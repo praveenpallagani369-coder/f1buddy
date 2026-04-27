@@ -74,15 +74,15 @@ function StatCard({
 }) {
   const iconBg = ICON_BG[accent] ?? "bg-gray-100";
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 relative overflow-hidden hover:shadow-md transition-shadow">
-      <div className={`absolute inset-y-0 left-0 w-1.5 ${accent} rounded-l-2xl`} />
-      <div className="flex items-start justify-between mb-3">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 relative overflow-hidden hover:shadow-md transition-shadow">
+      <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-2xl`} />
+      <div className="flex items-start justify-between mb-2">
         <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
-        <div className={`w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center text-lg flex-shrink-0`}>
+        <div className={`w-7 h-7 rounded-lg ${iconBg} flex items-center justify-center text-sm flex-shrink-0`}>
           {icon}
         </div>
       </div>
-      <div className="text-4xl font-bold text-gray-900 leading-none mb-1">{value}</div>
+      <div className="text-3xl font-bold text-gray-900 leading-none mb-1">{value}</div>
       {sub && <div className="text-xs text-gray-400 mt-1.5">{sub}</div>}
       {children}
     </div>
@@ -189,7 +189,7 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
@@ -197,7 +197,7 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-bold text-gray-900">
             {greeting}, {profile?.name?.split(" ")[0] ?? "Student"} 👋
           </h1>
-          <p className="text-gray-400 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
+          <p className="text-gray-500 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
         </div>
         <div className={`flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm ${statusConfig.bg}`}>
           <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`} />
@@ -209,7 +209,7 @@ export default async function DashboardPage() {
       <div className={`rounded-2xl border ${phaseConfig.border} bg-gradient-to-r ${phaseConfig.gradient} p-5`}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-start gap-3">
-            <div className={`w-10 h-10 rounded-xl ${phaseConfig.badge} flex items-center justify-center text-xl flex-shrink-0`}>
+            <div className={`w-8 h-8 rounded-xl ${phaseConfig.badge} flex items-center justify-center text-lg flex-shrink-0`}>
               {phaseConfig.icon}
             </div>
             <div>
@@ -356,8 +356,8 @@ export default async function DashboardPage() {
           </div>
           <div className="px-5 pb-5 space-y-2">
             {deadlines.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-3xl mb-2">✅</p>
+              <div className="text-center py-5">
+                <p className="text-xl mb-1.5">✅</p>
                 <p className="text-gray-400 text-sm">No pending deadlines</p>
               </div>
             ) : (
@@ -432,12 +432,12 @@ export default async function DashboardPage() {
           </div>
 
           {/* Quick Links */}
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-3">
             {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
                 className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-sm hover:border-gray-200 transition-all text-center`}>
                 <span className={`w-8 h-8 rounded-lg ${color.split(" ")[0]} flex items-center justify-center text-base`}>{icon}</span>
-                <span className="text-[10px] text-gray-600 font-medium leading-tight">{label}</span>
+                <span className="text-xs text-gray-600 font-medium leading-tight">{label}</span>
               </Link>
             ))}
           </div>
@@ -447,7 +447,7 @@ export default async function DashboardPage() {
       {/* ── Tools & Resources ────────────────────────────────────── */}
       <div>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
             { href: "/dashboard/currency", icon: "💱", label: "Currency",  desc: "Exchange rates", color: "bg-green-50"  },
             { href: "/dashboard/holidays", icon: "🗓️", label: "Holidays",  desc: "Bank closures",  color: "bg-blue-50"   },
