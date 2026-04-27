@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { differenceInCalendarDays, parseISO, addDays, format } from "date-fns";
 import { calculateUnemploymentDays } from "@/lib/immigration/rules";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
@@ -32,8 +31,6 @@ function detectPhase(opt: OPTRow | null, today: Date): Phase {
   if (today < eadStart) return opt.application_date ? "opt_pending" : "f1_active";
   if (today <= eadEnd) return opt.opt_type === "stem_extension" ? "stem_opt_active" : "opt_active";
 
-  // 180-day automatic extension: STEM OPT extension was timely filed (before EAD expiry)
-  // Per 8 CFR 274a.12(b)(6)(iv) — work authorization continues automatically while pending
   if (
     opt.opt_type === "stem_extension" &&
     opt.application_date &&
@@ -46,56 +43,40 @@ function detectPhase(opt: OPTRow | null, today: Date): Phase {
 }
 
 const PHASE_CONFIG = {
-  f1_active: {
-    label: "F-1 Student — Active",
-    icon: "🎓",
-    color: "border-indigo-200 bg-indigo-50",
-    textColor: "text-indigo-700",
-    tagline: "Enrolled and in status. Keep enrollment full-time and report address changes within 10 days.",
-  },
-  opt_pending: {
-    label: "OPT Application Pending",
-    icon: "⏳",
-    color: "border-amber-200 bg-amber-50",
-    textColor: "text-amber-700",
-    tagline: "You CANNOT work yet. Wait for the physical EAD card before starting any job.",
-  },
-  opt_active: {
-    label: "OPT Active",
-    icon: "💼",
-    color: "border-emerald-200 bg-emerald-50",
-    textColor: "text-emerald-700",
-    tagline: "Work must be directly related to your degree. Track unemployment days carefully.",
-  },
-  stem_opt_active: {
-    label: "STEM OPT Active",
-    icon: "🔬",
-    color: "border-violet-800/50 bg-violet-900/10",
-    textColor: "text-violet-300",
-    tagline: "150-day cumulative unemployment cap. Submit validation reports on time. Employer must stay E-Verify enrolled.",
-  },
-  stem_180_extension: {
-    label: "STEM OPT — 180-Day Auto-Extension",
-    icon: "🔄",
-    color: "border-blue-200 bg-blue-900/10",
-    textColor: "text-blue-700",
-    tagline: "Your OPT EAD expired but work authorization continues automatically while STEM extension is pending. Keep your I-797 receipt notice as proof.",
-  },
-  grace_period: {
-    label: "60-Day Grace Period",
-    icon: "⏱️",
-    color: "border-red-200 bg-red-50",
-    textColor: "text-red-700",
-    tagline: "YOU CANNOT WORK during the grace period. Use this time to change status, depart, or confirm H-1B cap-gap.",
-  },
-  program_ended: {
-    label: "Program Ended",
-    icon: "📋",
-    color: "border-gray-200 bg-gray-50",
-    textColor: "text-gray-500",
-    tagline: "Your OPT/grace period has ended. Contact your DSO immediately if you are still in the US.",
-  },
+  f1_active:         { label: "F-1 Student — Active",            icon: "🎓", gradient: "from-indigo-50 to-blue-50",   border: "border-indigo-200", text: "text-indigo-700", badge: "bg-indigo-100 text-indigo-700", tagline: "Enrolled and in status. Keep enrollment full-time and report address changes within 10 days." },
+  opt_pending:       { label: "OPT Application Pending",         icon: "⏳", gradient: "from-amber-50 to-yellow-50",  border: "border-amber-200",  text: "text-amber-700",  badge: "bg-amber-100 text-amber-700",  tagline: "You CANNOT work yet. Wait for the physical EAD card before starting any job." },
+  opt_active:        { label: "OPT Active",                      icon: "💼", gradient: "from-emerald-50 to-teal-50",  border: "border-emerald-200",text: "text-emerald-700",badge: "bg-emerald-100 text-emerald-700",tagline: "Work must be directly related to your degree. Track unemployment days carefully." },
+  stem_opt_active:   { label: "STEM OPT Active",                 icon: "🔬", gradient: "from-violet-50 to-purple-50", border: "border-violet-200", text: "text-violet-700", badge: "bg-violet-100 text-violet-700", tagline: "150-day cumulative unemployment cap. Submit validation reports on time. Employer must stay E-Verify enrolled." },
+  stem_180_extension:{ label: "STEM OPT — 180-Day Auto-Extension",icon: "🔄", gradient: "from-blue-50 to-sky-50",     border: "border-blue-200",   text: "text-blue-700",  badge: "bg-blue-100 text-blue-700",    tagline: "Work authorization continues automatically while STEM extension is pending. Keep your I-797 receipt as proof." },
+  grace_period:      { label: "60-Day Grace Period",             icon: "⏱️", gradient: "from-red-50 to-rose-50",     border: "border-red-200",    text: "text-red-700",   badge: "bg-red-100 text-red-700",      tagline: "YOU CANNOT WORK during the grace period. Use this time to change status, depart, or confirm H-1B cap-gap." },
+  program_ended:     { label: "Program Ended",                   icon: "📋", gradient: "from-gray-50 to-slate-50",   border: "border-gray-200",   text: "text-gray-500",  badge: "bg-gray-100 text-gray-600",    tagline: "Your OPT/grace period has ended. Contact your DSO immediately if you are still in the US." },
 };
+
+function StatCard({
+  label, value, sub, accent, icon, children,
+}: {
+  label: string;
+  value: React.ReactNode;
+  sub?: React.ReactNode;
+  accent: string;
+  icon: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-5 relative overflow-hidden hover:shadow-md transition-shadow`}>
+      <div className={`absolute inset-y-0 left-0 w-1 ${accent} rounded-l-2xl`} />
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
+        <div className={`w-8 h-8 rounded-xl ${accent.replace("bg-", "bg-").replace("-500", "-100")} flex items-center justify-center text-base flex-shrink-0`}>
+          {icon}
+        </div>
+      </div>
+      <div className="text-3xl font-bold text-gray-900 leading-none mb-1">{value}</div>
+      {sub && <div className="text-xs text-gray-400 mt-1">{sub}</div>}
+      {children}
+    </div>
+  );
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -124,7 +105,6 @@ export default async function DashboardPage() {
   const today = new Date();
   const thisYear = today.getFullYear();
 
-  // Live-calculated unemployment days from employment records
   const liveUnemploymentDays = opt?.ead_start_date
     ? calculateUnemploymentDays(
         opt.ead_start_date,
@@ -134,12 +114,9 @@ export default async function DashboardPage() {
     : (opt?.unemployment_days_used ?? 0);
 
   const unemploymentLimit = opt?.unemployment_limit ?? 90;
-
-  // Phase detection
   const phase = detectPhase(opt, today);
   const phaseConfig = PHASE_CONFIG[phase];
 
-  // Days outside US this year
   const daysOutsideThisYear = travels.reduce((sum, t) => {
     const dep = parseISO(t.departure_date);
     const ret = t.return_date ? parseISO(t.return_date) : today;
@@ -154,20 +131,17 @@ export default async function DashboardPage() {
   const currentlyAbroad = travels.some((t) => !t.return_date);
   const fiveMonthWarning = daysOutsideThisYear >= 120;
 
-  // Expiring documents (within 90 days)
   const expiringDocs = docs.filter((d) => {
     if (!d.expiration_date) return false;
     const days = differenceInCalendarDays(parseISO(d.expiration_date), today);
     return days >= 0 && days <= 90;
   });
 
-  // EAD expiry info
   const eadEnd = opt?.ead_end_date ? parseISO(opt.ead_end_date) : null;
   const daysToEadExpiry = eadEnd ? differenceInCalendarDays(eadEnd, today) : null;
   const graceEnd = eadEnd ? addDays(eadEnd, 60) : null;
   const daysInGrace = (phase === "grace_period" && graceEnd) ? differenceInCalendarDays(graceEnd, today) : null;
 
-  // Overall compliance status
   const criticalDeadlines = deadlines.filter((d) => {
     const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
     return days <= 7 || d.severity === "critical";
@@ -181,356 +155,305 @@ export default async function DashboardPage() {
       : "green";
 
   const statusConfig = {
-    green: { color: "bg-emerald-500", text: "All Clear", textColor: "text-emerald-600" },
-    yellow: { color: "bg-amber-500", text: "Action Needed", textColor: "text-amber-600" },
-    red: { color: "bg-red-500", text: "Urgent", textColor: "text-red-600" },
+    green:  { dot: "bg-emerald-400", text: "All Clear",     textColor: "text-emerald-600", ring: "ring-emerald-100" },
+    yellow: { dot: "bg-amber-400",   text: "Action Needed", textColor: "text-amber-600",   ring: "ring-amber-100"   },
+    red:    { dot: "bg-red-400",     text: "Urgent",        textColor: "text-red-600",      ring: "ring-red-100"     },
   }[overallStatus];
 
   const unemployPct = Math.min(100, (liveUnemploymentDays / unemploymentLimit) * 100);
-  const unemployColor = liveUnemploymentDays >= 85 ? "bg-red-500" : liveUnemploymentDays >= 75 ? "bg-orange-500" : liveUnemploymentDays >= 60 ? "bg-amber-500" : "bg-emerald-500";
+  const unemployColor = liveUnemploymentDays >= 85 ? "bg-red-500" : liveUnemploymentDays >= 60 ? "bg-amber-500" : "bg-emerald-500";
+  const unemployAccent = liveUnemploymentDays >= 85 ? "bg-red-500" : liveUnemploymentDays >= 60 ? "bg-amber-500" : "bg-orange-400";
+
+  const hour = today.getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
+  const QUICK_LINKS: Record<Phase, { href: string; icon: string; label: string; color: string }[]> = {
+    f1_active:          [{ href: "/dashboard/opt/timeline", icon: "📆", label: "Plan OPT",      color: "bg-indigo-50 text-indigo-600" }, { href: "/dashboard/cpt", icon: "📚", label: "CPT Tracker",  color: "bg-purple-50 text-purple-600" }, { href: "/dashboard/travel", icon: "✈️", label: "Log Trip",    color: "bg-sky-50 text-sky-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI",       color: "bg-violet-50 text-violet-600" }],
+    opt_pending:        [{ href: "/dashboard/opt/timeline", icon: "📆", label: "Track App",     color: "bg-amber-50 text-amber-600" },  { href: "/dashboard/documents", icon: "📁", label: "Upload Docs", color: "bg-blue-50 text-blue-600" },   { href: "/dashboard/travel/checklist", icon: "🗂️", label: "Travel Check", color: "bg-teal-50 text-teal-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    opt_active:         [{ href: "/dashboard/opt", icon: "💼", label: "Log Employer", color: "bg-emerald-50 text-emerald-600" }, { href: "/dashboard/opt/stem-timeline", icon: "🔬", label: "Plan STEM", color: "bg-violet-50 text-violet-600" }, { href: "/dashboard/travel", icon: "✈️", label: "Log Trip", color: "bg-sky-50 text-sky-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-indigo-50 text-indigo-600" }],
+    stem_opt_active:    [{ href: "/dashboard/opt/stem-reports", icon: "📋", label: "STEM Reports", color: "bg-violet-50 text-violet-600" }, { href: "/dashboard/opt", icon: "💼", label: "Log Employer", color: "bg-emerald-50 text-emerald-600" }, { href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Timeline", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-indigo-50 text-indigo-600" }],
+    stem_180_extension: [{ href: "/dashboard/opt/stem-reports", icon: "📋", label: "STEM Reports", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: "📁", label: "Documents", color: "bg-indigo-50 text-indigo-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    grace_period:       [{ href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Info", color: "bg-red-50 text-red-600" }, { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: "📁", label: "Documents", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    program_ended:      [{ href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Info", color: "bg-gray-50 text-gray-600" }, { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: "📁", label: "Documents", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+
+      {/* ── Header ──────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Good {today.getHours() < 12 ? "morning" : today.getHours() < 17 ? "afternoon" : "evening"},{" "}
-            {profile?.name?.split(" ")[0] ?? "Student"} 👋
+            {greeting}, {profile?.name?.split(" ")[0] ?? "Student"} 👋
           </h1>
-          <p className="text-gray-500 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
+          <p className="text-gray-400 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-200">
-          <div className={`w-2.5 h-2.5 rounded-full ${statusConfig.color} animate-pulse`} />
-          <span className={`text-sm font-medium ${statusConfig.textColor}`}>{statusConfig.text}</span>
+        <div className={`flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm ring-4 ${statusConfig.ring}`}>
+          <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`} />
+          <span className={`text-sm font-semibold ${statusConfig.textColor}`}>{statusConfig.text}</span>
         </div>
       </div>
 
-      {/* Phase Banner */}
-      <div className={`p-4 rounded-xl border ${phaseConfig.color}`}>
+      {/* ── Phase Banner ─────────────────────────────────────────── */}
+      <div className={`rounded-2xl border ${phaseConfig.border} bg-gradient-to-r ${phaseConfig.gradient} p-5`}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <p className={`text-sm font-bold ${phaseConfig.textColor} mb-0.5`}>
-              {phaseConfig.icon} Current Phase: {phaseConfig.label}
-            </p>
-            <p className="text-sm text-gray-600">{phaseConfig.tagline}</p>
-
-            {/* Phase-specific urgent info inline */}
-            {phase === "opt_pending" && opt?.application_date && (
-              <p className="text-xs text-amber-600 mt-1">
-                Filed: {opt.application_date} · Typical wait: 3–5 months · Track at egov.uscis.gov
-              </p>
-            )}
-            {phase === "stem_180_extension" && opt?.application_date && (
-              <p className="text-xs text-blue-600 mt-1 font-semibold">
-                Filed: {opt.application_date} · Auto-extension valid up to 180 days past EAD expiry · Keep I-797 receipt as proof — 8 CFR 274a.12(b)(6)(iv)
-              </p>
-            )}
-            {phase === "grace_period" && graceEnd && (
-              <p className="text-xs text-red-600 mt-1 font-semibold">
-                Grace period ends: {format(graceEnd, "MMM d, yyyy")} — {daysInGrace} days remaining
-              </p>
-            )}
-            {(phase === "opt_active" || phase === "stem_opt_active") && daysToEadExpiry !== null && daysToEadExpiry <= 90 && (
-              <p className={`text-xs mt-1 font-medium ${daysToEadExpiry <= 30 ? "text-red-600" : "text-amber-600"}`}>
-                EAD expires in {daysToEadExpiry} days — {phase === "opt_active" ? "apply for STEM OPT now" : "plan your next status"}
-              </p>
-            )}
-            {phase === "stem_opt_active" && nextStemDeadline && (
-              <p className="text-xs text-violet-300 mt-1">
-                Next validation report: {nextStemDeadline.title} — {differenceInCalendarDays(parseISO(nextStemDeadline.deadline_date), today)} days away
-              </p>
-            )}
+          <div className="flex items-start gap-3">
+            <div className={`w-10 h-10 rounded-xl ${phaseConfig.badge} flex items-center justify-center text-xl flex-shrink-0`}>
+              {phaseConfig.icon}
+            </div>
+            <div>
+              <p className={`text-sm font-bold ${phaseConfig.text} mb-0.5`}>Current Phase: {phaseConfig.label}</p>
+              <p className="text-sm text-gray-600 leading-relaxed">{phaseConfig.tagline}</p>
+              {phase === "opt_pending" && opt?.application_date && (
+                <p className="text-xs text-amber-600 mt-1.5 font-medium">
+                  Filed: {opt.application_date} · Typical wait: 3–5 months · Track at egov.uscis.gov
+                </p>
+              )}
+              {phase === "stem_180_extension" && opt?.application_date && (
+                <p className="text-xs text-blue-600 mt-1.5 font-semibold">
+                  Filed: {opt.application_date} · Auto-extension valid up to 180 days past EAD expiry · Keep I-797 receipt — 8 CFR 274a.12(b)(6)(iv)
+                </p>
+              )}
+              {phase === "grace_period" && graceEnd && (
+                <p className="text-xs text-red-600 mt-1.5 font-semibold">
+                  Grace period ends: {format(graceEnd, "MMM d, yyyy")} — {daysInGrace} days remaining
+                </p>
+              )}
+              {(phase === "opt_active" || phase === "stem_opt_active") && daysToEadExpiry !== null && daysToEadExpiry <= 90 && (
+                <p className={`text-xs mt-1.5 font-medium ${daysToEadExpiry <= 30 ? "text-red-600" : "text-amber-600"}`}>
+                  EAD expires in {daysToEadExpiry} days — {phase === "opt_active" ? "apply for STEM OPT now" : "plan your next status"}
+                </p>
+              )}
+              {phase === "stem_opt_active" && nextStemDeadline && (
+                <p className="text-xs text-violet-600 mt-1.5">
+                  Next validation report: {nextStemDeadline.title} — {differenceInCalendarDays(parseISO(nextStemDeadline.deadline_date), today)} days away
+                </p>
+              )}
+            </div>
           </div>
-
-          {/* Phase quick action */}
           <div className="flex-shrink-0">
-            {phase === "f1_active" && (
-              <Link href="/dashboard/opt/timeline" className="text-xs px-3 py-1.5 rounded-lg bg-indigo-100 border border-indigo-700 text-indigo-700 hover:bg-indigo-600/30">
-                Plan OPT Application →
-              </Link>
-            )}
-            {phase === "opt_pending" && (
-              <Link href="/dashboard/opt/timeline" className="text-xs px-3 py-1.5 rounded-lg bg-amber-600/20 border border-amber-700 text-amber-700 hover:bg-amber-600/30">
-                Track Application →
-              </Link>
-            )}
-            {phase === "opt_active" && (
-              <Link href="/dashboard/opt/stem-timeline" className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-700 text-emerald-700 hover:bg-emerald-600/30">
-                Plan STEM OPT →
-              </Link>
-            )}
-            {phase === "stem_opt_active" && (
-              <Link href="/dashboard/opt/stem-reports" className="text-xs px-3 py-1.5 rounded-lg bg-violet-600/20 border border-violet-700 text-violet-300 hover:bg-violet-600/30">
-                View STEM Reports →
-              </Link>
-            )}
-            {phase === "stem_180_extension" && (
-              <Link href="/dashboard/opt/stem-reports" className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-700 text-blue-700 hover:bg-blue-600/30">
-                STEM Reports →
-              </Link>
-            )}
-            {phase === "grace_period" && (
-              <Link href="/dashboard/opt/h1b" className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 border border-red-700 text-red-700 hover:bg-red-600/30">
-                H-1B Cap-Gap Info →
-              </Link>
-            )}
+            {phase === "f1_active"          && <Link href="/dashboard/opt/timeline"   className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>Plan OPT →</Link>}
+            {phase === "opt_pending"        && <Link href="/dashboard/opt/timeline"   className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>Track Application →</Link>}
+            {phase === "opt_active"         && <Link href="/dashboard/opt/stem-timeline" className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>Plan STEM OPT →</Link>}
+            {phase === "stem_opt_active"    && <Link href="/dashboard/opt/stem-reports"  className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>STEM Reports →</Link>}
+            {phase === "stem_180_extension" && <Link href="/dashboard/opt/stem-reports"  className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>STEM Reports →</Link>}
+            {phase === "grace_period"       && <Link href="/dashboard/opt/h1b"           className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>H-1B Cap-Gap →</Link>}
           </div>
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* ── Stat Cards ───────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* OPT Unemployment — live calculated */}
-        <Card className={liveUnemploymentDays >= 85 ? "border-red-200" : liveUnemploymentDays >= 60 ? "border-amber-200" : ""}>
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
-              {phase === "stem_opt_active" ? "STEM Unemployment (cumulative)" : "OPT Unemployment"}
-            </p>
-            {opt ? (
-              <>
-                <div className="flex items-baseline gap-1 mb-2">
-                  <span className={`text-2xl font-bold ${liveUnemploymentDays >= 85 ? "text-red-600" : liveUnemploymentDays >= 60 ? "text-amber-600" : "text-gray-900"}`}>
-                    {liveUnemploymentDays}
-                  </span>
-                  <span className="text-gray-400 text-sm">/ {unemploymentLimit} days</span>
-                </div>
-                <Progress value={unemployPct} max={100} color={unemployColor} />
-                <p className="text-xs text-gray-400 mt-1">{unemploymentLimit - liveUnemploymentDays} days remaining · live</p>
-              </>
-            ) : (
-              <Link href="/dashboard/opt" className="text-sm text-indigo-600 hover:underline">Set up OPT →</Link>
-            )}
-          </CardContent>
-        </Card>
+        {/* Unemployment */}
+        <StatCard
+          label={phase === "stem_opt_active" ? "STEM Unemployment" : "OPT Unemployment"}
+          value={opt ? <span className={liveUnemploymentDays >= 85 ? "text-red-600" : liveUnemploymentDays >= 60 ? "text-amber-600" : "text-gray-900"}>{liveUnemploymentDays}</span> : "—"}
+          sub={opt ? `${unemploymentLimit - liveUnemploymentDays} of ${unemploymentLimit} days remaining` : undefined}
+          accent={unemployAccent}
+          icon="💼"
+        >
+          {opt && (
+            <div className="mt-3">
+              <Progress value={unemployPct} max={100} color={unemployColor} />
+              {!opt && <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-2 block">Set up OPT →</Link>}
+            </div>
+          )}
+          {!opt && <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-2 block">Set up OPT →</Link>}
+        </StatCard>
 
         {/* Days Outside US */}
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Days Outside US ({thisYear})</p>
-            <div className="flex items-baseline gap-1 mb-2">
-              <span className={`text-2xl font-bold ${fiveMonthWarning ? "text-amber-600" : "text-gray-900"}`}>
-                {daysOutsideThisYear}
-              </span>
-              <span className="text-gray-400 text-sm">days</span>
-            </div>
-            {currentlyAbroad && <Badge variant="warning" className="text-xs">Currently Abroad</Badge>}
-            {fiveMonthWarning && !currentlyAbroad && <Badge variant="warning" className="text-xs">5-Month Rule Alert</Badge>}
+        <StatCard
+          label={`Days Outside US (${thisYear})`}
+          value={<span className={fiveMonthWarning ? "text-amber-600" : "text-gray-900"}>{daysOutsideThisYear}</span>}
+          sub={
+            currentlyAbroad ? "Currently abroad" :
+            fiveMonthWarning ? "⚠ 5-Month Rule Alert" :
+            "Within safe limit"
+          }
+          accent="bg-sky-400"
+          icon="✈️"
+        >
+          <div className="mt-2">
+            {currentlyAbroad  && <Badge variant="warning"  className="text-xs">Currently Abroad</Badge>}
+            {fiveMonthWarning && !currentlyAbroad && <Badge variant="warning" className="text-xs">5-Month Alert</Badge>}
             {!fiveMonthWarning && !currentlyAbroad && <Badge variant="success" className="text-xs">In Status</Badge>}
-          </CardContent>
-        </Card>
+          </div>
+        </StatCard>
 
-        {/* EAD Expiry or Program End */}
-        <Card className={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "border-red-200" : ""}>
-          <CardContent className="p-4">
-            {eadEnd ? (
-              <>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">EAD Expiry</p>
-                <p className={`text-2xl font-bold mb-1 ${daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "text-red-600" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "text-amber-600" : "text-gray-900"}`}>
+        {/* EAD / Program End */}
+        <StatCard
+          label={eadEnd ? "EAD Expiry" : "Program End"}
+          value={
+            eadEnd
+              ? <span className={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "text-red-600" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "text-amber-600" : "text-gray-900"}>
                   {daysToEadExpiry !== null && daysToEadExpiry >= 0 ? `${daysToEadExpiry}d` : "Expired"}
-                </p>
-                <p className="text-xs text-gray-400">{opt?.ead_end_date}</p>
-              </>
-            ) : (
-              <>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Program End</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1">
-                  {profile?.program_end_date ? `${differenceInCalendarDays(parseISO(profile.program_end_date), today)}d` : "—"}
-                </p>
-                <p className="text-xs text-gray-400">{profile?.program_end_date ?? "Not set"}</p>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                </span>
+              : <span className="text-gray-900">{profile?.program_end_date ? `${differenceInCalendarDays(parseISO(profile.program_end_date), today)}d` : "—"}</span>
+          }
+          sub={eadEnd ? opt?.ead_end_date ?? undefined : profile?.program_end_date ?? undefined}
+          accent={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "bg-red-500" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "bg-amber-500" : "bg-violet-400"}
+          icon="🪪"
+        />
 
         {/* Expiring Documents */}
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Expiring Documents</p>
-            <p className={`text-2xl font-bold ${expiringDocs.length > 0 ? "text-amber-600" : "text-gray-900"}`}>
-              {expiringDocs.length}
-            </p>
-            {expiringDocs.length > 0 ? (
-              <p className="text-xs text-amber-600 mt-1">Expiring within 90 days</p>
-            ) : (
-              <p className="text-xs text-emerald-600 mt-1">All documents valid</p>
-            )}
-          </CardContent>
-        </Card>
+        <StatCard
+          label="Expiring Documents"
+          value={<span className={expiringDocs.length > 0 ? "text-amber-600" : "text-gray-900"}>{expiringDocs.length}</span>}
+          sub={expiringDocs.length > 0 ? "Expiring within 90 days" : "All documents valid"}
+          accent={expiringDocs.length > 0 ? "bg-amber-400" : "bg-emerald-400"}
+          icon="📁"
+        >
+          {expiringDocs.length > 0 && (
+            <Link href="/dashboard/documents" className="text-xs text-amber-600 hover:underline mt-2 block">
+              View expiring →
+            </Link>
+          )}
+        </StatCard>
       </div>
 
-      {/* Grace Period Emergency Banner */}
+      {/* ── Grace Period Emergency Banner ────────────────────────── */}
       {phase === "grace_period" && (
-        <div className="p-5 rounded-xl bg-red-900/30 border-2 border-red-700">
-          <p className="text-lg font-bold text-red-700 mb-2">🚨 You CANNOT work during the 60-day grace period</p>
-          <p className="text-sm text-red-800 mb-3">Your OPT/STEM authorization has ended. Immediately choose one of these options:</p>
+        <div className="p-5 rounded-2xl bg-red-50 border border-red-200">
+          <p className="text-base font-bold text-red-700 mb-1">🚨 You CANNOT work during the 60-day grace period</p>
+          <p className="text-sm text-red-600 mb-4">Your OPT/STEM authorization has ended. Immediately choose one of these options:</p>
           <div className="grid sm:grid-cols-3 gap-3">
             {[
               { title: "Change Status", desc: "File for H-1B, B-2, or other status before grace period ends", link: "/dashboard/deadlines" },
-              { title: "Depart the US", desc: "Leave before grace period ends to maintain F-1 good standing", link: "/dashboard/travel" },
-              { title: "H-1B Cap-Gap", desc: "If H-1B was filed & selected, cap-gap extends authorization", link: "/dashboard/opt/h1b" },
-            ].map((opt) => (
-              <Link key={opt.title} href={opt.link} className="p-3 rounded-lg bg-red-900/30 border border-red-200 hover:bg-red-900/50 transition-colors">
-                <p className="text-sm font-semibold text-red-700">{opt.title}</p>
-                <p className="text-xs text-red-600 mt-0.5">{opt.desc}</p>
+              { title: "Depart the US",  desc: "Leave before grace period ends to maintain F-1 good standing",  link: "/dashboard/travel" },
+              { title: "H-1B Cap-Gap",  desc: "If H-1B was filed & selected, cap-gap extends authorization",   link: "/dashboard/opt/h1b" },
+            ].map((o) => (
+              <Link key={o.title} href={o.link} className="p-3 rounded-xl bg-white border border-red-200 hover:border-red-400 hover:shadow-sm transition-all">
+                <p className="text-sm font-semibold text-red-700">{o.title}</p>
+                <p className="text-xs text-red-500 mt-0.5">{o.desc}</p>
               </Link>
             ))}
           </div>
         </div>
       )}
 
-      {/* Two column */}
+      {/* ── Two-column ───────────────────────────────────────────── */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Deadlines */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Upcoming Deadlines</CardTitle>
-              <Link href="/dashboard/deadlines" className="text-xs text-indigo-600 hover:underline">View all →</Link>
+
+        {/* Deadlines card */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <div className="flex items-center justify-between px-5 pt-5 pb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-sm">📅</div>
+              <p className="font-semibold text-gray-900 text-sm">Upcoming Deadlines</p>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
+            <Link href="/dashboard/deadlines" className="text-xs text-indigo-600 hover:underline font-medium">View all →</Link>
+          </div>
+          <div className="px-5 pb-5 space-y-2">
             {deadlines.length === 0 ? (
-              <div className="text-center py-6">
+              <div className="text-center py-8">
                 <p className="text-3xl mb-2">✅</p>
-                <p className="text-gray-500 text-sm">No pending deadlines</p>
+                <p className="text-gray-400 text-sm">No pending deadlines</p>
               </div>
             ) : (
               deadlines.map((d) => {
                 const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
                 return (
-                  <div key={d.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-100 border border-gray-200">
-                    <div className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${
-                      d.severity === "critical" ? "bg-red-400" : d.severity === "warning" ? "bg-amber-400" : "bg-blue-400"
-                    }`} />
+                  <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-gray-200 transition-colors">
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${d.severity === "critical" ? "bg-red-400" : d.severity === "warning" ? "bg-amber-400" : "bg-blue-400"}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 font-medium truncate">{d.title}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{d.deadline_date}</p>
+                      <p className="text-sm text-gray-800 font-medium truncate">{d.title}</p>
+                      <p className="text-xs text-gray-400">{d.deadline_date}</p>
                     </div>
-                    <Badge variant={days <= 7 ? "critical" : days <= 30 ? "warning" : "info"}>
+                    <Badge variant={days <= 7 ? "critical" : days <= 30 ? "warning" : "info"} className="flex-shrink-0">
                       {days === 0 ? "Today" : days < 0 ? "Overdue" : `${days}d`}
                     </Badge>
                   </div>
                 );
               })
             )}
-            <Link href="/dashboard/deadlines" className="block text-center text-xs text-indigo-600 hover:underline pt-1">
+            <Link href="/dashboard/deadlines" className="block text-center text-xs text-indigo-600 hover:underline pt-2">
               + Add custom deadline
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Right column */}
         <div className="space-y-4">
+
           {/* Current Employment */}
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Current Employment</p>
-              {currentEmployer ? (
-                <div>
-                  <p className="text-gray-900 font-medium">{currentEmployer.employer_name}</p>
-                  <p className="text-gray-500 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type?.replace("_", " ")}</p>
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {!currentEmployer.reported_to_school && <Badge variant="warning" className="text-xs">Not reported to DSO</Badge>}
-                    {currentEmployer.e_verify_employer && <Badge variant="success" className="text-xs">E-Verify ✓</Badge>}
-                    {currentEmployer.is_stem_related && <Badge variant="info" className="text-xs">STEM</Badge>}
-                  </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-sm">💼</div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current Employment</p>
+            </div>
+            {currentEmployer ? (
+              <div>
+                <p className="text-gray-900 font-semibold">{currentEmployer.employer_name}</p>
+                <p className="text-gray-500 text-sm mt-0.5">{currentEmployer.position_title ?? currentEmployer.employment_type?.replace("_", " ")}</p>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {!currentEmployer.reported_to_school && <Badge variant="warning" className="text-xs">Not reported to DSO</Badge>}
+                  {currentEmployer.e_verify_employer   && <Badge variant="success" className="text-xs">E-Verify ✓</Badge>}
+                  {currentEmployer.is_stem_related     && <Badge variant="info"    className="text-xs">STEM</Badge>}
                 </div>
-              ) : (
-                <div>
-                  <p className="text-gray-500 text-sm">No current employer logged</p>
-                  <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-1 block">Add employer →</Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            ) : (
+              <div>
+                <p className="text-gray-400 text-sm">No current employer logged</p>
+                <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-1 block">Add employer →</Link>
+              </div>
+            )}
+          </div>
 
           {/* Program Info */}
-          <Card>
-            <CardContent className="p-4">
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Program Info</p>
-              <div className="space-y-1 text-sm">
-                {[
-                  ["School", profile?.school_name],
-                  ["Program", profile?.program_name],
-                  ["End Date", profile?.program_end_date],
-                  ["DSO", profile?.dso_name],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex justify-between">
-                    <span className="text-gray-400">{label}</span>
-                    <span className="text-gray-700 truncate max-w-[160px]">{value ?? "—"}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-sm">🎓</div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Program Info</p>
+            </div>
+            <div className="space-y-2 text-sm">
+              {[
+                ["School", profile?.school_name],
+                ["Program", profile?.program_name],
+                ["End Date", profile?.program_end_date],
+                ["DSO", profile?.dso_name],
+              ].map(([label, value]) => (
+                <div key={label} className="flex justify-between items-center">
+                  <span className="text-gray-400">{label}</span>
+                  <span className="text-gray-700 font-medium truncate max-w-[160px] text-right">{value ?? "—"}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-          {/* Quick links — phase-aware */}
-          <div className="grid grid-cols-2 gap-3">
-            {(phase === "f1_active"
-              ? [
-                  { href: "/dashboard/opt/timeline", icon: "📆", label: "Plan OPT" },
-                  { href: "/dashboard/cpt", icon: "📚", label: "CPT Tracker" },
-                  { href: "/dashboard/travel", icon: "✈️", label: "Log Trip" },
-                  { href: "/dashboard/ai", icon: "🤖", label: "Ask AI" },
-                ]
-              : phase === "opt_pending"
-              ? [
-                  { href: "/dashboard/opt/timeline", icon: "📆", label: "Track Application" },
-                  { href: "/dashboard/documents", icon: "📁", label: "Upload Docs" },
-                  { href: "/dashboard/travel/checklist", icon: "🗂️", label: "Travel Check" },
-                  { href: "/dashboard/ai", icon: "🤖", label: "Ask AI" },
-                ]
-              : phase === "opt_active"
-              ? [
-                  { href: "/dashboard/opt", icon: "💼", label: "Log Employer" },
-                  { href: "/dashboard/opt/stem-timeline", icon: "🔬", label: "Plan STEM OPT" },
-                  { href: "/dashboard/travel", icon: "✈️", label: "Log Trip" },
-                  { href: "/dashboard/ai", icon: "🤖", label: "Ask AI" },
-                ]
-              : phase === "stem_opt_active"
-              ? [
-                  { href: "/dashboard/opt/stem-reports", icon: "📋", label: "STEM Reports" },
-                  { href: "/dashboard/opt", icon: "💼", label: "Log Employer" },
-                  { href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Timeline" },
-                  { href: "/dashboard/ai", icon: "🤖", label: "Ask AI" },
-                ]
-              : [
-                  { href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Info" },
-                  { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines" },
-                  { href: "/dashboard/documents", icon: "📁", label: "Documents" },
-                  { href: "/dashboard/ai", icon: "🤖", label: "Ask AI" },
-                ]
-            ).map(({ href, icon, label }) => (
+          {/* Quick Links */}
+          <div className="grid grid-cols-4 gap-2">
+            {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
-                className="flex items-center gap-2 p-3 rounded-lg bg-white border border-gray-200 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
-                <span>{icon}</span>{label}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-sm hover:border-gray-200 transition-all text-center`}>
+                <span className={`w-8 h-8 rounded-lg ${color.split(" ")[0]} flex items-center justify-center text-base`}>{icon}</span>
+                <span className="text-[10px] text-gray-600 font-medium leading-tight">{label}</span>
               </Link>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Tools & Resources */}
+      {/* ── Tools & Resources ────────────────────────────────────── */}
       <div>
-        <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
-            { href: "/dashboard/currency", icon: "💱", label: "Currency", desc: "Exchange rates" },
-            { href: "/dashboard/holidays", icon: "🗓️", label: "Holidays", desc: "Bank closures" },
-            { href: "/dashboard/news", icon: "📰", label: "News", desc: "Rule changes" },
-            { href: "/dashboard/guides", icon: "📖", label: "Guides", desc: "SSN, bank, etc." },
-            { href: "/dashboard/emergency", icon: "🆘", label: "Emergency", desc: "Contacts & rights" },
-          ].map(({ href, icon, label, desc }) => (
+            { href: "/dashboard/currency", icon: "💱", label: "Currency",  desc: "Exchange rates", color: "bg-green-50"  },
+            { href: "/dashboard/holidays", icon: "🗓️", label: "Holidays",  desc: "Bank closures",  color: "bg-blue-50"   },
+            { href: "/dashboard/news",     icon: "📰", label: "News",       desc: "Rule changes",   color: "bg-orange-50" },
+            { href: "/dashboard/guides",   icon: "📖", label: "Guides",     desc: "SSN, bank, etc.",color: "bg-violet-50" },
+            { href: "/dashboard/emergency",icon: "🆘", label: "Emergency",  desc: "Contacts & rights",color: "bg-red-50"  },
+          ].map(({ href, icon, label, desc, color }) => (
             <Link key={href} href={href}
-              className="flex flex-col items-center gap-1 p-4 rounded-xl bg-white border border-gray-200 text-center hover:bg-gray-100 hover:border-indigo-800/30 transition-colors">
-              <span className="text-xl">{icon}</span>
-              <span className="text-sm text-gray-900 font-medium">{label}</span>
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white border border-gray-100 text-center hover:shadow-md hover:border-gray-200 transition-all">
+              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center text-xl`}>{icon}</div>
+              <span className="text-sm text-gray-800 font-semibold">{label}</span>
               <span className="text-xs text-gray-400">{desc}</span>
             </Link>
           ))}
         </div>
       </div>
+
     </div>
   );
 }

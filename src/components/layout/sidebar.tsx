@@ -5,35 +5,58 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 
-const NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: "🏠", group: null },
-  { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: "🗓️", group: null },
-  { href: "/dashboard/deadlines", label: "Deadlines", icon: "📅", group: null },
-  // OPT group
-  { href: "/dashboard/opt", label: "OPT Tracker", icon: "💼", group: "OPT" },
-  { href: "/dashboard/opt/timeline", label: "OPT Application Steps", icon: "📆", group: "OPT" },
-  { href: "/dashboard/opt/stem-timeline", label: "STEM Application Steps", icon: "🔬", group: "OPT" },
-  { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: "📋", group: "OPT" },
-  { href: "/dashboard/opt/h1b", label: "H-1B Timeline", icon: "🏢", group: "OPT" },
-  { href: "/dashboard/opt/calculator", label: "Auth Calculator", icon: "🧮", group: "OPT" },
-  { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: "📄", group: "OPT" },
-  // CPT (standalone)
-  { href: "/dashboard/cpt", label: "CPT Tracker", icon: "📚", group: null },
-  // Travel group
-  { href: "/dashboard/travel", label: "Travel", icon: "✈️", group: "Travel" },
-  { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: "🗂️", group: "Travel" },
-  // Other
-  { href: "/dashboard/documents", label: "Documents", icon: "📁", group: null },
-  { href: "/dashboard/tax", label: "Tax", icon: "🧾", group: null },
-  { href: "/dashboard/dso-email", label: "DSO Emails", icon: "✉️", group: null },
-  { href: "/dashboard/ai", label: "AI Assistant", icon: "🤖", group: null },
-  { href: "/dashboard/community", label: "Community", icon: "💬", group: null },
-  // Tools & Resources
-  { href: "/dashboard/currency", label: "Currency Converter", icon: "💱", group: "Tools" },
-  { href: "/dashboard/holidays", label: "US Holidays", icon: "🗓️", group: "Tools" },
-  { href: "/dashboard/news", label: "Immigration News", icon: "📰", group: "Tools" },
-  { href: "/dashboard/guides", label: "New Arrival Guides", icon: "📖", group: "Tools" },
-  { href: "/dashboard/emergency", label: "Emergency Info", icon: "🆘", group: "Tools" },
+const SECTIONS = [
+  {
+    label: null,
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: "🏠" },
+      { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: "🗓️" },
+      { href: "/dashboard/deadlines", label: "Deadlines", icon: "📅" },
+    ],
+  },
+  {
+    label: "OPT Suite",
+    items: [
+      { href: "/dashboard/opt", label: "OPT Tracker", icon: "💼", top: true },
+      { href: "/dashboard/opt/timeline", label: "Application Steps", icon: "📆" },
+      { href: "/dashboard/opt/stem-timeline", label: "STEM Steps", icon: "🔬" },
+      { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: "📋" },
+      { href: "/dashboard/opt/h1b", label: "H-1B Timeline", icon: "🏢" },
+      { href: "/dashboard/opt/calculator", label: "Auth Calculator", icon: "🧮" },
+      { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: "📄" },
+    ],
+  },
+  {
+    label: null,
+    items: [{ href: "/dashboard/cpt", label: "CPT Tracker", icon: "📚", top: true }],
+  },
+  {
+    label: "Travel",
+    items: [
+      { href: "/dashboard/travel", label: "Travel", icon: "✈️", top: true },
+      { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: "🗂️" },
+    ],
+  },
+  {
+    label: null,
+    items: [
+      { href: "/dashboard/documents", label: "Documents", icon: "📁", top: true },
+      { href: "/dashboard/tax", label: "Tax", icon: "🧾", top: true },
+      { href: "/dashboard/dso-email", label: "DSO Emails", icon: "✉️", top: true },
+      { href: "/dashboard/ai", label: "AI Assistant", icon: "🤖", top: true },
+      { href: "/dashboard/community", label: "Community", icon: "💬", top: true },
+    ],
+  },
+  {
+    label: "Tools",
+    items: [
+      { href: "/dashboard/currency", label: "Currency", icon: "💱" },
+      { href: "/dashboard/holidays", label: "Holidays", icon: "🗓️" },
+      { href: "/dashboard/news", label: "News", icon: "📰" },
+      { href: "/dashboard/guides", label: "Guides", icon: "📖" },
+      { href: "/dashboard/emergency", label: "Emergency", icon: "🆘" },
+    ],
+  },
 ];
 
 export function Sidebar({ user }: { user: { name: string; email: string; role: string } }) {
@@ -48,65 +71,77 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   }
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-gray-50 flex flex-col">
+    <aside className="w-60 flex-shrink-0 border-r border-gray-100 bg-white flex flex-col shadow-sm">
       {/* Logo */}
-      <div className="p-5 border-b border-gray-200">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-lg shadow-lg shadow-indigo-200\/60">
+      <div className="px-5 py-4 border-b border-gray-100">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-base shadow-md shadow-indigo-200">
             🎓
           </div>
           <div>
-            <p className="font-bold text-gray-900 text-sm tracking-wide">F1Buddy</p>
-            <p className="text-xs text-gray-400">Student Manager</p>
+            <p className="font-bold text-gray-900 text-sm leading-none">F1Buddy</p>
+            <p className="text-[10px] text-gray-400 mt-0.5 leading-none">Student Manager</p>
           </div>
         </Link>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {NAV.map(({ href, label, icon, group }) => {
-          const active = href === "/dashboard" ? pathname === href : pathname === href || pathname.startsWith(href + "/");
-          const isSubItem = group !== null;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg text-sm transition-all duration-150",
-                isSubItem ? "px-3 py-1.5 ml-4 text-xs" : "px-3 py-2.5",
-                active
-                  ? "bg-indigo-100 text-indigo-700 font-medium border border-indigo-200"
-                  : isSubItem
-                  ? "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
-              )}
-            >
-              <span className={isSubItem ? "text-sm" : "text-base"}>{icon}</span>
-              {label}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-4">
+        {SECTIONS.map((section, si) => (
+          <div key={si}>
+            {section.label && (
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-3 mb-1">
+                {section.label}
+              </p>
+            )}
+            <div className="space-y-0.5">
+              {section.items.map(({ href, label, icon, top }) => {
+                const active = href === "/dashboard"
+                  ? pathname === href
+                  : pathname === href || pathname.startsWith(href + "/");
+                const isTop = top ?? (section.label === null);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-lg transition-all duration-150",
+                      isTop ? "px-3 py-2 text-sm" : "px-3 py-1.5 ml-3 text-xs",
+                      active
+                        ? "bg-indigo-50 text-indigo-700 font-semibold"
+                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                    )}
+                  >
+                    <span className={cn("flex-shrink-0", isTop ? "text-base" : "text-sm")}>{icon}</span>
+                    <span className="truncate">{label}</span>
+                    {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Profile */}
-      <div className="p-3 border-t border-gray-200">
+      <div className="px-2 py-3 border-t border-gray-100">
         <Link
           href="/dashboard/profile"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors group"
         >
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md shadow-indigo-200\/60">
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0 shadow-sm">
             {user.name.charAt(0).toUpperCase()}
           </div>
-          <div className="min-w-0">
-            <p className="text-sm text-gray-900 truncate">{user.name}</p>
-            <p className="text-xs text-gray-400 truncate">{user.email}</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-gray-800 truncate">{user.name}</p>
+            <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
           </div>
         </Link>
         <button
           onClick={handleSignOut}
-          className="w-full mt-1 flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+          className="w-full mt-1 flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
         >
-          <span>🚪</span> Sign out
+          <span className="text-sm">🚪</span> Sign out
         </button>
       </div>
     </aside>
