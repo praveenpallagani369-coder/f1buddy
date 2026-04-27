@@ -67,7 +67,24 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
-  const [toolsOpen, setToolsOpen] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
+
+  function isSectionOpen(section: NavSection) {
+    if (!section.label) return true;
+    if (section.label in openSections) return openSections[section.label];
+    return section.items.some(
+      (item) => item.href === pathname || pathname.startsWith(item.href + "/")
+    );
+  }
+
+  function toggleSection(label: string) {
+    setOpenSections((prev) => ({
+      ...prev,
+      [label]: !(prev[label] ?? SECTIONS.find((s) => s.label === label)?.items.some(
+        (item) => item.href === pathname || pathname.startsWith(item.href + "/")
+      )),
+    }));
+  }
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -95,21 +112,15 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
         {SECTIONS.map((section, si) => (
           <div key={si}>
             {section.label && (
-              section.label === "Tools" ? (
-                <button
-                  onClick={() => setToolsOpen((v) => !v)}
-                  className="flex items-center justify-between w-full text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-3 mb-1 hover:text-gray-500 transition-colors"
-                >
-                  <span>{section.label}</span>
-                  <span className={cn("text-[9px] transition-transform", toolsOpen && "rotate-90")}>▸</span>
-                </button>
-              ) : (
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-3 mb-1">
-                  {section.label}
-                </p>
-              )
+              <button
+                onClick={() => toggleSection(section.label!)}
+                className="flex items-center justify-between w-full text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-3 mb-1 hover:text-gray-500 transition-colors"
+              >
+                <span>{section.label}</span>
+                <span className={cn("text-[9px] transition-transform", isSectionOpen(section) && "rotate-90")}>▸</span>
+              </button>
             )}
-            {(section.label !== "Tools" || toolsOpen) && <div className="space-y-0.5">
+            {isSectionOpen(section) && <div className="space-y-0.5">
               {section.items.map(({ href, label, icon, top }) => {
                 const active = href === "/dashboard"
                   ? pathname === href
