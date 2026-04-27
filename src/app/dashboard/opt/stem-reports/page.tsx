@@ -101,7 +101,7 @@ export default function STEMReportsPage() {
         .from("compliance_deadlines")
         .select("title, status")
         .eq("user_id", user.id)
-        .like("title", "%STEM Validation Report%")
+        .like("title", "%STEM OPT%Validation Report%")
         .eq("status", "completed");
 
       const completed = new Set<number>();
@@ -132,7 +132,7 @@ export default function STEMReportsPage() {
     if (!user) return;
 
     // Mark the deadline as completed, create if not exists
-    const title = `STEM OPT ${report.month}-Month Validation Report`;
+    const title = `STEM OPT ${report.month}-Month Validation Report${report.requiresSelfEvaluation ? " + Self-Evaluation" : ""}`;
     const { data: existing } = await supabase
       .from("compliance_deadlines")
       .select("id")
@@ -166,22 +166,30 @@ export default function STEMReportsPage() {
     if (!user) return;
 
     const start = parseISO(stemStartDate);
-    const deadlines = REPORT_MONTHS.map(month => ({
-      user_id: user.id,
-      title: `STEM OPT ${month}-Month Validation Report${SELF_EVAL_MONTHS.has(month) ? " + Self-Evaluation" : ""}`,
-      description: SELF_EVAL_MONTHS.has(month)
-        ? `Submit I-983 validation report AND self-evaluation (I-983 page 5, signed by you and employer) to DSO. You have 10 business days from this date to report. CFR: 8 CFR 214.2(f)(10)(ii)(C).`
-        : `Submit I-983 validation report to DSO. You have 10 business days from this date to report to DSO. CFR: 8 CFR 214.2(f)(10)(ii)(C).`,
-      deadline_date: format(addMonths(start, month), "yyyy-MM-dd"),
-      category: "opt",
-      severity: "critical",
-      status: "pending",
-      is_system_generated: true,
-    }));
 
-    // Upsert — don't duplicate
-    for (const d of deadlines) {
-      await supabase.from("compliance_deadlines").upsert(d, { onConflict: "user_id,title", ignoreDuplicates: true });
+    for (const month of REPORT_MONTHS) {
+      const title = `STEM OPT ${month}-Month Validation Report${SELF_EVAL_MONTHS.has(month) ? " + Self-Evaluation" : ""}`;
+
+      const { count } = await supabase
+        .from("compliance_deadlines")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("title", title);
+
+      if ((count ?? 0) > 0) continue;
+
+      await supabase.from("compliance_deadlines").insert({
+        user_id: user.id,
+        title,
+        description: SELF_EVAL_MONTHS.has(month)
+          ? `Submit I-983 validation report AND self-evaluation (I-983 page 5, signed by you and employer) to DSO. You have 10 business days from this date to report. CFR: 8 CFR 214.2(f)(10)(ii)(C).`
+          : `Submit I-983 validation report to DSO. You have 10 business days from this date to report to DSO. CFR: 8 CFR 214.2(f)(10)(ii)(C).`,
+        deadline_date: format(addMonths(start, month), "yyyy-MM-dd"),
+        category: "opt",
+        severity: "critical",
+        status: "pending",
+        is_system_generated: true,
+      });
     }
   }
 
