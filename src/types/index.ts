@@ -4,7 +4,6 @@
 
 export type VisaType = "F1" | "J1" | "M1";
 export type UserRole = "student" | "premium" | "university_admin" | "admin";
-export type MobilityLevel = "independent" | "assisted" | "wheelchair" | "bedridden";
 
 export type DeadlineCategory =
   | "opt"
@@ -28,6 +27,7 @@ export type DocumentType =
   | "passport"
   | "visa_stamp"
   | "i94"
+  | "ssn_card"
   | "offer_letter"
   | "pay_stub"
   | "tax_return"

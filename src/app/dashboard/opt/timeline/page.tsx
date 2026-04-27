@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { addDays, subDays, parseISO, differenceInCalendarDays, format, isAfter, isBefore } from "date-fns";
+import { addDays, subDays, parseISO, differenceInCalendarDays, format, isBefore } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -27,13 +26,10 @@ interface TimelineStep {
   tip: string;
 }
 
-function buildTimeline(programEndDate: Date, optType: string): TimelineStep[] {
-  // OPT must be applied up to 90 days before program end
-  // USCIS recommends applying 3-4 months before desired start date
+function buildTimeline(programEndDate: Date, _optType: string): TimelineStep[] {
   const applyBy = subDays(programEndDate, 90);
-  const dsoRequestBy = subDays(applyBy, 14); // request DSO rec 2 weeks before filing
+  const dsoRequestBy = subDays(applyBy, 14);
   const typicalEADDate = addDays(applyBy, PROCESSING_ESTIMATES.typical * 7);
-  const slowEADDate = addDays(applyBy, PROCESSING_ESTIMATES.slow * 7);
 
   return [
     {
@@ -140,6 +136,7 @@ export default function OPTTimelinePage() {
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const endDate = customEndDate || profile?.program_end_date;
@@ -226,6 +223,40 @@ export default function OPTTimelinePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* STEM OPT notice */}
+      {opt?.opt_type === "stem_extension" && (
+        <Card className="border-emerald-800/50">
+          <CardContent className="p-4 flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-emerald-400 font-medium text-sm">✅ You&apos;re on STEM OPT — initial OPT is complete</p>
+              <p className="text-slate-400 text-xs mt-0.5">These steps tracked your original OPT application. Mark them all done to clear the overdue flags.</p>
+            </div>
+            <button
+              onClick={async () => {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user || !mergedTimeline) return;
+                const now = format(new Date(), "yyyy-MM-dd");
+                for (const step of mergedTimeline) {
+                  if (!step.isCompleted) {
+                    const existing = savedSteps.find((s) => s.step_name === step.id);
+                    if (existing) {
+                      await supabase.from("opt_application_steps").update({ is_completed: true, completed_date: now, updated_at: new Date().toISOString() }).eq("id", existing.id);
+                    } else {
+                      await supabase.from("opt_application_steps").insert({ user_id: user.id, step_name: step.id, step_order: step.order, target_date: step.targetDate ? format(step.targetDate, "yyyy-MM-dd") : null, is_completed: true, completed_date: now });
+                    }
+                  }
+                }
+                const { data } = await supabase.from("opt_application_steps").select("*").eq("user_id", user.id).order("step_order");
+                setSavedSteps(data ?? []);
+              }}
+              className="text-xs px-4 py-2 rounded-lg bg-emerald-600/20 border border-emerald-700 text-emerald-400 hover:bg-emerald-600/30 transition-colors whitespace-nowrap"
+            >
+              Mark All Done ✓
+            </button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Progress bar */}
       {mergedTimeline && (

@@ -13,7 +13,7 @@ interface Template {
   title: string;
   description: string;
   fields: { id: string; label: string; placeholder: string; type?: string }[];
-  generate: (profile: any, fields: Record<string, string>) => { subject: string; body: string };
+  generate: (profile: Record<string, string | boolean | null>, fields: Record<string, string>) => { subject: string; body: string };
 }
 
 const TEMPLATES: Template[] = [
@@ -217,7 +217,7 @@ function DSOEmailContent() {
   const searchParams = useSearchParams();
   const defaultTemplate = searchParams.get("template") ?? "";
   const supabase = createClient();
-  const [profile, setProfile] = useState<any>({});
+  const [profile, setProfile] = useState<Record<string, string | boolean | null>>({});
   const [selectedTemplate, setSelectedTemplate] = useState<string>(defaultTemplate || "travel_signature");
   const [fields, setFields] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState<"subject" | "body" | null>(null);
@@ -226,13 +226,22 @@ function DSOEmailContent() {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const [profileRes, optRes] = await Promise.all([
-        supabase.from("users").select("name, email, program_name, degree_level, program_end_date, dso_name, dso_email, school_name").eq("id", user.id).single(),
+      // Fetch user via API so SEVIS ID is decrypted server-side
+      const [apiRes, optRes] = await Promise.all([
+        fetch("/api/user"),
         supabase.from("opt_status").select("ead_end_date").eq("user_id", user.id).single(),
       ]);
-      setProfile({ ...profileRes.data, has_ead: !!optRes.data?.ead_end_date });
+      const apiJson = await apiRes.json();
+      if (apiJson.success) {
+        setProfile({
+          ...apiJson.data,
+          sevis_id: apiJson.data.sevisId ?? null,
+          has_ead: !!optRes.data?.ead_end_date,
+        });
+      }
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const template = TEMPLATES.find(t => t.id === selectedTemplate)!;

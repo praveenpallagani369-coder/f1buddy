@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,12 +7,11 @@ import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 
-const DOC_LABELS: Record<string, string> = { i20:"I-20", ead:"EAD Card", passport:"Passport", visa_stamp:"Visa Stamp", i94:"I-94", offer_letter:"Offer Letter", pay_stub:"Pay Stub", tax_return:"Tax Return", transcript:"Transcript", other:"Other" };
-const DOC_ICONS: Record<string, string> = { i20:"📋", ead:"💳", passport:"🛂", visa_stamp:"🔖", i94:"📄", offer_letter:"📝", pay_stub:"💵", tax_return:"🧾", transcript:"📜", other:"📎" };
+const DOC_LABELS: Record<string, string> = { i20:"I-20", ead:"EAD Card", passport:"Passport", visa_stamp:"Visa Stamp", i94:"I-94", ssn_card:"SSN Card", offer_letter:"Offer Letter", pay_stub:"Pay Stub", tax_return:"Tax Return", transcript:"Transcript", other:"Other" };
+const DOC_ICONS: Record<string, string> = { i20:"📋", ead:"💳", passport:"🛂", visa_stamp:"🔖", i94:"📄", ssn_card:"🪪", offer_letter:"📝", pay_stub:"💵", tax_return:"🧾", transcript:"📜", other:"📎" };
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export default function DocumentsPage() {
-  const supabase = createClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [docs, setDocs] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -74,7 +72,7 @@ export default function DocumentsPage() {
         });
         if (!uploadRes.ok) {
           // Upload failed but record was created — still show it
-          console.warn("Storage upload failed, record saved without file");
+          if (process.env.NODE_ENV === "development") console.warn("Storage upload failed, record saved without file");
         }
       }
 
@@ -84,8 +82,8 @@ export default function DocumentsPage() {
       setSelectedFile(null);
       setForm({ docType: "i20", expirationDate: "", notes: "" });
       if (fileRef.current) fileRef.current.value = "";
-    } catch (e: any) {
-      setFileError(e.message ?? "Upload failed. Please try again.");
+    } catch (e: unknown) {
+      setFileError(e instanceof Error ? e.message : "Upload failed. Please try again.");
     }
     setSaving(false);
     setUploadProgress(null);

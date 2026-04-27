@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { parseISO, addDays, subDays, format, differenceInCalendarDays, isAfter, isBefore } from "date-fns";
+import { parseISO, subDays, format, differenceInCalendarDays, isAfter, addDays } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -42,7 +42,6 @@ function calculate(input: {
 
   if (input.optStartDate) {
     const optStart = parseISO(input.optStartDate);
-    const gracePeriodEnd = addDays(optStart, 90);
     results.push({
       label: "Earliest Work Start Date",
       value: format(optStart, "MMM d, yyyy"),

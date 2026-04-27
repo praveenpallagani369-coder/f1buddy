@@ -2,14 +2,17 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { addMonths, parseISO, differenceInCalendarDays, format, addDays } from "date-fns";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 // STEM OPT requires 4 validation reports: at 6, 12, 18, 24 months
-// Each has a 21-day submission window — MISSING IT IS NON-RECOVERABLE
+// Student must report to DSO within 10 business days (~14 calendar days) of each milestone
+// DSO then has 10 business days to enter in SEVIS — MISSING IS NON-RECOVERABLE
 const REPORT_MONTHS = [6, 12, 18, 24];
+// Months 12 and 24 also require a self-evaluation (I-983 page 5) in addition to validation report
+const SELF_EVAL_MONTHS = new Set([12, 24]);
 
 // I-983 validation checklist items required for each report
 const VALIDATION_CHECKLIST = [
@@ -26,13 +29,14 @@ interface ReportWindow {
   index: number;
   month: number;
   reportDate: Date;           // exact date the report is due
-  windowEnd: Date;            // 21 days after report date
+  windowEnd: Date;            // ~14 calendar days (10 business days) after report date
   label: string;
   daysUntilReport: number;
   daysUntilWindowEnd: number;
   status: "completed" | "active_window" | "upcoming" | "missed";
   isCurrentWindow: boolean;
   urgency: "critical" | "warning" | "ok" | "missed";
+  requiresSelfEvaluation: boolean;
 }
 
 function buildReportWindows(stemStartDate: string): ReportWindow[] {
@@ -41,7 +45,8 @@ function buildReportWindows(stemStartDate: string): ReportWindow[] {
 
   return REPORT_MONTHS.map((month, i) => {
     const reportDate = addMonths(start, month);
-    const windowEnd = addDays(reportDate, 21);
+    // 10 business days ≈ 14 calendar days — student must report to DSO within this window
+    const windowEnd = addDays(reportDate, 14);
     const daysUntilReport = differenceInCalendarDays(reportDate, today);
     const daysUntilWindowEnd = differenceInCalendarDays(windowEnd, today);
 
@@ -63,20 +68,22 @@ function buildReportWindows(stemStartDate: string): ReportWindow[] {
       month,
       reportDate,
       windowEnd,
-      label: `${month}-Month Validation Report`,
+      label: `${month}-Month Validation Report${SELF_EVAL_MONTHS.has(month) ? " + Self-Evaluation" : ""}`,
       daysUntilReport,
       daysUntilWindowEnd,
       status,
       isCurrentWindow: status === "active_window",
       urgency,
+      requiresSelfEvaluation: SELF_EVAL_MONTHS.has(month),
     };
   });
 }
 
 export default function STEMReportsPage() {
   const supabase = createClient();
-  const [opt, setOpt] = useState<any>(null);
+  const [opt, setOpt] = useState<{ opt_type: string | null; ead_start_date: string | null; [key: string]: unknown } | null>(null);
   const [completedReports, setCompletedReports] = useState<Set<number>>(new Set());
+  const [hasStemDeadlines, setHasStemDeadlines] = useState(true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [expandedReport, setExpandedReport] = useState<number | null>(null);
@@ -104,9 +111,19 @@ export default function STEMReportsPage() {
         });
       });
       setCompletedReports(completed);
+
+      // Check if STEM deadlines exist at all (for existing STEM users)
+      const { count } = await supabase
+        .from("compliance_deadlines")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .like("title", "%STEM OPT%Validation Report%");
+      setHasStemDeadlines((count ?? 0) > 0);
+
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function markReportComplete(report: ReportWindow) {
@@ -151,8 +168,10 @@ export default function STEMReportsPage() {
     const start = parseISO(stemStartDate);
     const deadlines = REPORT_MONTHS.map(month => ({
       user_id: user.id,
-      title: `STEM OPT ${month}-Month Validation Report`,
-      description: `Submit I-983 validation report to DSO. You have a 21-day window. MISSING THIS DEADLINE IS NON-RECOVERABLE — the SEVIS button disappears after 21 days.`,
+      title: `STEM OPT ${month}-Month Validation Report${SELF_EVAL_MONTHS.has(month) ? " + Self-Evaluation" : ""}`,
+      description: SELF_EVAL_MONTHS.has(month)
+        ? `Submit I-983 validation report AND self-evaluation (I-983 page 5, signed by you and employer) to DSO. You have 10 business days from this date to report. CFR: 8 CFR 214.2(f)(10)(ii)(C).`
+        : `Submit I-983 validation report to DSO. You have 10 business days from this date to report to DSO. CFR: 8 CFR 214.2(f)(10)(ii)(C).`,
       deadline_date: format(addMonths(start, month), "yyyy-MM-dd"),
       category: "opt",
       severity: "critical",
@@ -190,11 +209,12 @@ export default function STEMReportsPage() {
       <div className="p-4 rounded-xl bg-red-900/20 border border-red-800/30">
         <p className="text-sm font-bold text-red-300 mb-2">🚨 Non-Recoverable Deadline — Read This First</p>
         <p className="text-sm text-red-200 leading-relaxed">
-          STEM OPT requires 4 validation reports (I-983) submitted to your DSO at 6, 12, 18, and 24 months.
-          Each has a <strong>21-day submission window</strong>. If you miss this window, the SEVIS button
-          literally disappears — there is no way to submit retroactively. Your STEM OPT is at risk.
+          STEM OPT requires 4 validation reports (I-983) submitted to your DSO at 6, 12, 18, and 24 months from your STEM EAD start date.
+          You have <strong>10 business days (~14 calendar days)</strong> to report to your DSO after each milestone.
+          At months 12 and 24, a <strong>self-evaluation (I-983 page 5)</strong> is also required.
+          Missing these deadlines can jeopardize your STEM OPT authorization.
         </p>
-        <p className="text-xs text-red-400 mt-2 font-mono">Source: UNC Charlotte ISSO, per F1Buddy Feature Spec</p>
+        <p className="text-xs text-red-400 mt-2 font-mono">Source: 8 CFR 214.2(f)(10)(ii)(C) — 10 business days to DSO, DSO has 10 business days to update SEVIS</p>
       </div>
 
       {!isStemOPT ? (
@@ -212,11 +232,12 @@ export default function STEMReportsPage() {
           {activeWindow && (
             <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
               <p className="font-semibold text-amber-300 mb-1">
-                ⚠️ ACTIVE: {activeWindow.label} — {activeWindow.daysUntilWindowEnd} days left in window
+                ⚠️ ACTIVE: {activeWindow.label} — {activeWindow.daysUntilWindowEnd} days left in 10-business-day window
               </p>
               <p className="text-sm text-amber-200">
-                Window closes {format(activeWindow.windowEnd, "MMMM d, yyyy")}.
-                Submit your I-983 to your DSO NOW.
+                You must report to your DSO by {format(activeWindow.windowEnd, "MMMM d, yyyy")}.
+                {activeWindow.requiresSelfEvaluation && " This milestone also requires a self-evaluation (I-983 page 5)."}
+                {" "}Submit your I-983 to your DSO NOW.
               </p>
               <button
                 onClick={() => setExpandedReport(activeWindow.index)}
@@ -227,12 +248,27 @@ export default function STEMReportsPage() {
             </div>
           )}
 
-          {/* Generate deadlines button */}
-          <div className="flex justify-end">
-            <Button variant="outline" size="sm" onClick={() => generateSTEMDeadlines(stemStart!)}>
-              📅 Add All 4 Reports to Deadlines
-            </Button>
-          </div>
+          {/* No deadlines banner for existing STEM users */}
+          {!hasStemDeadlines && (
+            <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
+              <p className="text-sm font-semibold text-amber-300 mb-1">📅 Your STEM report deadlines are not in your Deadlines list</p>
+              <p className="text-sm text-amber-200 mb-3">
+                Your 4 validation report deadlines (6, 12, 18, 24 months) have not been added to your tracking list yet. Add them now so you get reminders.
+              </p>
+              <Button onClick={async () => { await generateSTEMDeadlines(stemStart!); setHasStemDeadlines(true); }}>
+                📅 Add All 4 STEM Report Deadlines Now
+              </Button>
+            </div>
+          )}
+
+          {/* Generate deadlines button (compact when deadlines already exist) */}
+          {hasStemDeadlines && (
+            <div className="flex justify-end">
+              <Button variant="outline" size="sm" onClick={() => generateSTEMDeadlines(stemStart!)}>
+                📅 Refresh Deadlines
+              </Button>
+            </div>
+          )}
 
           {/* Report timeline */}
           <div className="space-y-4">
@@ -272,10 +308,13 @@ export default function STEMReportsPage() {
                           </div>
 
                           <div className="text-sm text-slate-400 space-y-0.5">
-                            <p>Report due: <span className="text-slate-200">{format(report.reportDate, "MMM d, yyyy")}</span></p>
-                            <p>Window closes: <span className={report.daysUntilWindowEnd <= 7 && !isDone ? "text-red-400 font-medium" : "text-slate-200"}>
+                            <p>Milestone date: <span className="text-slate-200">{format(report.reportDate, "MMM d, yyyy")}</span></p>
+                            <p>DSO report by (10 bus. days): <span className={report.daysUntilWindowEnd <= 7 && !isDone ? "text-red-400 font-medium" : "text-slate-200"}>
                               {format(report.windowEnd, "MMM d, yyyy")} ({report.daysUntilWindowEnd > 0 ? `${report.daysUntilWindowEnd}d remaining` : "closed"})
                             </span></p>
+                            {report.requiresSelfEvaluation && (
+                              <p className="text-violet-400 text-xs">+ Self-evaluation (I-983 page 5) required at this milestone</p>
+                            )}
                           </div>
 
                           {!isDone && report.daysUntilReport <= 30 && report.daysUntilWindowEnd > 0 && (
@@ -284,6 +323,12 @@ export default function STEMReportsPage() {
                                 ? `🔴 Submit NOW — ${report.daysUntilWindowEnd} days until window closes`
                                 : `⏰ Upcoming in ${report.daysUntilReport} days — prepare I-983 with employer`}
                             </p>
+                          )}
+                          {report.status === "missed" && !isDone && (
+                            <div className="mt-2 p-3 rounded-lg bg-red-900/20 border border-red-800/30 text-xs text-red-300">
+                              <p className="font-medium mb-1">Window Closed — Contact Your DSO Immediately</p>
+                              <p className="leading-relaxed">The 10 business-day reporting window has passed. Contact your DSO as soon as possible. Explain the missed deadline — your DSO may be able to work with SEVP, but this is not guaranteed. Document all attempts to contact your DSO in writing.</p>
+                            </div>
                           )}
                         </div>
                       </div>
@@ -329,6 +374,31 @@ export default function STEMReportsPage() {
                             </label>
                           ))}
                         </div>
+                        {report.requiresSelfEvaluation && (
+                          <div className="mt-4 p-3 rounded-lg bg-violet-900/20 border border-violet-800/30">
+                            <p className="text-sm font-medium text-violet-300 mb-2">Also required at {report.month} months: Self-Evaluation (I-983 page 5)</p>
+                            <div className="space-y-2">
+                              {[
+                                { id: "self_eval_student", label: "Student completes I-983 page 5 (Student Self-Evaluation)", critical: true },
+                                { id: "self_eval_employer", label: "Employer supervisor completes I-983 page 5 (Employer Evaluation)", critical: true },
+                                { id: "self_eval_submit", label: "Submit completed self-evaluation to DSO together with validation report", critical: true },
+                              ].map((item) => (
+                                <label key={item.id} className="flex items-start gap-3 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={checklist[`${report.month}-${item.id}`] ?? false}
+                                    onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
+                                    className="mt-0.5 flex-shrink-0"
+                                  />
+                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-slate-500 line-through" : "text-violet-200"}`}>
+                                    {item.label}
+                                    {item.critical && <span className="text-red-400 ml-1 text-xs">*required</span>}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                         <div className="mt-4 p-3 rounded-lg bg-slate-800 text-xs text-slate-400">
                           <p className="font-medium text-slate-300 mb-1">After submitting to DSO:</p>
                           <ol className="space-y-1 list-decimal list-inside">

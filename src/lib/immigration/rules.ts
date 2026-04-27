@@ -3,7 +3,7 @@
 // All F-1 immigration rules codified here.
 // CFR references included per rule.
 // ============================================================
-import { differenceInCalendarDays, parseISO, isAfter, isBefore, startOfYear, endOfYear, format } from "date-fns";
+import { differenceInCalendarDays, parseISO, isAfter, isBefore, startOfYear, endOfYear, format, addMonths } from "date-fns";
 
 // ---- OPT Unemployment Counter ----
 // CFR: 8 CFR 214.2(f)(10)(ii)(E)
@@ -89,8 +89,10 @@ export function calculateDaysOutsideUS(
 export function checkFiveMonthRule(
   travelRecords: { departureDate: string; returnDate: string | null }[]
 ): { violated: boolean; maxConsecutiveDays: number } {
-  // CFR: 8 CFR 214.2(f)(5)(iv) — >5 months (~150 days) consecutive = SEVIS termination risk
+  // CFR: 8 CFR 214.2(f)(5)(iv) — absence exceeding 5 CALENDAR MONTHS terminates SEVIS
+  // Must use addMonths() comparison, NOT 150 days (months have different lengths)
   let maxConsecutive = 0;
+  let violated = false;
   const today = new Date();
 
   for (const trip of travelRecords) {
@@ -98,12 +100,10 @@ export function checkFiveMonthRule(
     const returnDate = trip.returnDate ? parseISO(trip.returnDate) : today;
     const days = differenceInCalendarDays(returnDate, departure);
     if (days > maxConsecutive) maxConsecutive = days;
+    if (isAfter(returnDate, addMonths(departure, 5))) violated = true;
   }
 
-  return {
-    violated: maxConsecutive >= 150,
-    maxConsecutiveDays: maxConsecutive,
-  };
+  return { violated, maxConsecutiveDays: maxConsecutive };
 }
 
 // ---- Substantial Presence Test ----
@@ -194,18 +194,21 @@ export function generateSystemDeadlines(student: StudentDeadlineInput): Generate
     }
   }
 
-  // Tax deadline (April 15 each year)
-  const taxDeadline = new Date(today.getFullYear(), 3, 15); // April 15
-  if (differenceInCalendarDays(taxDeadline, today) > 0 && differenceInCalendarDays(taxDeadline, today) <= 60) {
-    deadlines.push({
-      title: `File ${today.getFullYear() - 1} Tax Return (Form 1040-NR)`,
-      description:
-        "F-1 students must file Form 1040-NR by April 15. Even with no income, file Form 8843. Use Sprintax or Glacier Tax Prep.",
-      deadlineDate: format(taxDeadline, "yyyy-MM-dd"),
-      category: "tax",
-      severity: differenceInCalendarDays(taxDeadline, today) <= 14 ? "critical" : "warning",
-    });
+  // Tax deadline (April 15 each year) — always show the next upcoming deadline
+  let taxDeadline = new Date(today.getFullYear(), 3, 15); // April 15
+  if (differenceInCalendarDays(taxDeadline, today) <= 0) {
+    // This year's deadline has passed — show next year's
+    taxDeadline = new Date(today.getFullYear() + 1, 3, 15);
   }
+  const daysToTax = differenceInCalendarDays(taxDeadline, today);
+  deadlines.push({
+    title: `File ${taxDeadline.getFullYear() - 1} Tax Return (Form 1040-NR)`,
+    description:
+      "F-1 students must file Form 1040-NR by April 15. Even with no income, file Form 8843. Use Sprintax or Glacier Tax Prep.",
+    deadlineDate: format(taxDeadline, "yyyy-MM-dd"),
+    category: "tax",
+    severity: daysToTax <= 14 ? "critical" : daysToTax <= 60 ? "warning" : "info",
+  });
 
   // Unemployment warning
   if (student.unemploymentDaysUsed > 0 && student.unemploymentLimit > 0) {
@@ -244,10 +247,12 @@ export function generateReentryChecklist(student: {
       note: "Not required if eligible for automatic revalidation (Canada/Mexico/Caribbean)",
     },
     {
-      item: "Form I-20 with travel signature less than 1 year old",
+      item: student.hasEAD
+        ? "Form I-20 with travel signature less than 6 months old (OPT/STEM OPT rule)"
+        : "Form I-20 with travel signature less than 12 months old",
       required: true,
       note: student.i20TravelSignatureDate
-        ? `Your travel signature is from ${student.i20TravelSignatureDate}`
+        ? `Your travel signature is from ${student.i20TravelSignatureDate}${student.hasEAD ? " — verify it is within 6 months" : ""}`
         : "Contact your DSO to get travel signature before departing",
     },
     {

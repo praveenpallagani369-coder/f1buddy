@@ -1,4 +1,5 @@
 import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
+import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const createSchema = z.object({
@@ -31,6 +32,9 @@ export async function POST(request: Request) {
   const { user, supabase, error } = await getAuthUser();
   if (error || !user) return UNAUTHORIZED();
 
+  const { allowed } = await rateLimitDB(supabase, `deadlines:${user.id}`, 30, 60);
+  if (!allowed) return err("RATE_LIMIT", "Too many requests. Please wait.", 429);
+
   const body = await request.json().catch(() => null);
   const parsed = createSchema.safeParse(body);
   if (!parsed.success) return err("VALIDATION", parsed.error.issues[0]?.message ?? "Invalid input");
@@ -50,7 +54,7 @@ export async function POST(request: Request) {
     .select()
     .single();
 
-  if (dbErr) return err("DB_ERROR", dbErr.message);
+  if (dbErr) return err("DB_ERROR", "Failed to create deadline");
   return ok(data, 201);
 }
 

@@ -1,4 +1,5 @@
 import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
+import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const answerSchema = z.object({
@@ -14,6 +15,9 @@ export async function GET(request: Request) {
   const postId = searchParams.get("postId");
   if (!postId) return err("VALIDATION", "postId required");
 
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(postId)) return err("VALIDATION", "Invalid postId format");
+
   const { data } = await supabase
     .from("community_answers")
     .select("*, users(name)")
@@ -27,6 +31,9 @@ export async function POST(request: Request) {
   const { user, supabase, error } = await getAuthUser();
   if (error || !user) return UNAUTHORIZED();
 
+  const { allowed } = await rateLimitDB(supabase, `answers:${user.id}`, 10, 60);
+  if (!allowed) return err("RATE_LIMIT", "Too many requests. Please wait.", 429);
+
   const body = await request.json().catch(() => null);
   const parsed = answerSchema.safeParse(body);
   if (!parsed.success) return err("VALIDATION", parsed.error.issues[0]?.message ?? "Invalid input");
@@ -37,13 +44,10 @@ export async function POST(request: Request) {
     .select("*, users(name)")
     .single();
 
-  if (dbErr) return err("DB_ERROR", dbErr.message);
+  if (dbErr) return err("DB_ERROR", "Failed to save answer");
 
-  // Increment answer_count on the post
-  const { data: post } = await supabase.from("community_posts").select("answer_count").eq("id", parsed.data.postId).single();
-  if (post) {
-    await supabase.from("community_posts").update({ answer_count: (post.answer_count ?? 0) + 1 }).eq("id", parsed.data.postId);
-  }
+  // Atomic increment to avoid race condition
+  await supabase.rpc("increment_answer_count", { post_id_input: parsed.data.postId });
 
   return ok(answer, 201);
 }

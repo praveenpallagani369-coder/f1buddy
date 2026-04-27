@@ -22,7 +22,7 @@ export default function CommunityPage() {
   const [saving, setSaving] = useState(false);
   const [savingAnswer, setSavingAnswer] = useState<string | null>(null);
   const [filter, setFilter] = useState("All");
-  const [userId, setUserId] = useState<string | null>(null);
+  const [, setUserId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: "", body: "", category: "OPT", isAnonymous: false });
 
   useEffect(() => {
@@ -38,6 +38,7 @@ export default function CommunityPage() {
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadAnswers(postId: string) {
@@ -90,14 +91,28 @@ export default function CommunityPage() {
     setSavingAnswer(null);
   }
 
-  async function upvote(id: string, current: number) {
-    await supabase.from("community_posts").update({ upvotes: current + 1 }).eq("id", id);
-    setPosts(p => p.map(post => post.id === id ? { ...post, upvotes: current + 1 } : post));
+  async function upvote(id: string) {
+    const res = await fetch("/api/community/upvote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "post", id }),
+    });
+    const json = await res.json();
+    if (json.success) {
+      setPosts(p => p.map(post => post.id === id ? { ...post, upvotes: json.data.upvotes } : post));
+    }
   }
 
-  async function upvoteAnswer(postId: string, answerId: string, current: number) {
-    await supabase.from("community_answers").update({ upvotes: current + 1 }).eq("id", answerId);
-    setAnswers(a => ({ ...a, [postId]: a[postId].map(ans => ans.id === answerId ? { ...ans, upvotes: current + 1 } : ans) }));
+  async function upvoteAnswer(postId: string, answerId: string) {
+    const res = await fetch("/api/community/upvote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "answer", id: answerId }),
+    });
+    const json = await res.json();
+    if (json.success) {
+      setAnswers(a => ({ ...a, [postId]: a[postId].map(ans => ans.id === answerId ? { ...ans, upvotes: json.data.upvotes } : ans) }));
+    }
   }
 
   const filtered = filter === "All" ? posts : posts.filter(p => p.category === filter);
@@ -182,7 +197,7 @@ export default function CommunityPage() {
                   <div className="flex items-start gap-3">
                     {/* Upvote */}
                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                      <button onClick={() => upvote(post.id, post.upvotes)}
+                      <button onClick={() => upvote(post.id)}
                         className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-indigo-600/20 hover:text-indigo-400 text-slate-400 flex items-center justify-center transition-colors text-xs">
                         ▲
                       </button>
@@ -221,7 +236,7 @@ export default function CommunityPage() {
                                 {postAnswers.map((ans) => (
                                   <div key={ans.id} className="flex gap-3 p-3 rounded-lg bg-slate-800/50 border border-slate-800">
                                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
-                                      <button onClick={() => upvoteAnswer(post.id, ans.id, ans.upvotes)}
+                                      <button onClick={() => upvoteAnswer(post.id, ans.id)}
                                         className="w-6 h-6 rounded bg-slate-700 hover:bg-indigo-600/20 text-slate-400 hover:text-indigo-400 flex items-center justify-center transition-colors text-xs">
                                         ▲
                                       </button>

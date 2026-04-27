@@ -68,6 +68,7 @@ export const documentTypeEnum = pgEnum("document_type", [
   "passport",
   "visa_stamp",
   "i94",
+  "ssn_card",
   "offer_letter",
   "pay_stub",
   "tax_return",
@@ -291,6 +292,41 @@ export const communityAnswers = pgTable("community_answers", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const cptTypeEnum = pgEnum("cpt_type", ["part_time", "full_time"]);
+
+export const optApplicationSteps = pgTable("opt_application_steps", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  stepName: text("step_name").notNull(),
+  stepOrder: integer("step_order").notNull(),
+  targetDate: date("target_date"),
+  completedDate: date("completed_date"),
+  isCompleted: boolean("is_completed").default(false).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const cptRecords = pgTable("cpt_records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  employerName: text("employer_name").notNull(),
+  positionTitle: text("position_title"),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date"),
+  isCurrent: boolean("is_current").default(false),
+  cptType: cptTypeEnum("cpt_type").default("part_time"),
+  isAuthorizedOnI20: boolean("is_authorized_on_i20").default(false),
+  courseName: text("course_name"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const subscriptions = pgTable("subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
@@ -319,4 +355,6 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   posts: many(communityPosts),
   answers: many(communityAnswers),
   subscription: one(subscriptions),
+  optApplicationSteps: many(optApplicationSteps),
+  cptRecords: many(cptRecords),
 }));

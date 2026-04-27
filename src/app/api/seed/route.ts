@@ -1,15 +1,24 @@
-// POST /api/seed — populates demo data for the logged-in user (DEV ONLY)
-// Remove or protect this route before going to production
 import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
 import { format, addDays, subDays } from "date-fns";
 
 export async function POST() {
-  if (process.env.NODE_ENV === "production") {
-    return err("FORBIDDEN", "Seed endpoint disabled in production", 403);
+  // Block in production environments (Vercel sets VERCEL_ENV automatically)
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+    return err("FORBIDDEN", "Seed endpoint is disabled in production", 403);
+  }
+  // Require explicit opt-in with the literal string "true"
+  if (process.env.ALLOW_SEED !== "true") {
+    return err("FORBIDDEN", "Seed endpoint is disabled. Set ALLOW_SEED=true to enable.", 403);
   }
 
   const { user, supabase, error } = await getAuthUser();
   if (error || !user) return UNAUTHORIZED();
+
+  // Only allow admin-role users to seed data
+  const { data: profile } = await supabase.from("users").select("role").eq("id", user.id).single();
+  if (profile?.role !== "admin") {
+    return err("FORBIDDEN", "Only admin users can seed data", 403);
+  }
 
   const today = new Date();
   const f = (d: Date) => format(d, "yyyy-MM-dd");

@@ -3,6 +3,22 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { generateTravelChecklist, getOverallStatus } from "@/lib/immigration/travel-checklist";
 import type { CheckItem } from "@/lib/immigration/travel-checklist";
+
+interface ProfileRow {
+  i20_travel_signature_date: string | null;
+  visa_stamp_expiry: string | null;
+  passport_expiry: string | null;
+  program_end_date: string | null;
+}
+
+interface OPTRow {
+  ead_end_date: string | null;
+  ead_start_date: string | null;
+  unemployment_days_used: number;
+  unemployment_limit: number;
+  opt_type: string | null;
+  application_date: string | null;
+}
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,9 +39,9 @@ const OVERALL_CONFIG = {
 
 export default function TravelChecklistPage() {
   const supabase = createClient();
-  const [profile, setProfile] = useState<any>(null);
-  const [opt, setOpt] = useState<any>(null);
-  const [docs, setDocs] = useState<any[]>([]);
+  const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [opt, setOpt] = useState<OPTRow | null>(null);
+  const [docs, setDocs] = useState<{ doc_type: string; expiration_date: string | null }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [departureDate, setDepartureDate] = useState("");
@@ -48,6 +64,7 @@ export default function TravelChecklistPage() {
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function runChecklist() {
@@ -65,7 +82,7 @@ export default function TravelChecklistPage() {
       unemploymentDaysUsed: opt?.unemployment_days_used ?? 0,
       unemploymentLimit: opt?.unemployment_limit ?? 90,
       optType: opt?.opt_type ?? null,
-      documents: docs,
+      documents: docs.map((d) => ({ docType: d.doc_type, expirationDate: d.expiration_date })),
     });
     setChecklist(result);
     setGenerated(true);
@@ -75,12 +92,27 @@ export default function TravelChecklistPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     await supabase.from("users").update({ i20_travel_signature_date: date, updated_at: new Date().toISOString() }).eq("id", user.id);
-    setProfile((p: any) => ({ ...p, i20_travel_signature_date: date }));
+    setProfile((p) => p ? { ...p, i20_travel_signature_date: date } : p);
   }
 
   if (loading) return <div className="text-slate-400 text-center py-20">Loading your data...</div>;
 
   const overall = checklist ? getOverallStatus(checklist) : null;
+
+  // OPT initial pending: applied, but no active EAD yet (post-graduation waiting period)
+  const isInitialOPTPending = !!(
+    opt?.application_date &&
+    (!opt?.ead_start_date || new Date() < new Date(opt.ead_start_date))
+  );
+
+  // STEM extension pending: has an existing OPT EAD, filed for STEM extension
+  // Travel is PERMITTED per DHS 81 FR 13103; 180-day auto-extension applies per 8 CFR 274a.12(b)(6)(iv)
+  const isStemExtensionPending = !!(
+    opt?.opt_type === "stem_extension" &&
+    opt?.application_date &&
+    opt?.ead_start_date &&
+    new Date() >= new Date(opt.ead_start_date)
+  );
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -133,6 +165,56 @@ export default function TravelChecklistPage() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Scenario 1: OPT initial pending — HIGH RISK */}
+      {isInitialOPTPending && (
+        <div className="p-4 rounded-xl bg-red-900/20 border border-red-800/30">
+          <p className="text-sm font-bold text-red-300 mb-1">🚨 OPT Application Pending — High Travel Risk</p>
+          <p className="text-sm text-red-200 leading-relaxed">
+            Your OPT application is pending and you have <strong>no active EAD</strong>. USCIS and ICE have historically treated departure as potential abandonment of a pending OPT application. You have no work authorization to return to.
+          </p>
+          <ul className="mt-2 text-xs text-red-300 space-y-1">
+            <li>• Consult your DSO before booking any international travel</li>
+            <li>• Get a travel letter from your DSO documenting your pending application</li>
+            <li>• Keep your I-797 receipt notice accessible at all times</li>
+            <li>• Re-entry as F-1 requires full CBP inspection — carry all application documents</li>
+          </ul>
+          <p className="text-xs text-red-500 mt-2 font-mono">USCIS guidance: departure may constitute abandonment of pending OPT application</p>
+        </div>
+      )}
+
+      {/* Scenario 2: STEM extension pending — travel PERMITTED */}
+      {isStemExtensionPending && (
+        <div className="p-4 rounded-xl bg-blue-900/20 border border-blue-800/30">
+          <p className="text-sm font-bold text-blue-300 mb-1">ℹ️ STEM Extension Pending — Travel Permitted</p>
+          <p className="text-sm text-blue-200 leading-relaxed">
+            Travel is permitted while your STEM OPT extension is pending. Per DHS 81 FR 13103, you may continue to work and travel under your current authorization. If your OPT EAD expires while pending, an automatic 180-day extension applies under 8 CFR 274a.12(b)(6)(iv).
+          </p>
+          <ul className="mt-2 text-xs text-blue-300 space-y-1">
+            <li>• Carry your I-797 receipt notice — it proves authorized status during the 180-day extension</li>
+            <li>• Your EAD card + I-797 together serve as evidence of continued work authorization</li>
+            <li>• Ensure your I-20 travel signature is current (within 6 months for OPT/STEM)</li>
+            <li>• Notify your DSO about international travel plans as a courtesy</li>
+          </ul>
+          <p className="text-xs text-blue-500 mt-2 font-mono">Per DHS 81 FR 13103 and 8 CFR 274a.12(b)(6)(iv)</p>
+        </div>
+      )}
+
+      {/* Scenario 3: H-1B COS static warning — shown whenever any OPT application is pending */}
+      {(isInitialOPTPending || isStemExtensionPending) && (
+        <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
+          <p className="text-sm font-bold text-amber-300 mb-1">⚠️ H-1B Change of Status Pending? — Do NOT Travel</p>
+          <p className="text-sm text-amber-200 leading-relaxed">
+            If your employer has also filed an H-1B petition with <strong>Change of Status (COS)</strong>, departure from the US <strong>immediately and permanently abandons</strong> the COS. You would need to get an H-1B visa stamp at a US consulate abroad and re-enter.
+          </p>
+          <ul className="mt-2 text-xs text-amber-300 space-y-1">
+            <li>• Ask your employer&apos;s immigration attorney if a COS is included in your H-1B petition</li>
+            <li>• If COS is pending: no international travel under any circumstances before approval</li>
+            <li>• Consular processing alternative: get H-1B visa stamp at a US embassy abroad</li>
+          </ul>
+          <p className="text-xs text-amber-500 mt-2 font-mono">Per USCIS: departure = abandonment of pending Change of Status petition</p>
+        </div>
+      )}
 
       {/* Results */}
       {generated && checklist && overall && (

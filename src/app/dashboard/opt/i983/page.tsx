@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { differenceInCalendarDays, parseISO, format, addDays } from "date-fns";
+import { differenceInCalendarDays, parseISO } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
@@ -67,13 +66,21 @@ const SEVP_CHECKLIST = [
   "Check-in reports every 6 months while on STEM OPT (see STEM Reports tab)",
 ];
 
+interface EmployerRow {
+  id: string; employer_name: string; position_title: string | null;
+  employment_type: string; start_date: string; reported_to_school: boolean;
+  e_verify_employer: boolean; [key: string]: unknown;
+}
+interface DeadlineRow { id: string; deadline_date: string; [key: string]: unknown; }
+interface OptRow { opt_type: string; [key: string]: unknown; }
+
 export default function I983Page() {
   const supabase = createClient();
-  const [currentEmployer, setCurrentEmployer] = useState<any>(null);
-  const [latestDeadline, setLatestDeadline] = useState<any>(null);
+  const [currentEmployer, setCurrentEmployer] = useState<EmployerRow | null>(null);
+  const [latestDeadline, setLatestDeadline] = useState<DeadlineRow | null>(null);
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [opt, setOpt] = useState<any>(null);
+  const [opt, setOpt] = useState<OptRow | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -95,6 +102,7 @@ export default function I983Page() {
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function toggleStep(id: string) {
@@ -115,7 +123,7 @@ export default function I983Page() {
         .update({ status: "completed", updated_at: new Date().toISOString() })
         .eq("id", latestDeadline.id);
     }
-    setCurrentEmployer((e: any) => ({ ...e, reported_to_school: true }));
+    setCurrentEmployer((e) => e ? { ...e, reported_to_school: true } : e);
     setLatestDeadline(null);
   }
 

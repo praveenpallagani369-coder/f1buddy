@@ -17,6 +17,7 @@ export default function TaxPage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ taxYear: new Date().getFullYear() - 1, filingStatus: "nonresident_1040nr", treatyCountry: "", form8843Filed: false, federalFiled: false, stateFiled: false, stateName: "", filedDate: "", notes: "" });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   async function load() {
@@ -130,7 +131,7 @@ export default function TaxPage() {
                 { label: "State Return Filed", field: "stateFiled" },
               ].map(({ label, field }) => (
                 <label key={field} className="flex items-center gap-2 text-slate-300 cursor-pointer">
-                  <input type="checkbox" checked={(form as any)[field]} onChange={(e) => setForm(f => ({ ...f, [field]: e.target.checked }))} />
+                  <input type="checkbox" checked={form[field as keyof typeof form] as boolean} onChange={(e) => setForm(f => ({ ...f, [field]: e.target.checked }))} />
                   {label}
                 </label>
               ))}
