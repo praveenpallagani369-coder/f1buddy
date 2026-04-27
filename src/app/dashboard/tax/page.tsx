@@ -38,7 +38,7 @@ export default function TaxPage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading tax records...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading tax records...</div>;
 
   const currentYear = new Date().getFullYear();
   const aprilDeadline = new Date(currentYear, 3, 15);
@@ -48,15 +48,15 @@ export default function TaxPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Tax Filing</h1>
-          <p className="text-slate-400 text-sm">Track your annual tax filing status</p>
+          <h1 className="text-2xl font-bold text-gray-900">Tax Filing</h1>
+          <p className="text-gray-500 text-sm">Track your annual tax filing status</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Tax Year</Button>
       </div>
 
       {/* Tax Deadline Alert */}
       {daysToDeadline > 0 && daysToDeadline <= 60 && (
-        <div className={`p-4 rounded-xl border text-sm ${daysToDeadline <= 14 ? "bg-red-900/20 border-red-800/30 text-red-300" : "bg-amber-900/20 border-amber-800/30 text-amber-300"}`}>
+        <div className={`p-4 rounded-xl border text-sm ${daysToDeadline <= 14 ? "bg-red-50 border-red-200 text-red-700" : "bg-amber-50 border-amber-200 text-amber-700"}`}>
           <p className="font-medium">📅 Tax Deadline: April 15, {currentYear} — {daysToDeadline} days remaining</p>
           <p className="mt-1 text-xs opacity-80">F-1 students must file Form 1040-NR by April 15. Even with no US income, file Form 8843.</p>
         </div>
@@ -66,24 +66,24 @@ export default function TaxPage() {
       <div className="grid md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Filing Type</p>
-            <p className="text-white font-medium">Form 1040-NR</p>
-            <p className="text-sm text-slate-400">For nonresident aliens (most F-1 students)</p>
+            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Filing Type</p>
+            <p className="text-gray-900 font-medium">Form 1040-NR</p>
+            <p className="text-sm text-gray-500">For nonresident aliens (most F-1 students)</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Always Required</p>
-            <p className="text-white font-medium">Form 8843</p>
-            <p className="text-sm text-slate-400">Even if you earned zero income in the US</p>
+            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Always Required</p>
+            <p className="text-gray-900 font-medium">Form 8843</p>
+            <p className="text-sm text-gray-500">Even if you earned zero income in the US</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Free Resources</p>
+            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Free Resources</p>
             <div className="space-y-1">
-              <a href="https://www.sprintax.com" target="_blank" rel="noopener noreferrer" className="block text-sm text-indigo-400 hover:underline">Sprintax</a>
-              <a href="https://www.glaciertax.com" target="_blank" rel="noopener noreferrer" className="block text-sm text-indigo-400 hover:underline">Glacier Tax Prep</a>
+              <a href="https://www.sprintax.com" target="_blank" rel="noopener noreferrer" className="block text-sm text-indigo-600 hover:underline">Sprintax</a>
+              <a href="https://www.glaciertax.com" target="_blank" rel="noopener noreferrer" className="block text-sm text-indigo-600 hover:underline">Glacier Tax Prep</a>
             </div>
           </CardContent>
         </Card>
@@ -91,16 +91,16 @@ export default function TaxPage() {
 
       {/* Add form */}
       {showForm && (
-        <Card className="border-indigo-800/50">
+        <Card className="border-indigo-200">
           <CardHeader><CardTitle className="text-base">Add Tax Year Record</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Tax Year *</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Tax Year *</label>
                 <Input type="number" value={form.taxYear} onChange={(e) => setForm(f => ({ ...f, taxYear: parseInt(e.target.value) }))} />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Filing Status</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Filing Status</label>
                 <Select value={form.filingStatus} onChange={(e) => setForm(f => ({ ...f, filingStatus: e.target.value }))}>
                   <option value="nonresident_1040nr">Nonresident — 1040-NR</option>
                   <option value="resident_1040">Resident — 1040</option>
@@ -109,18 +109,18 @@ export default function TaxPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Tax Treaty Country</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Tax Treaty Country</label>
                 <Select value={form.treatyCountry} onChange={(e) => setForm(f => ({ ...f, treatyCountry: e.target.value }))}>
                   <option value="">No treaty / Unknown</option>
                   {TAX_TREATIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Date Filed</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Date Filed</label>
                 <Input type="date" value={form.filedDate} onChange={(e) => setForm(f => ({ ...f, filedDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">State Filed</label>
+                <label className="block text-sm text-gray-600 mb-1.5">State Filed</label>
                 <Input placeholder="California" value={form.stateName} onChange={(e) => setForm(f => ({ ...f, stateName: e.target.value }))} />
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function TaxPage() {
                 { label: "Federal Return Filed", field: "federalFiled" },
                 { label: "State Return Filed", field: "stateFiled" },
               ].map(({ label, field }) => (
-                <label key={field} className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                <label key={field} className="flex items-center gap-2 text-gray-600 cursor-pointer">
                   <input type="checkbox" checked={form[field as keyof typeof form] as boolean} onChange={(e) => setForm(f => ({ ...f, [field]: e.target.checked }))} />
                   {label}
                 </label>
@@ -149,15 +149,15 @@ export default function TaxPage() {
         <CardHeader><CardTitle className="text-base">Filing History</CardTitle></CardHeader>
         <CardContent>
           {records.length === 0 ? (
-            <div className="text-center py-8 text-slate-400">No tax records yet — add your first filing</div>
+            <div className="text-center py-8 text-gray-500">No tax records yet — add your first filing</div>
           ) : (
             <div className="space-y-3">
               {records.map((r) => (
-                <div key={r.id} className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-800">
+                <div key={r.id} className="flex items-center justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
                   <div>
-                    <p className="text-white font-medium">Tax Year {r.tax_year}</p>
-                    <p className="text-sm text-slate-400 capitalize mt-0.5">{r.filing_status?.replace(/_/g, " ") ?? "Unknown status"}</p>
-                    {r.treaty_country && <p className="text-xs text-slate-500">Treaty: {r.treaty_country}</p>}
+                    <p className="text-gray-900 font-medium">Tax Year {r.tax_year}</p>
+                    <p className="text-sm text-gray-500 capitalize mt-0.5">{r.filing_status?.replace(/_/g, " ") ?? "Unknown status"}</p>
+                    {r.treaty_country && <p className="text-xs text-gray-400">Treaty: {r.treaty_country}</p>}
                   </div>
                   <div className="flex gap-2 flex-wrap justify-end">
                     {r.form_8843_filed && <Badge variant="success" className="text-xs">8843 ✓</Badge>}

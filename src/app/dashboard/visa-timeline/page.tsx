@@ -2,18 +2,15 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { buildVisaTimeline, getCurrentStage } from "@/lib/immigration/visa-stages";
-import type { StageInfo } from "@/lib/immigration/visa-stages";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { format, parseISO } from "date-fns";
+import { Card, CardContent } from "@/components/ui/card";
 
 const COLOR_MAP: Record<string, { ring: string; bg: string; text: string; badge: string; dot: string }> = {
-  indigo: { ring: "ring-indigo-500", bg: "bg-indigo-900/20 border-indigo-800/40", text: "text-indigo-300", badge: "bg-indigo-600/20 text-indigo-300 border-indigo-600/30", dot: "bg-indigo-500" },
-  amber:  { ring: "ring-amber-500",  bg: "bg-amber-900/20 border-amber-800/40",   text: "text-amber-300",  badge: "bg-amber-600/20 text-amber-300 border-amber-600/30",   dot: "bg-amber-500"  },
-  emerald:{ ring: "ring-emerald-500",bg: "bg-emerald-900/20 border-emerald-800/40",text:"text-emerald-300", badge: "bg-emerald-600/20 text-emerald-300 border-emerald-600/30",dot:"bg-emerald-500"},
+  indigo: { ring: "ring-indigo-500", bg: "bg-indigo-900/20 border-indigo-800/40", text: "text-indigo-700", badge: "bg-indigo-100 text-indigo-700 border-indigo-300", dot: "bg-indigo-500" },
+  amber:  { ring: "ring-amber-500",  bg: "bg-amber-50 border-amber-800/40",   text: "text-amber-700",  badge: "bg-amber-600/20 text-amber-700 border-amber-600/30",   dot: "bg-amber-500"  },
+  emerald:{ ring: "ring-emerald-500",bg: "bg-emerald-50 border-emerald-800/40",text:"text-emerald-700", badge: "bg-emerald-600/20 text-emerald-700 border-emerald-600/30",dot:"bg-emerald-500"},
   violet: { ring: "ring-violet-500", bg: "bg-violet-900/20 border-violet-800/40", text: "text-violet-300", badge: "bg-violet-600/20 text-violet-300 border-violet-600/30", dot: "bg-violet-500" },
   orange: { ring: "ring-orange-500", bg: "bg-orange-900/20 border-orange-800/40", text: "text-orange-300", badge: "bg-orange-600/20 text-orange-300 border-orange-600/30", dot: "bg-orange-500" },
-  blue:   { ring: "ring-blue-500",   bg: "bg-blue-900/20 border-blue-800/40",     text: "text-blue-300",   badge: "bg-blue-600/20 text-blue-300 border-blue-600/30",         dot: "bg-blue-500"   },
+  blue:   { ring: "ring-blue-500",   bg: "bg-blue-50 border-blue-800/40",     text: "text-blue-700",   badge: "bg-blue-600/20 text-blue-700 border-blue-600/30",         dot: "bg-blue-500"   },
 };
 
 export default function VisaTimelinePage() {
@@ -36,6 +33,7 @@ export default function VisaTimelinePage() {
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return (
@@ -60,8 +58,8 @@ export default function VisaTimelinePage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
-        <h1 className="text-2xl font-bold text-white">Visa Status Timeline</h1>
-        <p className="text-slate-400 text-sm mt-0.5">Your F-1 immigration journey — current stage, applicable rules, and what comes next.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Visa Status Timeline</h1>
+        <p className="text-gray-500 text-sm mt-0.5">Your F-1 immigration journey — current stage, applicable rules, and what comes next.</p>
       </div>
 
       {/* Current stage banner */}
@@ -75,14 +73,14 @@ export default function VisaTimelinePage() {
                 <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${COLOR_MAP[currentStage.color].badge}`}>CURRENT</span>
               </div>
               {currentStage.endDate && (
-                <p className="text-sm text-slate-400">
-                  Valid until <span className="text-white font-medium">{currentStage.endDate}</span>
+                <p className="text-sm text-gray-500">
+                  Valid until <span className="text-gray-900 font-medium">{currentStage.endDate}</span>
                 </p>
               )}
               {currentStage.warnings.length > 0 && (
                 <div className="mt-2 space-y-1">
                   {currentStage.warnings.map((w, i) => (
-                    <p key={i} className="text-sm text-amber-300 font-medium">⚠️ {w}</p>
+                    <p key={i} className="text-sm text-amber-700 font-medium">⚠️ {w}</p>
                   ))}
                 </div>
               )}
@@ -94,22 +92,22 @@ export default function VisaTimelinePage() {
       {/* Horizontal progress track */}
       <div className="relative">
         <div className="flex items-center justify-between mb-2">
-          {stages.map((stage, i) => {
+          {stages.map((stage, _i) => {
             const c = COLOR_MAP[stage.color];
             return (
               <div key={stage.id} className="flex-1 flex flex-col items-center">
                 <button
                   onClick={() => setExpanded(expanded === stage.id ? null : stage.id)}
                   className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg transition-all z-10 relative
-                    ${stage.isCurrent ? `${c.ring} ring-4 ring-offset-2 ring-offset-slate-950 bg-slate-950 scale-110` : ""}
+                    ${stage.isCurrent ? `${c.ring} ring-4 ring-offset-2 ring-offset-white bg-gray-50 scale-110` : ""}
                     ${stage.isCompleted ? `bg-slate-700 border-slate-600` : ""}
-                    ${stage.isFuture && !stage.isCurrent ? "bg-slate-900 border-slate-700 opacity-40" : ""}
-                    ${stage.isCurrent ? `bg-slate-950 border-current` : ""}`}
+                    ${stage.isFuture && !stage.isCurrent ? "bg-white border-gray-200 opacity-40" : ""}
+                    ${stage.isCurrent ? `bg-gray-50 border-current` : ""}`}
                   style={stage.isCurrent ? { borderColor: "" } : {}}
                 >
                   {stage.isCompleted ? "✓" : stage.icon}
                 </button>
-                <p className={`text-xs mt-1 text-center leading-tight ${stage.isCurrent ? "text-white font-semibold" : stage.isCompleted ? "text-slate-500" : "text-slate-600"}`}>
+                <p className={`text-xs mt-1 text-center leading-tight ${stage.isCurrent ? "text-gray-900 font-semibold" : stage.isCompleted ? "text-gray-400" : "text-gray-400"}`}>
                   {stage.label}
                 </p>
               </div>
@@ -117,7 +115,7 @@ export default function VisaTimelinePage() {
           })}
         </div>
         {/* Connecting line */}
-        <div className="absolute top-5 left-5 right-5 h-0.5 bg-slate-800 -z-0" />
+        <div className="absolute top-5 left-5 right-5 h-0.5 bg-gray-100 -z-0" />
       </div>
 
       {/* Stage detail cards */}
@@ -138,30 +136,30 @@ export default function VisaTimelinePage() {
                     <span className="text-xl">{stage.icon}</span>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className={`font-medium ${stage.isCurrent ? "text-white" : stage.isCompleted ? "text-slate-500" : "text-slate-400"}`}>
+                        <p className={`font-medium ${stage.isCurrent ? "text-gray-900" : stage.isCompleted ? "text-gray-400" : "text-gray-500"}`}>
                           {stage.label}
                         </p>
                         {stage.isCurrent && <span className={`text-xs px-2 py-0.5 rounded-full border ${c.badge}`}>Current</span>}
-                        {stage.isCompleted && <span className="text-xs px-2 py-0.5 rounded-full border border-slate-700 text-slate-500">Completed</span>}
-                        {stage.isFuture && <span className="text-xs px-2 py-0.5 rounded-full border border-slate-800 text-slate-600">Future</span>}
+                        {stage.isCompleted && <span className="text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-400">Completed</span>}
+                        {stage.isFuture && <span className="text-xs px-2 py-0.5 rounded-full border border-gray-200 text-gray-400">Future</span>}
                       </div>
                       {(stage.startDate || stage.endDate) && (
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-gray-400 mt-0.5">
                           {stage.startDate ?? "—"} → {stage.endDate ?? "Present"}
                         </p>
                       )}
                     </div>
                   </div>
-                  <span className="text-slate-600 text-sm">{isOpen ? "▲" : "▼"}</span>
+                  <span className="text-gray-400 text-sm">{isOpen ? "▲" : "▼"}</span>
                 </div>
 
                 {isOpen && (
-                  <div className="mt-4 space-y-4 border-t border-slate-800 pt-4">
+                  <div className="mt-4 space-y-4 border-t border-gray-200 pt-4">
                     {/* Warnings */}
                     {stage.warnings.length > 0 && (
                       <div className="space-y-2">
                         {stage.warnings.map((w, i) => (
-                          <div key={i} className="p-3 rounded-lg bg-amber-900/20 border border-amber-800/30 text-sm text-amber-300 font-medium">
+                          <div key={i} className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 font-medium">
                             ⚠️ {w}
                           </div>
                         ))}
@@ -170,10 +168,10 @@ export default function VisaTimelinePage() {
 
                     {/* Rules */}
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Rules That Apply</p>
+                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Rules That Apply</p>
                       <ul className="space-y-1.5">
                         {stage.rules.map((rule, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
                             <span className={`mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full ${c.dot}`} />
                             {rule}
                           </li>
@@ -183,9 +181,9 @@ export default function VisaTimelinePage() {
 
                     {/* Next step */}
                     {stage.nextStep && (
-                      <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-sm">
-                        <span className="text-slate-500 text-xs uppercase tracking-wider block mb-1">Next Step</span>
-                        <span className="text-indigo-300">→ {stage.nextStep}</span>
+                      <div className="p-3 rounded-lg bg-gray-100/60 border border-gray-200 text-sm">
+                        <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Next Step</span>
+                        <span className="text-indigo-700">→ {stage.nextStep}</span>
                       </div>
                     )}
                   </div>
@@ -201,9 +199,9 @@ export default function VisaTimelinePage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">📋</p>
-            <p className="text-white font-medium mb-1">Complete your profile first</p>
-            <p className="text-slate-400 text-sm mb-4">Add your program start/end dates in Profile to see your visa timeline</p>
-            <a href="/dashboard/profile" className="text-indigo-400 hover:underline text-sm">Go to Profile →</a>
+            <p className="text-gray-900 font-medium mb-1">Complete your profile first</p>
+            <p className="text-gray-500 text-sm mb-4">Add your program start/end dates in Profile to see your visa timeline</p>
+            <a href="/dashboard/profile" className="text-indigo-600 hover:underline text-sm">Go to Profile →</a>
           </CardContent>
         </Card>
       )}

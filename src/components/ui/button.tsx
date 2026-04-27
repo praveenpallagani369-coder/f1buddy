@@ -14,11 +14,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
     const variants = {
-      default: "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm shadow-indigo-900/40",
+      default: "bg-gradient-to-r from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700 shadow-sm shadow-indigo-200\/60",
       destructive: "bg-red-600 text-white hover:bg-red-700",
-      outline: "border border-slate-700 bg-transparent text-slate-200 hover:bg-slate-800",
-      ghost: "text-slate-300 hover:bg-slate-800 hover:text-white",
-      link: "text-indigo-400 underline-offset-4 hover:underline",
+      outline: "border border-gray-200 bg-transparent text-gray-700 hover:bg-gray-100",
+      ghost: "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+      link: "text-indigo-600 underline-offset-4 hover:underline",
     };
 
     const sizes = {

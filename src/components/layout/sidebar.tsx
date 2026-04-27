@@ -48,16 +48,16 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   }
 
   return (
-    <aside className="w-64 flex-shrink-0 border-r border-slate-800 bg-slate-950 flex flex-col">
+    <aside className="w-64 flex-shrink-0 border-r border-gray-200 bg-gray-50 flex flex-col">
       {/* Logo */}
-      <div className="p-5 border-b border-slate-800">
+      <div className="p-5 border-b border-gray-200">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-lg shadow-lg shadow-indigo-900/40">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-lg shadow-lg shadow-indigo-200\/60">
             🎓
           </div>
           <div>
-            <p className="font-bold text-white text-sm tracking-wide">F1Buddy</p>
-            <p className="text-xs text-slate-500">Student Manager</p>
+            <p className="font-bold text-gray-900 text-sm tracking-wide">F1Buddy</p>
+            <p className="text-xs text-gray-400">Student Manager</p>
           </div>
         </Link>
       </div>
@@ -75,10 +75,10 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
                 "flex items-center gap-3 rounded-lg text-sm transition-all duration-150",
                 isSubItem ? "px-3 py-1.5 ml-4 text-xs" : "px-3 py-2.5",
                 active
-                  ? "bg-indigo-600/20 text-indigo-300 font-medium border border-indigo-700/30"
+                  ? "bg-indigo-100 text-indigo-700 font-medium border border-indigo-200"
                   : isSubItem
-                  ? "text-slate-500 hover:bg-slate-800/70 hover:text-slate-300"
-                  : "text-slate-400 hover:bg-slate-800/70 hover:text-white"
+                  ? "text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                  : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
               )}
             >
               <span className={isSubItem ? "text-sm" : "text-base"}>{icon}</span>
@@ -89,22 +89,22 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
       </nav>
 
       {/* Profile */}
-      <div className="p-3 border-t border-slate-800">
+      <div className="p-3 border-t border-gray-200">
         <Link
           href="/dashboard/profile"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/70 hover:text-white transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
         >
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md shadow-indigo-900/40">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md shadow-indigo-200\/60">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-white truncate">{user.name}</p>
-            <p className="text-xs text-slate-500 truncate">{user.email}</p>
+            <p className="text-sm text-gray-900 truncate">{user.name}</p>
+            <p className="text-xs text-gray-400 truncate">{user.email}</p>
           </div>
         </Link>
         <button
           onClick={handleSignOut}
-          className="w-full mt-1 flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-red-400 hover:bg-red-900/10 transition-colors"
+          className="w-full mt-1 flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
         >
           <span>🚪</span> Sign out
         </button>

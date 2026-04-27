@@ -143,17 +143,17 @@ export default function I983Page() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-slate-500 hover:text-slate-300 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">Employment Change + I-983 Guide</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Employment Change + I-983 Guide</h1>
       </div>
 
       {/* 10-day countdown alert */}
       {latestDeadline && daysLeft !== null && (
         <div className={`p-4 rounded-xl border text-sm ${
-          daysLeft <= 3 ? "bg-red-900/20 border-red-800/30 text-red-300"
-          : daysLeft <= 7 ? "bg-amber-900/20 border-amber-800/30 text-amber-300"
-          : "bg-blue-900/20 border-blue-800/30 text-blue-300"
+          daysLeft <= 3 ? "bg-red-50 border-red-200 text-red-700"
+          : daysLeft <= 7 ? "bg-amber-50 border-amber-200 text-amber-700"
+          : "bg-blue-50 border-blue-200 text-blue-700"
         }`}>
           <p className="font-bold mb-1">
             {daysLeft <= 0 ? "🚨 OVERDUE" : `⏱️ ${daysLeft} day${daysLeft !== 1 ? "s" : ""} remaining`} — Report New Employer to DSO
@@ -165,12 +165,12 @@ export default function I983Page() {
           </p>
           <div className="flex gap-3 mt-3 flex-wrap">
             <Link href="/dashboard/dso-email?template=new_employer">
-              <button className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-600/30 hover:bg-indigo-600/30 transition-colors">
+              <button className="text-xs px-3 py-1.5 rounded-lg bg-indigo-100 border border-indigo-300 hover:bg-indigo-600/30 transition-colors">
                 ✉️ Generate DSO Email
               </button>
             </Link>
             {currentEmployer?.reported_to_school ? null : (
-              <button onClick={markEmployerReported} className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-400 hover:bg-emerald-600/30">
+              <button onClick={markEmployerReported} className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-600 hover:bg-emerald-600/30">
                 ✓ Mark as Reported
               </button>
             )}
@@ -182,12 +182,12 @@ export default function I983Page() {
       {currentEmployer && (
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Current Employer</p>
+            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Current Employer</p>
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white font-medium">{currentEmployer.employer_name}</p>
-                <p className="text-slate-400 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type}</p>
-                <p className="text-xs text-slate-500">Started: {currentEmployer.start_date}</p>
+                <p className="text-gray-900 font-medium">{currentEmployer.employer_name}</p>
+                <p className="text-gray-500 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type}</p>
+                <p className="text-xs text-gray-400">Started: {currentEmployer.start_date}</p>
               </div>
               <div className="flex flex-col gap-1 items-end">
                 {currentEmployer.reported_to_school
@@ -206,16 +206,16 @@ export default function I983Page() {
 
       {/* Progress */}
       <div className="flex items-center gap-4">
-        <div className="flex-1 bg-slate-800 rounded-full h-2">
+        <div className="flex-1 bg-gray-100 rounded-full h-2">
           <div className="bg-indigo-500 h-2 rounded-full transition-all" style={{ width: `${(completedCount / I983_STEPS.length) * 100}%` }} />
         </div>
-        <span className="text-sm text-slate-400 whitespace-nowrap">{completedCount}/{I983_STEPS.length} steps</span>
+        <span className="text-sm text-gray-500 whitespace-nowrap">{completedCount}/{I983_STEPS.length} steps</span>
         {allDone && <Badge variant="success">Complete ✓</Badge>}
       </div>
 
       {/* I-983 Steps */}
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-white">I-983 Training Plan — Step by Step</h2>
+        <h2 className="text-base font-semibold text-gray-900">I-983 Training Plan — Step by Step</h2>
         {I983_STEPS.map((step, i) => {
           const done = completedSteps.has(step.id);
           return (
@@ -225,21 +225,21 @@ export default function I983Page() {
                   <button
                     onClick={() => toggleStep(step.id)}
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all ${
-                      done ? "bg-emerald-600 border-emerald-600 text-white" : "bg-slate-900 border-slate-600 text-slate-400 hover:border-indigo-500"
+                      done ? "bg-emerald-600 border-emerald-600 text-gray-900" : "bg-white border-slate-600 text-gray-500 hover:border-indigo-500"
                     }`}
                   >
                     {done ? "✓" : i + 1}
                   </button>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className={`font-medium text-sm ${done ? "line-through text-slate-500" : "text-white"}`}>{step.title}</p>
-                      {step.critical && !done && <span className="text-xs text-red-400 font-medium">Required</span>}
+                      <p className={`font-medium text-sm ${done ? "line-through text-gray-400" : "text-gray-900"}`}>{step.title}</p>
+                      {step.critical && !done && <span className="text-xs text-red-600 font-medium">Required</span>}
                     </div>
-                    <p className="text-sm text-slate-400 leading-relaxed">{step.detail}</p>
+                    <p className="text-sm text-gray-500 leading-relaxed">{step.detail}</p>
                     {step.action && !done && (
                       <div className="mt-2 flex items-start gap-2">
-                        <span className="text-indigo-400 text-xs flex-shrink-0">→</span>
-                        <p className="text-xs text-indigo-300">{step.action}</p>
+                        <span className="text-indigo-600 text-xs flex-shrink-0">→</span>
+                        <p className="text-xs text-indigo-700">{step.action}</p>
                       </div>
                     )}
                   </div>
@@ -258,15 +258,15 @@ export default function I983Page() {
         <CardContent>
           <ul className="space-y-2">
             {SEVP_CHECKLIST.map((item, i) => (
-              <li key={i} className="flex gap-2 text-sm text-slate-400">
-                <span className="text-amber-400 flex-shrink-0 mt-0.5">△</span>
+              <li key={i} className="flex gap-2 text-sm text-gray-500">
+                <span className="text-amber-600 flex-shrink-0 mt-0.5">△</span>
                 {item}
               </li>
             ))}
           </ul>
-          <div className="mt-4 pt-4 border-t border-slate-800">
+          <div className="mt-4 pt-4 border-t border-gray-200">
             <Link href="/dashboard/opt/stem-reports">
-              <button className="text-sm text-indigo-400 hover:underline">→ Go to STEM Validation Reports (6/12/18/24 month)</button>
+              <button className="text-sm text-indigo-600 hover:underline">→ Go to STEM Validation Reports (6/12/18/24 month)</button>
             </Link>
           </div>
         </CardContent>

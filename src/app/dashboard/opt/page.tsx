@@ -19,10 +19,10 @@ function stemOptAlert(opt: OPTRow | null) {
   const eadEnd = new Date(opt.ead_end_date);
   const daysLeft = Math.ceil((eadEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (daysLeft > 90) return null;
-  if (daysLeft <= 0) return { daysLeft, cls: "bg-red-900/20 border-red-800/30 text-red-300", label: "EXPIRED", msg: `Your OPT EAD has expired. If you haven't applied for STEM OPT, contact your DSO immediately.` };
-  if (daysLeft <= 30) return { daysLeft, cls: "bg-red-900/20 border-red-800/30 text-red-300", label: "CRITICAL", msg: `Only ${daysLeft} days left on your OPT EAD. You must apply for STEM OPT now — file Form I-765 immediately or you'll lose work authorization.` };
+  if (daysLeft <= 0) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700", label: "EXPIRED", msg: `Your OPT EAD has expired. If you haven't applied for STEM OPT, contact your DSO immediately.` };
+  if (daysLeft <= 30) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700", label: "CRITICAL", msg: `Only ${daysLeft} days left on your OPT EAD. You must apply for STEM OPT now — file Form I-765 immediately or you'll lose work authorization.` };
   if (daysLeft <= 60) return { daysLeft, cls: "bg-orange-900/20 border-orange-800/30 text-orange-300", label: "URGENT", msg: `${daysLeft} days left on OPT. Apply for STEM OPT now — USCIS processing can take 3–5 months.` };
-  return { daysLeft, cls: "bg-amber-900/20 border-amber-800/30 text-amber-300", label: "ACTION NEEDED", msg: `${daysLeft} days left on OPT. You're now in the 90-day STEM OPT application window. File Form I-765 with your employer's I-983 Training Plan.` };
+  return { daysLeft, cls: "bg-amber-50 border-amber-200 text-amber-700", label: "ACTION NEEDED", msg: `${daysLeft} days left on OPT. You're now in the 90-day STEM OPT application window. File Form I-765 with your employer's I-983 Training Plan.` };
 }
 
 export default function OPTPage() {
@@ -155,7 +155,7 @@ export default function OPTPage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading OPT data...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading OPT data...</div>;
 
   const stemAlert = stemOptAlert(opt);
   const unemployed = opt?.unemployment_days_used ?? 0;
@@ -167,19 +167,19 @@ export default function OPTPage() {
   const at60 = unemployed >= 60 && unemployed < 75;
   const unemployColor = at85 ? "bg-red-500" : at75 ? "bg-orange-500" : at60 ? "bg-amber-500" : "bg-emerald-500";
   const unemployAlert = at85
-    ? { msg: `🚨 CRITICAL: ${unemployed}/${limit} days used — only ${limit - unemployed} days left. Contact your DSO immediately.`, cls: "bg-red-900/20 border-red-800/30 text-red-300" }
+    ? { msg: `🚨 CRITICAL: ${unemployed}/${limit} days used — only ${limit - unemployed} days left. Contact your DSO immediately.`, cls: "bg-red-50 border-red-200 text-red-700" }
     : at75
     ? { msg: `⚠️ WARNING: ${unemployed}/${limit} days used. Find employment within ${limit - unemployed} days to avoid OPT termination.`, cls: "bg-orange-900/20 border-orange-800/30 text-orange-300" }
     : at60
-    ? { msg: `⚠️ NOTICE: ${unemployed}/${limit} days used. Start your job search now — 30 days left before the 75-day warning.`, cls: "bg-amber-900/20 border-amber-800/30 text-amber-300" }
+    ? { msg: `⚠️ NOTICE: ${unemployed}/${limit} days used. Start your job search now — 30 days left before the 75-day warning.`, cls: "bg-amber-50 border-amber-200 text-amber-700" }
     : null;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">OPT Employment Tracker</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Track your employment authorization and unemployment days</p>
+          <h1 className="text-2xl font-bold text-gray-900">OPT Employment Tracker</h1>
+          <p className="text-gray-500 text-sm mt-0.5">Track your employment authorization and unemployment days</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowOptForm(true)}>
@@ -191,14 +191,14 @@ export default function OPTPage() {
 
       {/* STEM deadlines created success banner */}
       {stemDeadlinesCreated && (
-        <div className="p-4 rounded-xl bg-emerald-900/20 border border-emerald-800/30 flex items-center justify-between gap-4">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-emerald-300">✅ STEM report deadlines created in your Deadlines list</p>
-            <p className="text-xs text-emerald-400 mt-0.5">4 deadlines added for 6, 12, 18, and 24-month validation reports (months 12 & 24 include self-evaluation)</p>
+            <p className="text-sm font-semibold text-emerald-700">✅ STEM report deadlines created in your Deadlines list</p>
+            <p className="text-xs text-emerald-600 mt-0.5">4 deadlines added for 6, 12, 18, and 24-month validation reports (months 12 & 24 include self-evaluation)</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Link href="/dashboard/deadlines" className="text-xs text-emerald-300 underline whitespace-nowrap">View Deadlines →</Link>
-            <button onClick={() => setStemDeadlinesCreated(false)} className="text-slate-500 hover:text-slate-300 text-lg leading-none">×</button>
+            <Link href="/dashboard/deadlines" className="text-xs text-emerald-700 underline whitespace-nowrap">View Deadlines →</Link>
+            <button onClick={() => setStemDeadlinesCreated(false)} className="text-gray-400 hover:text-gray-600 text-lg leading-none">×</button>
           </div>
         </div>
       )}
@@ -230,24 +230,24 @@ export default function OPTPage() {
           <CardContent className="p-6">
             <div className="grid md:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">OPT Type</p>
-                <p className="text-white font-medium capitalize">{(opt.opt_type ?? "").replace("_", " ")}</p>
-                <p className="text-sm text-slate-400">EAD Category: {opt.ead_category ?? "—"}</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">OPT Type</p>
+                <p className="text-gray-900 font-medium capitalize">{(opt.opt_type ?? "").replace("_", " ")}</p>
+                <p className="text-sm text-gray-500">EAD Category: {opt.ead_category ?? "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">EAD Validity</p>
-                <p className="text-white font-medium">{opt.ead_start_date} → {opt.ead_end_date}</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">EAD Validity</p>
+                <p className="text-gray-900 font-medium">{opt.ead_start_date} → {opt.ead_end_date}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Unemployment Days</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Unemployment Days</p>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-2xl font-bold text-white">{opt.unemployment_days_used}</span>
-                  <span className="text-slate-400">/ {opt.unemployment_limit} days</span>
+                  <span className="text-2xl font-bold text-gray-900">{opt.unemployment_days_used}</span>
+                  <span className="text-gray-500">/ {opt.unemployment_limit} days</span>
                 </div>
                 <Progress value={opt.unemployment_days_used} max={opt.unemployment_limit} color={unemployColor} />
-                <p className="text-xs text-slate-400 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
+                <p className="text-xs text-gray-500 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
                 {opt.opt_type === "stem_extension" && (
-                  <p className="text-xs text-slate-500 mt-1">150 total = 90 OPT + 60 STEM (cumulative, never resets) — 8 CFR 214.2(f)(10)(ii)(E)</p>
+                  <p className="text-xs text-gray-400 mt-1">150 total = 90 OPT + 60 STEM (cumulative, never resets) — 8 CFR 214.2(f)(10)(ii)(E)</p>
                 )}
               </div>
             </div>
@@ -262,8 +262,8 @@ export default function OPTPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">💼</p>
-            <p className="text-white font-medium mb-1">No OPT set up yet</p>
-            <p className="text-slate-400 text-sm mb-4">Add your EAD details to start tracking unemployment days</p>
+            <p className="text-gray-900 font-medium mb-1">No OPT set up yet</p>
+            <p className="text-gray-500 text-sm mb-4">Add your EAD details to start tracking unemployment days</p>
             <Button onClick={() => setShowOptForm(true)}>Set Up OPT →</Button>
           </CardContent>
         </Card>
@@ -271,12 +271,12 @@ export default function OPTPage() {
 
       {/* OPT Form */}
       {showOptForm && (
-        <Card className="border-indigo-800/50">
+        <Card className="border-indigo-200">
           <CardHeader><CardTitle className="text-base">{opt ? "Update OPT Status" : "Set Up OPT"}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">OPT Type</label>
+                <label className="block text-sm text-gray-600 mb-1.5">OPT Type</label>
                 <Select value={optForm.optType} onChange={(e) => {
                   const t = e.target.value;
                   setOptForm(f => ({
@@ -291,20 +291,20 @@ export default function OPTPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">EAD Category</label>
+                <label className="block text-sm text-gray-600 mb-1.5">EAD Category</label>
                 <Select value={optForm.eadCategory} onChange={(e) => setOptForm(f => ({ ...f, eadCategory: e.target.value }))}>
                   <option value="C3A">C3A (Pre-Completion OPT)</option>
                   <option value="C3B">C3B (Post-Completion OPT)</option>
                   <option value="C3C">C3C (STEM Extension)</option>
                 </Select>
-                <p className="text-xs text-slate-500 mt-1">Check the category printed on your physical EAD card</p>
+                <p className="text-xs text-gray-400 mt-1">Check the category printed on your physical EAD card</p>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">EAD Start Date</label>
+                <label className="block text-sm text-gray-600 mb-1.5">EAD Start Date</label>
                 <Input type="date" value={optForm.eadStartDate} onChange={(e) => setOptForm(f => ({ ...f, eadStartDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">EAD End Date</label>
+                <label className="block text-sm text-gray-600 mb-1.5">EAD End Date</label>
                 <Input type="date" value={optForm.eadEndDate} onChange={(e) => setOptForm(f => ({ ...f, eadEndDate: e.target.value }))} />
               </div>
             </div>
@@ -330,20 +330,20 @@ export default function OPTPage() {
 
       {/* Employer Form */}
       {showEmpForm && (
-        <Card className="border-indigo-800/50">
+        <Card className="border-indigo-200">
           <CardHeader><CardTitle className="text-base">Add Employer</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Employer Name *</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Employer Name *</label>
                 <Input placeholder="Acme Corporation" value={empForm.employerName} onChange={(e) => setEmpForm(f => ({ ...f, employerName: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Position Title</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Position Title</label>
                 <Input placeholder="Software Engineer" value={empForm.positionTitle} onChange={(e) => setEmpForm(f => ({ ...f, positionTitle: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Employment Type</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Employment Type</label>
                 <Select value={empForm.employmentType} onChange={(e) => setEmpForm(f => ({ ...f, employmentType: e.target.value }))}>
                   <option value="full_time">Full Time (40h/wk)</option>
                   <option value="part_time">Part Time (20h/wk)</option>
@@ -352,11 +352,11 @@ export default function OPTPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Start Date *</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Start Date *</label>
                 <Input type="date" value={empForm.startDate} onChange={(e) => setEmpForm(f => ({ ...f, startDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">End Date (leave blank if current)</label>
+                <label className="block text-sm text-gray-600 mb-1.5">End Date (leave blank if current)</label>
                 <Input type="date" value={empForm.endDate} onChange={(e) => setEmpForm(f => ({ ...f, endDate: e.target.value }))} />
               </div>
             </div>
@@ -367,24 +367,24 @@ export default function OPTPage() {
                 { label: "Reported to DSO", field: "reportedToSchool" },
                 { label: "Current Job", field: "isCurrent" },
               ].map(({ label, field }) => (
-                <label key={field} className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                <label key={field} className="flex items-center gap-2 text-gray-600 cursor-pointer">
                   <input type="checkbox" className="rounded" checked={empForm[field as keyof typeof empForm] as boolean} onChange={(e) => setEmpForm(f => ({ ...f, [field]: e.target.checked }))} />
                   {label}
                 </label>
               ))}
             </div>
             {opt?.opt_type === "stem_extension" && !empForm.eVerifyEmployer && (
-              <div className="p-3 rounded-lg bg-red-900/20 border border-red-800/30 text-sm text-red-300">
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
                 🚨 STEM OPT requires an E-Verify enrolled employer. You cannot work under STEM OPT at a non-E-Verify employer. Verify at e-verify.uscis.gov before accepting the job. — 8 CFR 214.2(f)(10)(ii)(C)
               </div>
             )}
             {opt?.opt_type === "stem_extension" && (empForm.employmentType === "volunteer" || empForm.employmentType === "unpaid_intern") && (
-              <div className="p-3 rounded-lg bg-red-900/20 border border-red-800/30 text-sm text-red-300">
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
                 🚨 STEM OPT does NOT authorize volunteer work or unpaid internships. Employment must be paid. Unpaid work violates your STEM OPT terms and may result in SEVIS termination. — 8 CFR 214.2(f)(10)(ii)(C)
               </div>
             )}
             {!empForm.reportedToSchool && (
-              <div className="p-3 rounded-lg bg-amber-900/20 border border-amber-800/30 text-sm text-amber-300">
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700">
                 ⚠️ Remember: You must report new employers to your DSO within 10 days of starting.
               </div>
             )}
@@ -403,18 +403,18 @@ export default function OPTPage() {
         </CardHeader>
         <CardContent>
           {employers.length === 0 ? (
-            <div className="text-center py-8 text-slate-400">No employers logged yet</div>
+            <div className="text-center py-8 text-gray-500">No employers logged yet</div>
           ) : (
             <div className="space-y-3">
               {employers.map((e) => (
-                <div key={e.id} className="flex items-start justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-800">
+                <div key={e.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-white font-medium">{e.employer_name}</p>
+                      <p className="text-gray-900 font-medium">{e.employer_name}</p>
                       {e.is_current && <Badge variant="success" className="text-xs">Current</Badge>}
                     </div>
-                    <p className="text-sm text-slate-400">{e.position_title ?? e.employment_type.replace("_", " ")}</p>
-                    <p className="text-xs text-slate-500 mt-1">{e.start_date} → {e.end_date ?? "Present"}</p>
+                    <p className="text-sm text-gray-500">{e.position_title ?? e.employment_type.replace("_", " ")}</p>
+                    <p className="text-xs text-gray-400 mt-1">{e.start_date} → {e.end_date ?? "Present"}</p>
                     <div className="flex gap-2 mt-2">
                       {e.is_stem_related && <Badge variant="info" className="text-xs">STEM</Badge>}
                       {e.e_verify_employer && <Badge variant="info" className="text-xs">E-Verify</Badge>}

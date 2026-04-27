@@ -1,13 +1,25 @@
-// POST /api/onboarding — called after onboarding wizard completes
-// Auto-generates system deadlines based on student profile
-import { NextResponse } from "next/server";
-import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
+import { getAuthUser, ok, UNAUTHORIZED } from "@/lib/api/helpers";
 import { generateSystemDeadlines } from "@/lib/immigration/rules";
-import { format } from "date-fns";
+import { encryptIfPresent } from "@/lib/crypto";
+import { z } from "zod";
 
-export async function POST() {
+const onboardingBody = z.object({
+  sevisId: z.string().max(20).nullable().optional(),
+}).strict();
+
+export async function POST(request: Request) {
   const { user, supabase, error } = await getAuthUser();
   if (error || !user) return UNAUTHORIZED();
+
+  const body = await request.json().catch(() => ({}));
+  const parsed = onboardingBody.safeParse(body);
+
+  if (parsed.success && parsed.data.sevisId) {
+    const encrypted = encryptIfPresent(parsed.data.sevisId);
+    if (encrypted) {
+      await supabase.from("users").update({ sevis_id_encrypted: encrypted }).eq("id", user.id);
+    }
+  }
 
   const { data: profile } = await supabase
     .from("users")

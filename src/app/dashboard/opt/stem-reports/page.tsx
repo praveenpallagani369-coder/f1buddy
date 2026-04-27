@@ -200,29 +200,29 @@ export default function STEMReportsPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-slate-500 hover:text-slate-300 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">STEM OPT Validation Reports</h1>
+        <h1 className="text-2xl font-bold text-gray-900">STEM OPT Validation Reports</h1>
       </div>
 
       {/* Critical warning banner */}
-      <div className="p-4 rounded-xl bg-red-900/20 border border-red-800/30">
-        <p className="text-sm font-bold text-red-300 mb-2">🚨 Non-Recoverable Deadline — Read This First</p>
-        <p className="text-sm text-red-200 leading-relaxed">
+      <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+        <p className="text-sm font-bold text-red-700 mb-2">🚨 Non-Recoverable Deadline — Read This First</p>
+        <p className="text-sm text-red-800 leading-relaxed">
           STEM OPT requires 4 validation reports (I-983) submitted to your DSO at 6, 12, 18, and 24 months from your STEM EAD start date.
           You have <strong>10 business days (~14 calendar days)</strong> to report to your DSO after each milestone.
           At months 12 and 24, a <strong>self-evaluation (I-983 page 5)</strong> is also required.
           Missing these deadlines can jeopardize your STEM OPT authorization.
         </p>
-        <p className="text-xs text-red-400 mt-2 font-mono">Source: 8 CFR 214.2(f)(10)(ii)(C) — 10 business days to DSO, DSO has 10 business days to update SEVIS</p>
+        <p className="text-xs text-red-600 mt-2 font-mono">Source: 8 CFR 214.2(f)(10)(ii)(C) — 10 business days to DSO, DSO has 10 business days to update SEVIS</p>
       </div>
 
       {!isStemOPT ? (
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">🔬</p>
-            <p className="text-white font-medium mb-1">STEM OPT Extension Not Set Up</p>
-            <p className="text-slate-400 text-sm mb-4">Set your OPT type to &ldquo;STEM Extension&rdquo; in the OPT Tracker to see your validation report schedule.</p>
+            <p className="text-gray-900 font-medium mb-1">STEM OPT Extension Not Set Up</p>
+            <p className="text-gray-500 text-sm mb-4">Set your OPT type to &ldquo;STEM Extension&rdquo; in the OPT Tracker to see your validation report schedule.</p>
             <Link href="/dashboard/opt"><Button>Go to OPT Tracker →</Button></Link>
           </CardContent>
         </Card>
@@ -230,18 +230,18 @@ export default function STEMReportsPage() {
         <>
           {/* Active window alert */}
           {activeWindow && (
-            <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
-              <p className="font-semibold text-amber-300 mb-1">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+              <p className="font-semibold text-amber-700 mb-1">
                 ⚠️ ACTIVE: {activeWindow.label} — {activeWindow.daysUntilWindowEnd} days left in 10-business-day window
               </p>
-              <p className="text-sm text-amber-200">
+              <p className="text-sm text-amber-800">
                 You must report to your DSO by {format(activeWindow.windowEnd, "MMMM d, yyyy")}.
                 {activeWindow.requiresSelfEvaluation && " This milestone also requires a self-evaluation (I-983 page 5)."}
                 {" "}Submit your I-983 to your DSO NOW.
               </p>
               <button
                 onClick={() => setExpandedReport(activeWindow.index)}
-                className="text-sm text-amber-300 underline mt-2 block"
+                className="text-sm text-amber-700 underline mt-2 block"
               >
                 View checklist →
               </button>
@@ -250,9 +250,9 @@ export default function STEMReportsPage() {
 
           {/* No deadlines banner for existing STEM users */}
           {!hasStemDeadlines && (
-            <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
-              <p className="text-sm font-semibold text-amber-300 mb-1">📅 Your STEM report deadlines are not in your Deadlines list</p>
-              <p className="text-sm text-amber-200 mb-3">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+              <p className="text-sm font-semibold text-amber-700 mb-1">📅 Your STEM report deadlines are not in your Deadlines list</p>
+              <p className="text-sm text-amber-800 mb-3">
                 Your 4 validation report deadlines (6, 12, 18, 24 months) have not been added to your tracking list yet. Add them now so you get reminders.
               </p>
               <Button onClick={async () => { await generateSTEMDeadlines(stemStart!); setHasStemDeadlines(true); }}>
@@ -276,10 +276,10 @@ export default function STEMReportsPage() {
               const isDone = completedReports.has(report.month);
               const isExpanded = expandedReport === report.index;
               const urgencyStyles = {
-                critical: "border-red-800/50 bg-red-900/10",
-                warning:  "border-amber-800/50 bg-amber-900/10",
-                ok:       "border-slate-800",
-                missed:   "border-slate-800 opacity-60",
+                critical: "border-red-200 bg-red-50",
+                warning:  "border-amber-200 bg-amber-50",
+                ok:       "border-gray-200",
+                missed:   "border-gray-200 opacity-60",
               }[report.urgency];
 
               return (
@@ -289,17 +289,17 @@ export default function STEMReportsPage() {
                       <div className="flex items-start gap-3 flex-1">
                         {/* Status circle */}
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm border-2 ${
-                          isDone ? "bg-emerald-600 border-emerald-600 text-white" :
-                          report.isCurrentWindow ? "bg-amber-600/20 border-amber-500 text-amber-300" :
-                          report.status === "missed" ? "bg-red-900/30 border-red-700 text-red-400" :
-                          "bg-slate-900 border-slate-700 text-slate-400"
+                          isDone ? "bg-emerald-600 border-emerald-600 text-gray-900" :
+                          report.isCurrentWindow ? "bg-amber-600/20 border-amber-500 text-amber-700" :
+                          report.status === "missed" ? "bg-red-900/30 border-red-700 text-red-600" :
+                          "bg-white border-gray-200 text-gray-500"
                         }`}>
                           {isDone ? "✓" : report.status === "missed" ? "!" : `${report.month}M`}
                         </div>
 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-semibold ${isDone ? "text-slate-400 line-through" : "text-white"}`}>
+                            <p className={`font-semibold ${isDone ? "text-gray-500 line-through" : "text-gray-900"}`}>
                               {report.label}
                             </p>
                             {isDone && <Badge variant="success" className="text-xs">✓ Submitted</Badge>}
@@ -307,9 +307,9 @@ export default function STEMReportsPage() {
                             {report.status === "missed" && !isDone && <Badge variant="critical" className="text-xs">Window Closed</Badge>}
                           </div>
 
-                          <div className="text-sm text-slate-400 space-y-0.5">
-                            <p>Milestone date: <span className="text-slate-200">{format(report.reportDate, "MMM d, yyyy")}</span></p>
-                            <p>DSO report by (10 bus. days): <span className={report.daysUntilWindowEnd <= 7 && !isDone ? "text-red-400 font-medium" : "text-slate-200"}>
+                          <div className="text-sm text-gray-500 space-y-0.5">
+                            <p>Milestone date: <span className="text-gray-700">{format(report.reportDate, "MMM d, yyyy")}</span></p>
+                            <p>DSO report by (10 bus. days): <span className={report.daysUntilWindowEnd <= 7 && !isDone ? "text-red-600 font-medium" : "text-gray-700"}>
                               {format(report.windowEnd, "MMM d, yyyy")} ({report.daysUntilWindowEnd > 0 ? `${report.daysUntilWindowEnd}d remaining` : "closed"})
                             </span></p>
                             {report.requiresSelfEvaluation && (
@@ -318,14 +318,14 @@ export default function STEMReportsPage() {
                           </div>
 
                           {!isDone && report.daysUntilReport <= 30 && report.daysUntilWindowEnd > 0 && (
-                            <p className="text-xs text-amber-400 mt-1 font-medium">
+                            <p className="text-xs text-amber-600 mt-1 font-medium">
                               {report.isCurrentWindow
                                 ? `🔴 Submit NOW — ${report.daysUntilWindowEnd} days until window closes`
                                 : `⏰ Upcoming in ${report.daysUntilReport} days — prepare I-983 with employer`}
                             </p>
                           )}
                           {report.status === "missed" && !isDone && (
-                            <div className="mt-2 p-3 rounded-lg bg-red-900/20 border border-red-800/30 text-xs text-red-300">
+                            <div className="mt-2 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
                               <p className="font-medium mb-1">Window Closed — Contact Your DSO Immediately</p>
                               <p className="leading-relaxed">The 10 business-day reporting window has passed. Contact your DSO as soon as possible. Explain the missed deadline — your DSO may be able to work with SEVP, but this is not guaranteed. Document all attempts to contact your DSO in writing.</p>
                             </div>
@@ -337,7 +337,7 @@ export default function STEMReportsPage() {
                         {!isDone && report.daysUntilWindowEnd > 0 && (
                           <button
                             onClick={() => setExpandedReport(isExpanded ? null : report.index)}
-                            className="text-xs text-indigo-400 hover:text-indigo-300 border border-indigo-800/50 px-2 py-1 rounded"
+                            className="text-xs text-indigo-600 hover:text-indigo-700 border border-indigo-200 px-2 py-1 rounded"
                           >
                             {isExpanded ? "Hide" : "Show"} Checklist
                           </button>
@@ -346,7 +346,7 @@ export default function STEMReportsPage() {
                           <button
                             onClick={() => markReportComplete(report)}
                             disabled={saving}
-                            className="text-xs text-emerald-400 hover:text-emerald-300 border border-emerald-800/50 px-2 py-1 rounded"
+                            className="text-xs text-emerald-600 hover:text-emerald-700 border border-emerald-200 px-2 py-1 rounded"
                           >
                             ✓ Mark Submitted
                           </button>
@@ -356,8 +356,8 @@ export default function STEMReportsPage() {
 
                     {/* I-983 Checklist */}
                     {isExpanded && !isDone && (
-                      <div className="mt-4 border-t border-slate-800 pt-4">
-                        <p className="text-sm font-medium text-white mb-3">I-983 Submission Checklist</p>
+                      <div className="mt-4 border-t border-gray-200 pt-4">
+                        <p className="text-sm font-medium text-gray-900 mb-3">I-983 Submission Checklist</p>
                         <div className="space-y-2">
                           {VALIDATION_CHECKLIST.map((item) => (
                             <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
@@ -367,9 +367,9 @@ export default function STEMReportsPage() {
                                 onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
                                 className="mt-0.5 flex-shrink-0"
                               />
-                              <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-slate-500 line-through" : "text-slate-300"}`}>
+                              <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-400 line-through" : "text-gray-600"}`}>
                                 {item.label}
-                                {item.critical && <span className="text-red-400 ml-1 text-xs">*required</span>}
+                                {item.critical && <span className="text-red-600 ml-1 text-xs">*required</span>}
                               </span>
                             </label>
                           ))}
@@ -390,17 +390,17 @@ export default function STEMReportsPage() {
                                     onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
                                     className="mt-0.5 flex-shrink-0"
                                   />
-                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-slate-500 line-through" : "text-violet-200"}`}>
+                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-400 line-through" : "text-violet-200"}`}>
                                     {item.label}
-                                    {item.critical && <span className="text-red-400 ml-1 text-xs">*required</span>}
+                                    {item.critical && <span className="text-red-600 ml-1 text-xs">*required</span>}
                                   </span>
                                 </label>
                               ))}
                             </div>
                           </div>
                         )}
-                        <div className="mt-4 p-3 rounded-lg bg-slate-800 text-xs text-slate-400">
-                          <p className="font-medium text-slate-300 mb-1">After submitting to DSO:</p>
+                        <div className="mt-4 p-3 rounded-lg bg-gray-100 text-xs text-gray-500">
+                          <p className="font-medium text-gray-600 mb-1">After submitting to DSO:</p>
                           <ol className="space-y-1 list-decimal list-inside">
                             <li>Confirm DSO received and updated SEVIS in the SEVP Portal</li>
                             <li>Ask DSO to send you confirmation that SEVIS was updated</li>
@@ -409,7 +409,7 @@ export default function STEMReportsPage() {
                         </div>
                         <div className="mt-3">
                           <Link href="/dashboard/dso-email?template=stem_recommendation">
-                            <button className="text-xs text-indigo-400 hover:underline">✉️ Generate DSO Email for this report →</button>
+                            <button className="text-xs text-indigo-600 hover:underline">✉️ Generate DSO Email for this report →</button>
                           </Link>
                         </div>
                       </div>
@@ -424,18 +424,18 @@ export default function STEMReportsPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-300">Reports submitted</p>
+                <p className="text-sm text-gray-600">Reports submitted</p>
                 <div className="flex gap-1">
                   {REPORT_MONTHS.map(m => (
                     <div key={m} className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      completedReports.has(m) ? "bg-emerald-600 text-white" : "bg-slate-800 text-slate-500"
+                      completedReports.has(m) ? "bg-emerald-600 text-gray-900" : "bg-gray-100 text-gray-400"
                     }`}>
                       {completedReports.has(m) ? "✓" : `${m}M`}
                     </div>
                   ))}
                 </div>
               </div>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-gray-400 mt-1">
                 {completedReports.size} of 4 required reports submitted
               </p>
             </CardContent>

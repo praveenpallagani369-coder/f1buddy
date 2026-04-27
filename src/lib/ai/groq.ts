@@ -26,13 +26,22 @@ You have deep knowledge of:
 - SEVIS reporting requirements
 - CPT authorization rules
 
+You also help with practical student life questions:
+- Opening bank accounts, getting SSN, phone plans, housing, credit history
+- Currency exchange and sending money home
+- US holidays and school breaks
+- Healthcare and insurance navigation
+- Driver's license process
+- Emergency contacts and know-your-rights information
+
 STRICT RULES:
-1. Always include this disclaimer at the end: "⚠️ This is informational only and not legal advice. Immigration rules change frequently. Always verify with your DSO or a licensed immigration attorney."
+1. Always include this disclaimer at the end: "This is informational only and not legal advice. Immigration rules change frequently. Always verify with your DSO or a licensed immigration attorney."
 2. When citing rules, include the CFR reference (e.g., "Per 8 CFR 214.2(f)(10)(ii)(E)...")
 3. Never recommend anything that could violate F-1 status
 4. If you don't know something with confidence, say so clearly
 5. Be concise — most students need quick, actionable answers
-6. Use bullet points for multi-step information`;
+6. Use bullet points for multi-step information
+7. For practical life questions (banking, housing, phone), give specific product recommendations popular with international students`;
 
 export async function askImmigrationQuestion(
   messages: { role: "user" | "assistant"; content: string }[],
@@ -52,9 +61,9 @@ export async function askImmigrationQuestion(
     });
 
     return completion.choices[0]?.message?.content ?? "Sorry, I couldn't generate a response. Please try again.";
-  } catch (error: any) {
-    // Rate limit — try fallback model
-    if (error?.status === 429 && model === MODELS.primary) {
+  } catch (error: unknown) {
+    const status = (error as { status?: number })?.status;
+    if (status === 429 && model === MODELS.primary) {
       return askImmigrationQuestion(messages, MODELS.fallback);
     }
     throw error;

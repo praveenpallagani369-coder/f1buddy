@@ -12,7 +12,7 @@ const US_STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","
 
 export default function AddressPage() {
   const supabase = createClient();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Record<string, string | boolean | null> | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -32,6 +32,7 @@ export default function AddressPage() {
       setLoading(false);
     }
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function saveAddress() {
@@ -77,34 +78,34 @@ export default function AddressPage() {
     await supabase.from("compliance_deadlines")
       .update({ status: "completed", updated_at: new Date().toISOString() })
       .eq("user_id", user.id).eq("title", "Report New Address to DSO (SEVIS Update)").eq("status", "pending");
-    setProfile((p: any) => ({ ...p, address_reported_to_dso: true }));
+    setProfile((p) => p ? { ...p, address_reported_to_dso: true } : p);
   }
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading address...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading address...</div>;
 
   const hasAddress = !!(profile?.current_address_line1 && profile?.current_address_city);
   const daysSinceUpdate = profile?.address_updated_at
-    ? differenceInCalendarDays(new Date(), parseISO(profile.address_updated_at))
+    ? differenceInCalendarDays(new Date(), parseISO(profile.address_updated_at as string))
     : null;
   const reportingDeadlinePassed = daysSinceUpdate !== null && daysSinceUpdate > 10 && !profile?.address_reported_to_dso;
 
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/profile" className="text-slate-500 hover:text-slate-300 text-sm">← Profile</Link>
+        <Link href="/dashboard/profile" className="text-gray-400 hover:text-gray-600 text-sm">← Profile</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">US Address & SEVIS Reporting</h1>
+        <h1 className="text-2xl font-bold text-gray-900">US Address & SEVIS Reporting</h1>
       </div>
 
       {/* CFR Info */}
-      <div className="p-4 rounded-xl bg-blue-900/20 border border-blue-800/30 text-sm text-blue-300">
+      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-sm text-blue-700">
         <p className="font-medium mb-1">📋 Federal Requirement — 8 CFR 214.2(f)(18)</p>
         <p>F-1 students must report any change of US address to their DSO within <strong>10 days</strong> of moving. The DSO then updates your SEVIS record. Failure to report can jeopardize your F-1 status.</p>
       </div>
 
       {/* Reporting status alert */}
       {hasAddress && !profile?.address_reported_to_dso && (
-        <div className={`p-4 rounded-xl border text-sm ${reportingDeadlinePassed ? "bg-red-900/20 border-red-800/30 text-red-300" : "bg-amber-900/20 border-amber-800/30 text-amber-300"}`}>
+        <div className={`p-4 rounded-xl border text-sm ${reportingDeadlinePassed ? "bg-red-50 border-red-200 text-red-700" : "bg-amber-50 border-amber-200 text-amber-700"}`}>
           <p className="font-medium mb-1">
             {reportingDeadlinePassed ? "🚨 Overdue — Must Report Now" : "⚠️ Action Required — Report to DSO"}
           </p>
@@ -118,7 +119,7 @@ export default function AddressPage() {
                 ✉️ Generate DSO Email →
               </Link>
             )}
-            <button onClick={markReported} className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-400 hover:bg-emerald-600/30 transition-colors">
+            <button onClick={markReported} className="text-xs px-3 py-1.5 rounded-lg bg-emerald-600/20 border border-emerald-600/30 text-emerald-600 hover:bg-emerald-600/30 transition-colors">
               ✓ I reported to my DSO
             </button>
           </div>
@@ -127,7 +128,7 @@ export default function AddressPage() {
 
       {/* Confirmed reported */}
       {hasAddress && profile?.address_reported_to_dso && (
-        <div className="p-4 rounded-xl bg-emerald-900/20 border border-emerald-800/30 text-sm text-emerald-300">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
           ✅ Address reported to DSO — SEVIS update in progress
         </div>
       )}
@@ -154,31 +155,31 @@ export default function AddressPage() {
         <CardContent>
           {editing ? (
             <div className="space-y-4">
-              <div className="p-3 rounded-lg bg-amber-900/20 border border-amber-800/30 text-xs text-amber-300">
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700">
                 ⚠️ Updating your address will automatically create a 10-day SEVIS reporting deadline in your Deadlines page.
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Street Address *</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Street Address *</label>
                 <Input placeholder="123 Main Street, Apt 4B" value={form.line1} onChange={(e) => setForm(f => ({ ...f, line1: e.target.value }))} />
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-1">
-                  <label className="block text-sm text-slate-300 mb-1.5">City *</label>
+                  <label className="block text-sm text-gray-600 mb-1.5">City *</label>
                   <Input placeholder="Boston" value={form.city} onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))} />
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-300 mb-1.5">State *</label>
+                  <label className="block text-sm text-gray-600 mb-1.5">State *</label>
                   <select
                     value={form.state}
                     onChange={(e) => setForm(f => ({ ...f, state: e.target.value }))}
-                    className="flex h-10 w-full rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                   >
                     <option value="">State</option>
                     {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm text-slate-300 mb-1.5">ZIP *</label>
+                  <label className="block text-sm text-gray-600 mb-1.5">ZIP *</label>
                   <Input placeholder="02115" value={form.zip} onChange={(e) => setForm(f => ({ ...f, zip: e.target.value }))} maxLength={5} />
                 </div>
               </div>
@@ -191,11 +192,11 @@ export default function AddressPage() {
             </div>
           ) : hasAddress ? (
             <div>
-              <p className="text-white font-medium">{profile.current_address_line1}</p>
-              <p className="text-slate-300">{profile.current_address_city}, {profile.current_address_state} {profile.current_address_zip}</p>
+              <p className="text-gray-900 font-medium">{profile.current_address_line1}</p>
+              <p className="text-gray-600">{profile.current_address_city}, {profile.current_address_state} {profile.current_address_zip}</p>
               {profile.address_updated_at && (
-                <p className="text-xs text-slate-500 mt-2">
-                  Last updated: {format(parseISO(profile.address_updated_at), "MMM d, yyyy")}
+                <p className="text-xs text-gray-400 mt-2">
+                  Last updated: {format(parseISO(profile.address_updated_at as string), "MMM d, yyyy")}
                   {daysSinceUpdate !== null && ` (${daysSinceUpdate} days ago)`}
                 </p>
               )}
@@ -203,8 +204,8 @@ export default function AddressPage() {
           ) : (
             <div className="text-center py-6">
               <p className="text-3xl mb-2">🏠</p>
-              <p className="text-slate-400 text-sm">No US address on file</p>
-              <p className="text-slate-500 text-xs mt-1">Add your current address to enable SEVIS reporting reminders</p>
+              <p className="text-gray-500 text-sm">No US address on file</p>
+              <p className="text-gray-400 text-xs mt-1">Add your current address to enable SEVIS reporting reminders</p>
             </div>
           )}
         </CardContent>
@@ -222,12 +223,12 @@ export default function AddressPage() {
               { step: "4", text: "Mark as reported in F1Buddy", note: "Clears the deadline from your compliance dashboard" },
             ].map((item) => (
               <li key={item.step} className="flex gap-3">
-                <div className="w-6 h-6 rounded-full bg-indigo-600/20 border border-indigo-600/30 text-indigo-400 text-xs flex items-center justify-center flex-shrink-0 font-bold">
+                <div className="w-6 h-6 rounded-full bg-indigo-100 border border-indigo-300 text-indigo-600 text-xs flex items-center justify-center flex-shrink-0 font-bold">
                   {item.step}
                 </div>
                 <div>
-                  <p className="text-sm text-white">{item.text}</p>
-                  <p className="text-xs text-slate-500">{item.note}</p>
+                  <p className="text-sm text-gray-900">{item.text}</p>
+                  <p className="text-xs text-gray-400">{item.note}</p>
                 </div>
               </li>
             ))}

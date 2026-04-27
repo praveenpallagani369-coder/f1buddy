@@ -101,7 +101,7 @@ export default function DocumentsPage() {
     <div className="flex items-center justify-center py-20">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-slate-400 text-sm">Loading documents...</p>
+        <p className="text-gray-500 text-sm">Loading documents...</p>
       </div>
     </div>
   );
@@ -110,15 +110,15 @@ export default function DocumentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Document Vault</h1>
-          <p className="text-slate-400 text-sm">Store and track expiration of your important documents (PDF, JPG, PNG — max 10 MB)</p>
+          <h1 className="text-2xl font-bold text-gray-900">Document Vault</h1>
+          <p className="text-gray-500 text-sm">Store and track expiration of your important documents (PDF, JPG, PNG — max 10 MB)</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Document</Button>
       </div>
 
       {expiringSoon.length > 0 && (
-        <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
-          <p className="text-sm font-medium text-amber-400 mb-2">⚠️ {expiringSoon.length} document{expiringSoon.length > 1 ? "s" : ""} expiring within 90 days</p>
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+          <p className="text-sm font-medium text-amber-600 mb-2">⚠️ {expiringSoon.length} document{expiringSoon.length > 1 ? "s" : ""} expiring within 90 days</p>
           <div className="flex flex-wrap gap-2">
             {expiringSoon.map(d => (
               <Badge key={d.id} variant="warning">{DOC_LABELS[d.doc_type]} — {d.expiration_date}</Badge>
@@ -129,57 +129,57 @@ export default function DocumentsPage() {
 
       {/* Upload form */}
       {showForm && (
-        <Card className="border-indigo-800/50">
+        <Card className="border-indigo-200">
           <CardHeader><CardTitle className="text-base">Add Document</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Document Type *</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Document Type *</label>
                 <Select value={form.docType} onChange={(e) => setForm(f => ({ ...f, docType: e.target.value }))}>
                   {Object.entries(DOC_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Expiration Date (if applicable)</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Expiration Date (if applicable)</label>
                 <Input type="date" value={form.expirationDate} onChange={(e) => setForm(f => ({ ...f, expirationDate: e.target.value }))} />
               </div>
             </div>
 
             {/* File upload */}
             <div>
-              <label className="block text-sm text-slate-300 mb-1.5">Upload File * (PDF, JPG, PNG — max 10 MB)</label>
+              <label className="block text-sm text-gray-600 mb-1.5">Upload File * (PDF, JPG, PNG — max 10 MB)</label>
               <div
-                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${selectedFile ? "border-indigo-600 bg-indigo-600/5" : "border-slate-700 hover:border-slate-600"}`}
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${selectedFile ? "border-indigo-600 bg-indigo-600/5" : "border-gray-200 hover:border-slate-600"}`}
                 onClick={() => fileRef.current?.click()}
               >
                 <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" onChange={handleFileSelect} />
                 {selectedFile ? (
                   <div>
                     <p className="text-2xl mb-1">📎</p>
-                    <p className="text-white font-medium text-sm">{selectedFile.name}</p>
-                    <p className="text-slate-500 text-xs mt-1">{(selectedFile.size / 1024).toFixed(0)} KB</p>
-                    <button className="text-xs text-indigo-400 mt-2 hover:underline" onClick={(e) => { e.stopPropagation(); setSelectedFile(null); if (fileRef.current) fileRef.current.value = ""; }}>
+                    <p className="text-gray-900 font-medium text-sm">{selectedFile.name}</p>
+                    <p className="text-gray-400 text-xs mt-1">{(selectedFile.size / 1024).toFixed(0)} KB</p>
+                    <button className="text-xs text-indigo-600 mt-2 hover:underline" onClick={(e) => { e.stopPropagation(); setSelectedFile(null); if (fileRef.current) fileRef.current.value = ""; }}>
                       Remove
                     </button>
                   </div>
                 ) : (
                   <div>
                     <p className="text-3xl mb-2">📁</p>
-                    <p className="text-slate-400 text-sm">Click to select or drag & drop</p>
-                    <p className="text-slate-600 text-xs mt-1">PDF, JPG, PNG up to 10 MB</p>
+                    <p className="text-gray-500 text-sm">Click to select or drag & drop</p>
+                    <p className="text-gray-400 text-xs mt-1">PDF, JPG, PNG up to 10 MB</p>
                   </div>
                 )}
               </div>
-              {fileError && <p className="text-red-400 text-xs mt-1">{fileError}</p>}
+              {fileError && <p className="text-red-600 text-xs mt-1">{fileError}</p>}
             </div>
 
             <div>
-              <label className="block text-sm text-slate-300 mb-1.5">Notes (optional)</label>
+              <label className="block text-sm text-gray-600 mb-1.5">Notes (optional)</label>
               <Input placeholder="Issued date, version, or any notes..." value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} />
             </div>
 
             {uploadProgress && (
-              <div className="flex items-center gap-2 text-sm text-indigo-400">
+              <div className="flex items-center gap-2 text-sm text-indigo-600">
                 <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
                 {uploadProgress}
               </div>
@@ -200,8 +200,8 @@ export default function DocumentsPage() {
         <Card>
           <CardContent className="p-12 text-center">
             <p className="text-4xl mb-3">📁</p>
-            <p className="text-white font-medium mb-1">No documents yet</p>
-            <p className="text-slate-400 text-sm mb-4">Upload your I-20, EAD, passport and other documents to track expirations</p>
+            <p className="text-gray-900 font-medium mb-1">No documents yet</p>
+            <p className="text-gray-500 text-sm mb-4">Upload your I-20, EAD, passport and other documents to track expirations</p>
             <Button onClick={() => setShowForm(true)}>Upload First Document</Button>
           </CardContent>
         </Card>
@@ -211,17 +211,17 @@ export default function DocumentsPage() {
             const daysToExp = d.expiration_date ? differenceInCalendarDays(parseISO(d.expiration_date), today) : null;
             const expStatus = daysToExp === null ? null : daysToExp < 0 ? "expired" : daysToExp <= 30 ? "critical" : daysToExp <= 90 ? "warning" : "valid";
             return (
-              <Card key={d.id} className={expStatus === "expired" ? "border-red-800/50" : expStatus === "critical" ? "border-amber-800/50" : ""}>
+              <Card key={d.id} className={expStatus === "expired" ? "border-red-200" : expStatus === "critical" ? "border-amber-200" : ""}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <span className="text-2xl">{DOC_ICONS[d.doc_type]}</span>
-                    <button onClick={() => deleteDoc(d.id)} className="text-slate-600 hover:text-red-400 text-xs transition-colors p-1">✕</button>
+                    <button onClick={() => deleteDoc(d.id)} className="text-gray-400 hover:text-red-600 text-xs transition-colors p-1">✕</button>
                   </div>
-                  <p className="font-medium text-white">{DOC_LABELS[d.doc_type]}</p>
-                  <p className="text-xs text-slate-500 mt-0.5 truncate">{d.file_name}</p>
+                  <p className="font-medium text-gray-900">{DOC_LABELS[d.doc_type]}</p>
+                  <p className="text-xs text-gray-400 mt-0.5 truncate">{d.file_name}</p>
                   {d.expiration_date && (
                     <div className="mt-2">
-                      <p className="text-xs text-slate-500">Expires: {d.expiration_date}</p>
+                      <p className="text-xs text-gray-400">Expires: {d.expiration_date}</p>
                       {daysToExp !== null && (
                         <Badge variant={expStatus === "expired" || expStatus === "critical" ? "critical" : expStatus === "warning" ? "warning" : "success"} className="text-xs mt-1">
                           {daysToExp < 0 ? "Expired" : daysToExp === 0 ? "Expires today" : `${daysToExp}d left`}
@@ -232,11 +232,11 @@ export default function DocumentsPage() {
                   {/* View link if we have a real URL */}
                   {d.file_url && !d.file_url.startsWith("pending://") && !d.file_url.startsWith("demo://") && (
                     <a href={d.file_url} target="_blank" rel="noopener noreferrer"
-                      className="block text-xs text-indigo-400 hover:underline mt-2">
+                      className="block text-xs text-indigo-600 hover:underline mt-2">
                       View document →
                     </a>
                   )}
-                  {d.notes && <p className="text-xs text-slate-500 mt-2 italic">{d.notes}</p>}
+                  {d.notes && <p className="text-xs text-gray-400 mt-2 italic">{d.notes}</p>}
                 </CardContent>
               </Card>
             );

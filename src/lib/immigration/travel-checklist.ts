@@ -2,7 +2,7 @@
 // Pre-Travel Checklist Generator — Domain Logic
 // CFR: 8 CFR 214.2(f)(5), 22 CFR 41.112 (visa stamp)
 // ============================================================
-import { differenceInCalendarDays, parseISO, format, addMonths } from "date-fns";
+import { differenceInCalendarDays, parseISO, format, addMonths, isAfter } from "date-fns";
 
 export type CheckStatus = "pass" | "warn" | "fail" | "unknown";
 
@@ -36,7 +36,6 @@ export interface TravelChecklistInput {
 export function generateTravelChecklist(input: TravelChecklistInput): CheckItem[] {
   const departure = parseISO(input.departureDate);
   const returnDate = input.returnDate ? parseISO(input.returnDate) : null;
-  const today = new Date();
   const tripDays = returnDate ? differenceInCalendarDays(returnDate, departure) : null;
 
   const items: CheckItem[] = [];
@@ -185,7 +184,6 @@ export function generateTravelChecklist(input: TravelChecklistInput): CheckItem[
     // OPT unemployment check — traveling while unemployed burns days
     const remaining = input.unemploymentLimit - input.unemploymentDaysUsed;
     if (tripDays !== null && remaining > 0) {
-      const wouldUse = Math.min(tripDays, remaining);
       const afterTrip = input.unemploymentDaysUsed + (tripDays > 0 ? tripDays : 0);
       items.push({
         id: "unemployment",
@@ -199,15 +197,19 @@ export function generateTravelChecklist(input: TravelChecklistInput): CheckItem[
   }
 
   // ── 6. Trip length (5-month rule) ────────────────────────
+  // CFR: 8 CFR 214.2(f)(5)(iv) — 5 calendar months, not a fixed day count
   if (tripDays !== null && tripDays >= 120) {
+    const fiveMonthsLater = addMonths(departure, 5);
+    const effectiveReturn = returnDate ?? new Date(departure.getTime() + tripDays * 86400000);
+    const exceedsFiveMonths = isAfter(effectiveReturn, fiveMonthsLater);
     items.push({
       id: "five_month",
       title: "Trip Length — 5-Month Rule",
-      status: tripDays >= 150 ? "fail" : "warn",
-      detail: tripDays >= 150
-        ? `This trip is ${tripDays} days — exceeding the 5-month (≈150 day) limit. Staying outside the US for 5+ consecutive months may result in automatic SEVIS termination.`
+      status: exceedsFiveMonths ? "fail" : "warn",
+      detail: exceedsFiveMonths
+        ? `This trip exceeds 5 calendar months (${format(fiveMonthsLater, "MMM d, yyyy")}). Staying outside the US for 5+ consecutive months may result in automatic SEVIS termination.`
         : `This trip is ${tripDays} days. Approaching the 5-month limit. Consult your DSO before travel.`,
-      action: "Speak with your DSO before any trip longer than 5 months (≈150 days)",
+      action: "Speak with your DSO before any trip longer than 5 calendar months",
       cfr: "8 CFR 214.2(f)(5)(iv)",
     });
   }

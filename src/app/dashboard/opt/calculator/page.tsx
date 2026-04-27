@@ -132,10 +132,10 @@ function calculate(input: {
 }
 
 const STATUS_STYLES = {
-  info: { bg: "bg-blue-900/20 border-blue-800/30", dot: "bg-blue-400", text: "text-blue-300" },
-  warning: { bg: "bg-amber-900/20 border-amber-800/30", dot: "bg-amber-400", text: "text-amber-300" },
-  critical: { bg: "bg-red-900/20 border-red-800/30", dot: "bg-red-400", text: "text-red-300" },
-  success: { bg: "bg-emerald-900/20 border-emerald-800/30", dot: "bg-emerald-400", text: "text-emerald-300" },
+  info: { bg: "bg-blue-50 border-blue-200", dot: "bg-blue-400", text: "text-blue-700" },
+  warning: { bg: "bg-amber-50 border-amber-200", dot: "bg-amber-400", text: "text-amber-700" },
+  critical: { bg: "bg-red-50 border-red-200", dot: "bg-red-400", text: "text-red-700" },
+  success: { bg: "bg-emerald-50 border-emerald-200", dot: "bg-emerald-400", text: "text-emerald-700" },
 };
 
 export default function CalculatorPage() {
@@ -153,11 +153,11 @@ export default function CalculatorPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-slate-500 hover:text-slate-300 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">Employment Authorization Calculator</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Employment Authorization Calculator</h1>
       </div>
-      <p className="text-slate-400 text-sm -mt-4">
+      <p className="text-gray-500 text-sm -mt-4">
         Enter your dates to see exactly when you can work, when you must stop, and all critical deadlines.
       </p>
 
@@ -168,40 +168,40 @@ export default function CalculatorPage() {
             <CardHeader className="pb-3"><CardTitle className="text-base">Your Dates</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">OPT Type</label>
+                <label className="block text-sm text-gray-600 mb-1.5">OPT Type</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { value: "standard", label: "Standard OPT", sub: "12 months" },
                     { value: "stem_eligible", label: "STEM OPT", sub: "12 + 24 months" },
                   ].map((opt) => (
                     <button key={opt.value} onClick={() => set("optType", opt.value)}
-                      className={`p-3 rounded-lg border text-left transition-colors ${form.optType === opt.value ? "border-indigo-600 bg-indigo-600/10" : "border-slate-700 hover:border-slate-600"}`}>
-                      <p className="text-sm font-medium text-white">{opt.label}</p>
-                      <p className="text-xs text-slate-500">{opt.sub}</p>
+                      className={`p-3 rounded-lg border text-left transition-colors ${form.optType === opt.value ? "border-indigo-600 bg-indigo-50" : "border-gray-200 hover:border-slate-600"}`}>
+                      <p className="text-sm font-medium text-gray-900">{opt.label}</p>
+                      <p className="text-xs text-gray-400">{opt.sub}</p>
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">Program End Date *</label>
+                <label className="block text-sm text-gray-600 mb-1.5">Program End Date *</label>
                 <Input type="date" value={form.programEndDate} onChange={(e) => set("programEndDate", e.target.value)} />
-                <p className="text-xs text-slate-500 mt-1">The I-20 program end date (not graduation date)</p>
+                <p className="text-xs text-gray-400 mt-1">The I-20 program end date (not graduation date)</p>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">OPT Start Date (EAD)</label>
+                <label className="block text-sm text-gray-600 mb-1.5">OPT Start Date (EAD)</label>
                 <Input type="date" value={form.optStartDate} onChange={(e) => set("optStartDate", e.target.value)} />
-                <p className="text-xs text-slate-500 mt-1">The start date printed on your EAD card</p>
+                <p className="text-xs text-gray-400 mt-1">The start date printed on your EAD card</p>
               </div>
               <div>
-                <label className="block text-sm text-slate-300 mb-1.5">OPT End Date (EAD)</label>
+                <label className="block text-sm text-gray-600 mb-1.5">OPT End Date (EAD)</label>
                 <Input type="date" value={form.eadEndDate} onChange={(e) => set("eadEndDate", e.target.value)} />
-                <p className="text-xs text-slate-500 mt-1">The end date printed on your EAD card</p>
+                <p className="text-xs text-gray-400 mt-1">The end date printed on your EAD card</p>
               </div>
               {form.optType === "stem_eligible" && (
                 <div>
-                  <label className="block text-sm text-slate-300 mb-1.5">STEM Extension End Date</label>
+                  <label className="block text-sm text-gray-600 mb-1.5">STEM Extension End Date</label>
                   <Input type="date" value={form.stemEndDate} onChange={(e) => set("stemEndDate", e.target.value)} />
-                  <p className="text-xs text-slate-500 mt-1">If STEM extension approved: end date on new EAD</p>
+                  <p className="text-xs text-gray-400 mt-1">If STEM extension approved: end date on new EAD</p>
                 </div>
               )}
             </CardContent>
@@ -209,15 +209,15 @@ export default function CalculatorPage() {
 
           {/* Key rules */}
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-sm text-slate-400">Key Rules — Know These</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-sm text-gray-500">Key Rules — Know These</CardTitle></CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-xs text-slate-500">
-                <li className="flex gap-2"><span className="text-red-400">✗</span> Cannot work before EAD start date printed on card</li>
-                <li className="flex gap-2"><span className="text-red-400">✗</span> Cannot work after EAD end date (unless STEM extension approved)</li>
-                <li className="flex gap-2"><span className="text-red-400">✗</span> Receipt notice does NOT authorize work — only physical EAD card</li>
-                <li className="flex gap-2"><span className="text-amber-400">△</span> STEM: must have E-Verify employer</li>
-                <li className="flex gap-2"><span className="text-amber-400">△</span> STEM: timely filed = 180-day automatic extension</li>
-                <li className="flex gap-2"><span className="text-emerald-400">✓</span> Grace period = 60 days to change status, NOT to work</li>
+              <ul className="space-y-2 text-xs text-gray-400">
+                <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work before EAD start date printed on card</li>
+                <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work after EAD end date (unless STEM extension approved)</li>
+                <li className="flex gap-2"><span className="text-red-600">✗</span> Receipt notice does NOT authorize work — only physical EAD card</li>
+                <li className="flex gap-2"><span className="text-amber-600">△</span> STEM: must have E-Verify employer</li>
+                <li className="flex gap-2"><span className="text-amber-600">△</span> STEM: timely filed = 180-day automatic extension</li>
+                <li className="flex gap-2"><span className="text-emerald-600">✓</span> Grace period = 60 days to change status, NOT to work</li>
               </ul>
             </CardContent>
           </Card>
@@ -226,7 +226,7 @@ export default function CalculatorPage() {
         {/* Results */}
         <div className="space-y-3">
           {results.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-slate-500 text-sm">
+            <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
               Enter your program end date to see results
             </div>
           ) : (
@@ -237,9 +237,9 @@ export default function CalculatorPage() {
                   <div className="flex items-start gap-2 mb-1">
                     <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${s.dot}`} />
                     <div className="flex-1">
-                      <p className="text-xs text-slate-500 mb-0.5">{r.label}</p>
+                      <p className="text-xs text-gray-400 mb-0.5">{r.label}</p>
                       <p className={`font-semibold text-sm ${s.text}`}>{r.value}</p>
-                      {r.note && <p className="text-xs text-slate-400 mt-1 leading-relaxed">{r.note}</p>}
+                      {r.note && <p className="text-xs text-gray-500 mt-1 leading-relaxed">{r.note}</p>}
                     </div>
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export default function CalculatorPage() {
           )}
 
           {results.length > 0 && (
-            <div className="text-xs text-slate-600 text-center pt-2">
+            <div className="text-xs text-gray-400 text-center pt-2">
               Always verify with your DSO or immigration attorney. Rules change.
             </div>
           )}

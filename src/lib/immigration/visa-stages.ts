@@ -1,7 +1,7 @@
 // ============================================================
 // Visa Stage Engine — determines current F-1 stage and rules
 // ============================================================
-import { differenceInCalendarDays, parseISO, addDays, addMonths, format } from "date-fns";
+import { differenceInCalendarDays, parseISO, addDays, format } from "date-fns";
 
 export type VisaStage =
   | "f1_active"
@@ -47,7 +47,6 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
   const progEnd = input.programEndDate ? parseISO(input.programEndDate) : null;
   const eadStart = input.eadStartDate ? parseISO(input.eadStartDate) : null;
   const eadEnd = input.eadEndDate ? parseISO(input.eadEndDate) : null;
-  const stemEnd = input.stemEndDate ? parseISO(input.stemEndDate) : null;
 
   // ── Stage 1: F-1 Student Active ───────────────────────────
   const f1End = eadStart ?? progEnd;
@@ -142,13 +141,14 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
       isCompleted: today > eadEnd,
       isFuture: today < eadStart,
       rules: [
-        "Employer MUST be E-Verify enrolled — verify before accepting offer",
-        "I-983 Training Plan must be signed by employer before starting",
-        "Validation reports required at 6, 12, 18, and 24 months",
-        "21-day window for each validation report — missing it is NON-RECOVERABLE",
-        "Max 150 total unemployment days (includes 90 from original OPT)",
-        "Must report employer changes to DSO within 10 days",
-        "Must report if laid off or voluntarily quit within 10 days",
+        "Employer MUST be E-Verify enrolled — no self-employment, no 1099, no unpaid/volunteer work",
+        "I-983 Training Plan must be signed by employer AND submitted to DSO before starting",
+        "Validation reports due at 6, 12, 18, 24 months — student has 10 business days to report to DSO",
+        "Self-evaluations (I-983 page 5) due at 12 and 24 months — signed by student AND employer",
+        "150 days is the CUMULATIVE unemployment cap across ALL of OPT + STEM OPT combined — not a fresh counter",
+        "Time abroad while unemployed counts toward the 150-day cap",
+        "Report employer changes to DSO within 10 days; new I-983 required within 10 days of new employer",
+        "Employer must report termination/departure to DSO within 5 business days",
       ],
       warnings: daysLeft <= 90 && daysLeft > 0
         ? [`STEM OPT expires in ${daysLeft} days — ${daysLeft <= 180 ? "file H-1B or prepare to change status" : ""}`]
@@ -186,16 +186,22 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
 
   // ── Stage 6: H-1B Cap-Gap ────────────────────────────────
   if (input.h1bPetitionFiled) {
+    // Cap-gap extends until Oct 1 of the H-1B fiscal year (the next Oct 1 after EAD ends)
+    const capGapRef = activeEadEnd ?? today;
+    const oct1SameYear = new Date(capGapRef.getFullYear(), 9, 1);
+    const h1bStartDate = capGapRef < oct1SameYear ? oct1SameYear : new Date(capGapRef.getFullYear() + 1, 9, 1);
+    const h1bStartStr = format(h1bStartDate, "yyyy-MM-dd");
+
     stages.push({
       id: "h1b_cap_gap",
       label: "H-1B Cap-Gap",
       icon: "🏢",
       color: "blue",
       startDate: activeEadEnd ? format(addDays(activeEadEnd, 1), "yyyy-MM-dd") : null,
-      endDate: "2025-10-01", // H-1B start date
-      isCurrent: false,
-      isCompleted: false,
-      isFuture: true,
+      endDate: h1bStartStr,
+      isCurrent: activeEadEnd ? today > activeEadEnd && today < h1bStartDate : false,
+      isCompleted: today >= h1bStartDate,
+      isFuture: activeEadEnd ? today <= activeEadEnd : true,
       rules: [
         "H-1B petition filed and selected in lottery",
         "Cap-gap extends OPT work authorization until H-1B start (Oct 1)",

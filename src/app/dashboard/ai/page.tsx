@@ -11,7 +11,9 @@ const SUGGESTED = [
   "What happens if my STEM OPT extension is pending when my OPT expires?",
   "Do I need to file taxes if I had no US income?",
   "What documents do I need to re-enter the US after travel?",
-  "Can I travel outside the US while my OPT is pending?",
+  "How do I get an SSN as an international student?",
+  "What's the cheapest way to send money home?",
+  "How do I build credit history in the US?",
 ];
 
 export default function AIPage() {
@@ -55,8 +57,8 @@ export default function AIPage() {
     <div className="flex flex-col h-[calc(100vh-7rem)]">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-white">AI Immigration Assistant</h1>
-        <p className="text-slate-400 text-sm">Powered by Groq + Llama 3.3 · Ask any F-1 compliance question</p>
+        <h1 className="text-2xl font-bold text-gray-900">AI Immigration Assistant</h1>
+        <p className="text-gray-500 text-sm">Powered by Groq + Llama 3.3 · Ask any F-1 compliance question</p>
       </div>
 
       {/* Chat area */}
@@ -64,14 +66,14 @@ export default function AIPage() {
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center">
             <div className="text-5xl mb-4">🤖</div>
-            <h2 className="text-xl font-semibold text-white mb-2">Ask anything about F-1 compliance</h2>
-            <p className="text-slate-400 text-sm mb-8 max-w-sm">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Ask anything about F-1 compliance</h2>
+            <p className="text-gray-500 text-sm mb-8 max-w-sm">
               Get quick answers about OPT, travel, taxes, SEVIS, and more — with CFR references.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full max-w-2xl">
               {SUGGESTED.map((q) => (
                 <button key={q} onClick={() => send(q)}
-                  className="text-left p-3 rounded-lg bg-slate-900 border border-slate-800 text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors hover:border-indigo-800/50">
+                  className="text-left p-3 rounded-lg bg-white border border-gray-200 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors hover:border-indigo-200">
                   {q}
                 </button>
               ))}
@@ -83,8 +85,8 @@ export default function AIPage() {
               <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
                   m.role === "user"
-                    ? "bg-indigo-600 text-white rounded-br-sm"
-                    : "bg-slate-900 border border-slate-800 text-slate-200 rounded-bl-sm"
+                    ? "bg-indigo-600 text-gray-900 rounded-br-sm"
+                    : "bg-white border border-gray-200 text-gray-700 rounded-bl-sm"
                 }`}>
                   {m.role === "assistant" ? (
                     <div className="space-y-2 whitespace-pre-wrap leading-relaxed">{m.content}</div>
@@ -94,7 +96,7 @@ export default function AIPage() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl rounded-bl-sm px-4 py-3">
+                <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3">
                   <div className="flex gap-1 items-center">
                     <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "0ms" }} />
                     <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: "150ms" }} />
@@ -109,7 +111,7 @@ export default function AIPage() {
       </div>
 
       {/* Disclaimer */}
-      <div className="text-xs text-slate-600 text-center mb-3">
+      <div className="text-xs text-gray-400 text-center mb-3">
         AI responses are informational only and not legal advice. Verify with your DSO or immigration attorney.
       </div>
 

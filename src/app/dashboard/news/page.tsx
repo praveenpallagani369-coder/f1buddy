@@ -15,9 +15,9 @@ interface Article {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  Rule: "bg-red-500/10 text-red-400 border-red-800/30",
-  "Proposed Rule": "bg-amber-500/10 text-amber-400 border-amber-800/30",
-  Notice: "bg-blue-500/10 text-blue-400 border-blue-800/30",
+  Rule: "bg-red-500/10 text-red-600 border-red-200",
+  "Proposed Rule": "bg-amber-500/10 text-amber-600 border-amber-200",
+  Notice: "bg-blue-500/10 text-blue-600 border-blue-200",
   "Presidential Document": "bg-purple-500/10 text-purple-400 border-purple-800/30",
 };
 
@@ -42,14 +42,14 @@ export default function NewsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Immigration News</h1>
-        <p className="text-slate-400 text-sm">Latest Federal Register updates affecting international students</p>
+        <h1 className="text-2xl font-bold text-gray-900">Immigration News</h1>
+        <p className="text-gray-500 text-sm">Latest Federal Register updates affecting international students</p>
       </div>
 
       {/* Alert banner */}
-      <div className="p-4 rounded-xl bg-amber-900/10 border border-amber-800/30">
-        <p className="text-sm text-amber-300 font-medium">Stay Informed</p>
-        <p className="text-xs text-amber-400/80 mt-0.5">
+      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <p className="text-sm text-amber-700 font-medium">Stay Informed</p>
+        <p className="text-xs text-amber-600/80 mt-0.5">
           Immigration rules can change. These are official Federal Register documents from DHS/USCIS.
           &quot;Proposed Rules&quot; are not yet final — &quot;Rules&quot; are active law.
         </p>
@@ -68,14 +68,14 @@ export default function NewsPage() {
       {loading ? (
         <div className="text-center py-12">
           <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-slate-400">Fetching latest immigration news...</p>
+          <p className="text-sm text-gray-500">Fetching latest immigration news...</p>
         </div>
       ) : articles.length === 0 ? (
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-2">📰</p>
-            <p className="text-slate-400">No recent immigration news found</p>
-            <p className="text-xs text-slate-500 mt-1">Check back later — the Federal Register publishes daily on weekdays</p>
+            <p className="text-gray-500">No recent immigration news found</p>
+            <p className="text-xs text-gray-400 mt-1">Check back later — the Federal Register publishes daily on weekdays</p>
           </CardContent>
         </Card>
       ) : (
@@ -94,20 +94,20 @@ export default function NewsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1.5">
                         <Badge
-                          className={`text-xs border ${TYPE_COLORS[article.type] ?? "bg-slate-800 text-slate-400 border-slate-700"}`}
+                          className={`text-xs border ${TYPE_COLORS[article.type] ?? "bg-gray-100 text-gray-500 border-gray-200"}`}
                         >
                           {article.type}
                         </Badge>
-                        <span className="text-xs text-slate-500">{article.agency}</span>
+                        <span className="text-xs text-gray-400">{article.agency}</span>
                       </div>
-                      <h3 className="text-sm text-white font-medium leading-snug mb-1">{article.title}</h3>
+                      <h3 className="text-sm text-gray-900 font-medium leading-snug mb-1">{article.title}</h3>
                       {article.summary && (
-                        <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">{article.summary}</p>
+                        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{article.summary}</p>
                       )}
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-xs text-slate-500">{format(parseISO(article.date), "MMM d, yyyy")}</p>
-                      <p className="text-xs text-indigo-400 mt-1">Read &rarr;</p>
+                      <p className="text-xs text-gray-400">{format(parseISO(article.date), "MMM d, yyyy")}</p>
+                      <p className="text-xs text-indigo-600 mt-1">Read &rarr;</p>
                     </div>
                   </div>
                 </CardContent>
@@ -132,13 +132,13 @@ export default function NewsPage() {
               href={r.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800 hover:border-indigo-800/50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg bg-gray-100 border border-gray-200 hover:border-indigo-200 transition-colors"
             >
               <div>
-                <p className="text-sm text-white font-medium">{r.name}</p>
-                <p className="text-xs text-slate-400">{r.desc}</p>
+                <p className="text-sm text-gray-900 font-medium">{r.name}</p>
+                <p className="text-xs text-gray-500">{r.desc}</p>
               </div>
-              <span className="text-indigo-400 text-sm">&rarr;</span>
+              <span className="text-indigo-600 text-sm">&rarr;</span>
             </a>
           ))}
         </CardContent>

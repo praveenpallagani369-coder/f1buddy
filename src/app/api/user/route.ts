@@ -1,17 +1,18 @@
 import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
+import { decryptIfPresent } from "@/lib/crypto";
 import { z } from "zod";
 
 const updateSchema = z.object({
-  name: z.string().min(2).optional(),
-  schoolName: z.string().optional().nullable(),
-  programName: z.string().optional().nullable(),
-  degreeLevel: z.string().optional().nullable(),
+  name: z.string().min(2).max(100).optional(),
+  schoolName: z.string().max(200).optional().nullable(),
+  programName: z.string().max(200).optional().nullable(),
+  degreeLevel: z.string().max(50).optional().nullable(),
   programStartDate: z.string().optional().nullable(),
   programEndDate: z.string().optional().nullable(),
-  dsoName: z.string().optional().nullable(),
+  dsoName: z.string().max(100).optional().nullable(),
   dsoEmail: z.string().email().optional().nullable().or(z.literal("")),
-  dsoPhone: z.string().optional().nullable(),
-  homeCountry: z.string().optional().nullable(),
+  dsoPhone: z.string().max(30).optional().nullable(),
+  homeCountry: z.string().max(100).optional().nullable(),
   passportExpiry: z.string().optional().nullable(),
   visaStampExpiry: z.string().optional().nullable(),
   i20TravelSignatureDate: z.string().optional().nullable(),
@@ -23,9 +24,17 @@ export async function GET() {
 
   const { data } = await supabase
     .from("users")
-    .select("id,email,name,avatar_url,visa_type,school_name,program_name,degree_level,program_start_date,program_end_date,dso_name,dso_email,dso_phone,home_country,passport_expiry,visa_stamp_expiry,i20_travel_signature_date,role,onboarding_completed,created_at")
+    .select("id,email,name,avatar_url,visa_type,sevis_id_encrypted,school_name,program_name,degree_level,program_start_date,program_end_date,dso_name,dso_email,dso_phone,home_country,passport_expiry,visa_stamp_expiry,i20_travel_signature_date,role,onboarding_completed,created_at")
     .eq("id", user.id)
     .single();
+
+  if (data) {
+    const { sevis_id_encrypted, ...rest } = data as typeof data & { sevis_id_encrypted?: string };
+    return ok({
+      ...rest,
+      sevisId: decryptIfPresent(sevis_id_encrypted),
+    });
+  }
 
   return ok(data);
 }
@@ -38,7 +47,7 @@ export async function PATCH(request: Request) {
   const parsed = updateSchema.safeParse(body);
   if (!parsed.success) return err("VALIDATION", parsed.error.issues[0]?.message ?? "Invalid input");
 
-  const updates: Record<string, any> = { updated_at: new Date().toISOString() };
+  const updates: Record<string, string | boolean | null> = { updated_at: new Date().toISOString() };
   if (parsed.data.name !== undefined) updates.name = parsed.data.name;
   if (parsed.data.schoolName !== undefined) updates.school_name = parsed.data.schoolName;
   if (parsed.data.programName !== undefined) updates.program_name = parsed.data.programName;

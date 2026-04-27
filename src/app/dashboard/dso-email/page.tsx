@@ -265,18 +265,18 @@ function DSOEmailContent() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold text-white">DSO Email Generator</h1>
-        <p className="text-slate-400 text-sm mt-0.5">Professional, pre-written emails for common DSO requests — fill in a few fields, copy, and send.</p>
+        <h1 className="text-2xl font-bold text-gray-900">DSO Email Generator</h1>
+        <p className="text-gray-500 text-sm mt-0.5">Professional, pre-written emails for common DSO requests — fill in a few fields, copy, and send.</p>
       </div>
 
       {/* Template selector */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {TEMPLATES.map((t) => (
           <button key={t.id} onClick={() => { setSelectedTemplate(t.id); setFields({}); }}
-            className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-600/10" : "border-slate-800 bg-slate-900 hover:border-slate-700"}`}>
+            className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white hover:border-gray-200"}`}>
             <span className="text-xl mb-2 block">{t.icon}</span>
-            <p className="text-sm font-medium text-white">{t.title}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{t.description}</p>
+            <p className="text-sm font-medium text-gray-900">{t.title}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t.description}</p>
           </button>
         ))}
       </div>
@@ -289,12 +289,12 @@ function DSOEmailContent() {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Auto-filled profile notice */}
-            <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700 text-xs text-slate-400">
+            <div className="p-3 rounded-lg bg-gray-100 border border-gray-200 text-xs text-gray-500">
               ✨ Your name, SEVIS ID, program, and DSO info are automatically filled from your profile.
             </div>
             {template.fields.map((field) => (
               <div key={field.id}>
-                <label className="block text-sm text-slate-300 mb-1.5">{field.label}</label>
+                <label className="block text-sm text-gray-600 mb-1.5">{field.label}</label>
                 <Input
                   type={field.type ?? "text"}
                   placeholder={field.placeholder}
@@ -312,13 +312,13 @@ function DSOEmailContent() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Subject Line</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider">Subject Line</p>
                 <button onClick={() => copy("subject")}
-                  className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                  className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors">
                   {copied === "subject" ? "✓ Copied!" : "Copy"}
                 </button>
               </div>
-              <p className="text-sm text-white font-medium">{email.subject}</p>
+              <p className="text-sm text-gray-900 font-medium">{email.subject}</p>
             </CardContent>
           </Card>
 
@@ -326,13 +326,13 @@ function DSOEmailContent() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs text-slate-500 uppercase tracking-wider">Email Body</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider">Email Body</p>
                 <button onClick={() => copy("body")}
-                  className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                  className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors">
                   {copied === "body" ? "✓ Copied!" : "Copy"}
                 </button>
               </div>
-              <pre className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto font-sans">
+              <pre className="text-xs text-gray-600 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto font-sans">
                 {email.body}
               </pre>
             </CardContent>
@@ -350,8 +350,8 @@ function DSOEmailContent() {
             )}
           </div>
           {!profile.dso_email && (
-            <p className="text-xs text-slate-500 text-center">
-              Add your DSO email in <a href="/dashboard/profile" className="text-indigo-400 hover:underline">Profile</a> to enable one-click mail
+            <p className="text-xs text-gray-400 text-center">
+              Add your DSO email in <a href="/dashboard/profile" className="text-indigo-600 hover:underline">Profile</a> to enable one-click mail
             </p>
           )}
         </div>
@@ -362,7 +362,7 @@ function DSOEmailContent() {
 
 export default function DSOEmailPage() {
   return (
-    <Suspense fallback={<div className="text-slate-400 text-center py-20">Loading...</div>}>
+    <Suspense fallback={<div className="text-gray-500 text-center py-20">Loading...</div>}>
       <DSOEmailContent />
     </Suspense>
   );

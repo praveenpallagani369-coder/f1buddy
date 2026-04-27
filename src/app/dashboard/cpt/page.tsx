@@ -14,9 +14,9 @@ const FULL_TIME_CPT_OPT_DISQUALIFY_DAYS = 365;
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
     <div>
-      <label className="block text-sm text-slate-300 mb-1.5">{label}</label>
+      <label className="block text-sm text-gray-600 mb-1.5">{label}</label>
       {children}
-      {hint && <p className="text-xs text-slate-500 mt-1">{hint}</p>}
+      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -98,23 +98,23 @@ export default function CPTPage() {
   const optEligibilityRisk = fullTimeDays >= FULL_TIME_CPT_OPT_DISQUALIFY_DAYS;
   const optEligibilityWarning = fullTimeDays >= 300 && !optEligibilityRisk;
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading CPT records...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading CPT records...</div>;
 
   if (!tableExists) {
     return (
       <div className="max-w-2xl space-y-6">
-        <h1 className="text-2xl font-bold text-white">CPT Tracker</h1>
-        <Card className="border-amber-800/50">
+        <h1 className="text-2xl font-bold text-gray-900">CPT Tracker</h1>
+        <Card className="border-amber-200">
           <CardContent className="p-6">
-            <p className="text-amber-300 font-medium mb-2">🔧 Database setup required</p>
-            <p className="text-sm text-slate-400 mb-4">
+            <p className="text-amber-700 font-medium mb-2">🔧 Database setup required</p>
+            <p className="text-sm text-gray-500 mb-4">
               The CPT records table needs to be created in your Supabase database. Run the migration below in your Supabase SQL Editor.
             </p>
-            <div className="p-3 rounded-lg bg-slate-900 border border-slate-700 font-mono text-xs text-slate-300 overflow-x-auto">
+            <div className="p-3 rounded-lg bg-white border border-gray-200 font-mono text-xs text-gray-600 overflow-x-auto">
               <p>Go to: supabase.com → your project → SQL Editor</p>
               <p className="mt-1">Run the file: <strong>supabase/migrations/003_cpt_records.sql</strong></p>
             </div>
-            <p className="text-xs text-slate-500 mt-3">After running the migration, refresh this page.</p>
+            <p className="text-xs text-gray-400 mt-3">After running the migration, refresh this page.</p>
           </CardContent>
         </Card>
       </div>
@@ -125,26 +125,26 @@ export default function CPTPage() {
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">CPT Tracker</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Curricular Practical Training — authorization tied to your I-20 and a specific course</p>
+          <h1 className="text-2xl font-bold text-gray-900">CPT Tracker</h1>
+          <p className="text-gray-500 text-sm mt-0.5">Curricular Practical Training — authorization tied to your I-20 and a specific course</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add CPT Record</Button>
       </div>
 
       {/* OPT eligibility warning */}
       {optEligibilityRisk && (
-        <div className="p-4 rounded-xl bg-red-900/20 border border-red-800/30">
-          <p className="text-sm font-bold text-red-300 mb-1">🚨 OPT Ineligibility Risk — Full-time CPT Used: {fullTimeDays} days</p>
-          <p className="text-sm text-red-200">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+          <p className="text-sm font-bold text-red-700 mb-1">🚨 OPT Ineligibility Risk — Full-time CPT Used: {fullTimeDays} days</p>
+          <p className="text-sm text-red-800">
             You have used <strong>{fullTimeDays} days</strong> of full-time CPT. Students who accumulate <strong>12+ months of full-time CPT become ineligible for OPT</strong>. — 8 CFR 214.2(f)(10)(i)
           </p>
-          <p className="text-xs text-red-400 mt-2">Contact your DSO immediately to understand your OPT eligibility status.</p>
+          <p className="text-xs text-red-600 mt-2">Contact your DSO immediately to understand your OPT eligibility status.</p>
         </div>
       )}
       {optEligibilityWarning && (
-        <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
-          <p className="text-sm font-semibold text-amber-300 mb-1">⚠️ Approaching 12-Month Full-time CPT Limit — {fullTimeDays} days used</p>
-          <p className="text-sm text-amber-200">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+          <p className="text-sm font-semibold text-amber-700 mb-1">⚠️ Approaching 12-Month Full-time CPT Limit — {fullTimeDays} days used</p>
+          <p className="text-sm text-amber-800">
             You have {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS - fullTimeDays} days of full-time CPT remaining before you lose OPT eligibility.
             After 12 months of full-time CPT, you cannot use OPT. — 8 CFR 214.2(f)(10)(i)
           </p>
@@ -155,23 +155,23 @@ export default function CPTPage() {
       <div className="grid sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-slate-500 mb-1">Total CPT Records</p>
-            <p className="text-2xl font-bold text-white">{records.length}</p>
+            <p className="text-xs text-gray-400 mb-1">Total CPT Records</p>
+            <p className="text-2xl font-bold text-gray-900">{records.length}</p>
           </CardContent>
         </Card>
-        <Card className={optEligibilityRisk ? "border-red-800/50" : optEligibilityWarning ? "border-amber-800/50" : ""}>
+        <Card className={optEligibilityRisk ? "border-red-200" : optEligibilityWarning ? "border-amber-200" : ""}>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-slate-500 mb-1">Full-time CPT Days</p>
-            <p className={`text-2xl font-bold ${optEligibilityRisk ? "text-red-400" : optEligibilityWarning ? "text-amber-400" : "text-white"}`}>
+            <p className="text-xs text-gray-400 mb-1">Full-time CPT Days</p>
+            <p className={`text-2xl font-bold ${optEligibilityRisk ? "text-red-600" : optEligibilityWarning ? "text-amber-600" : "text-gray-900"}`}>
               {fullTimeDays}
             </p>
-            <p className="text-xs text-slate-500">/ {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS} day OPT limit</p>
+            <p className="text-xs text-gray-400">/ {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS} day OPT limit</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-slate-500 mb-1">OPT Eligibility</p>
-            <p className={`text-lg font-bold ${optEligibilityRisk ? "text-red-400" : optEligibilityWarning ? "text-amber-400" : "text-emerald-400"}`}>
+            <p className="text-xs text-gray-400 mb-1">OPT Eligibility</p>
+            <p className={`text-lg font-bold ${optEligibilityRisk ? "text-red-600" : optEligibilityWarning ? "text-amber-600" : "text-emerald-600"}`}>
               {optEligibilityRisk ? "At Risk" : optEligibilityWarning ? "Watch" : "Eligible"}
             </p>
           </CardContent>
@@ -179,8 +179,8 @@ export default function CPTPage() {
       </div>
 
       {/* CPT Rules */}
-      <Card className="border-slate-700/50">
-        <CardHeader className="pb-3"><CardTitle className="text-sm text-slate-300">📋 CPT Rules Summary</CardTitle></CardHeader>
+      <Card className="border-gray-200/50">
+        <CardHeader className="pb-3"><CardTitle className="text-sm text-gray-600">📋 CPT Rules Summary</CardTitle></CardHeader>
         <CardContent>
           <div className="grid sm:grid-cols-2 gap-3 text-sm">
             {[
@@ -194,8 +194,8 @@ export default function CPTPage() {
               { rule: "8 CFR 214.2(f)(10)(i) — authorization required per semester", crit: false },
             ].map((item) => (
               <div key={item.rule} className="flex items-start gap-2">
-                <span className={`flex-shrink-0 mt-0.5 ${item.crit ? "text-red-400" : "text-emerald-400"}`}>{item.crit ? "⚠" : "✓"}</span>
-                <span className="text-slate-400">{item.rule}</span>
+                <span className={`flex-shrink-0 mt-0.5 ${item.crit ? "text-red-600" : "text-emerald-600"}`}>{item.crit ? "⚠" : "✓"}</span>
+                <span className="text-gray-500">{item.rule}</span>
               </div>
             ))}
           </div>
@@ -204,7 +204,7 @@ export default function CPTPage() {
 
       {/* Add Record Form */}
       {showForm && (
-        <Card className="border-indigo-800/50">
+        <Card className="border-indigo-200">
           <CardHeader><CardTitle className="text-base">Add CPT Record</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
@@ -235,14 +235,14 @@ export default function CPTPage() {
                 { label: "I-20 authorized for this CPT (required before starting)", field: "isAuthorizedOnI20" },
                 { label: "Currently working here", field: "isCurrent" },
               ].map(({ label, field }) => (
-                <label key={field} className="flex items-center gap-2 text-slate-300 cursor-pointer">
+                <label key={field} className="flex items-center gap-2 text-gray-600 cursor-pointer">
                   <input type="checkbox" checked={form[field as keyof typeof form] as boolean} onChange={(e) => set(field, e.target.checked)} />
                   {label}
                 </label>
               ))}
             </div>
             {!form.isAuthorizedOnI20 && (
-              <div className="p-3 rounded-lg bg-red-900/20 border border-red-800/30 text-sm text-red-300">
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
                 🚨 You CANNOT start CPT without an updated I-20 authorizing this employer. Contact your DSO first.
               </div>
             )}
@@ -259,7 +259,7 @@ export default function CPTPage() {
         <CardHeader><CardTitle className="text-base">CPT History</CardTitle></CardHeader>
         <CardContent>
           {records.length === 0 ? (
-            <div className="text-center py-8 text-slate-400">
+            <div className="text-center py-8 text-gray-500">
               <p className="text-2xl mb-2">📚</p>
               <p>No CPT records yet</p>
               <p className="text-xs mt-1">Add your CPT authorizations to track OPT eligibility</p>
@@ -271,23 +271,23 @@ export default function CPTPage() {
                 const end = r.end_date ? parseISO(r.end_date) : today;
                 const duration = differenceInCalendarDays(end, start);
                 return (
-                  <div key={r.id} className="flex items-start justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-800">
+                  <div key={r.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-white font-medium">{r.employer_name}</p>
+                        <p className="text-gray-900 font-medium">{r.employer_name}</p>
                         {r.is_current && <Badge variant="success" className="text-xs">Current</Badge>}
                         <Badge variant={r.cpt_type === "full_time" ? "warning" : "info"} className="text-xs">
                           {r.cpt_type === "full_time" ? "Full-time" : "Part-time"}
                         </Badge>
                         {!r.is_authorized_on_i20 && <Badge variant="critical" className="text-xs">⚠ I-20 not verified</Badge>}
                       </div>
-                      {r.position_title && <p className="text-sm text-slate-400 mt-0.5">{r.position_title}</p>}
-                      {r.course_name && <p className="text-xs text-slate-500 mt-0.5">Course: {r.course_name}</p>}
-                      <p className="text-xs text-slate-500 mt-1">
+                      {r.position_title && <p className="text-sm text-gray-500 mt-0.5">{r.position_title}</p>}
+                      {r.course_name && <p className="text-xs text-gray-400 mt-0.5">Course: {r.course_name}</p>}
+                      <p className="text-xs text-gray-400 mt-1">
                         {r.start_date} → {r.end_date ?? "Present"} · {duration} days
                       </p>
                     </div>
-                    <button onClick={() => deleteRecord(r.id)} className="text-slate-600 hover:text-red-400 text-xs ml-4 flex-shrink-0">
+                    <button onClick={() => deleteRecord(r.id)} className="text-gray-400 hover:text-red-600 text-xs ml-4 flex-shrink-0">
                       Remove
                     </button>
                   </div>

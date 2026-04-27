@@ -167,8 +167,8 @@ export default function GuidesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">New Arrival Guides</h1>
-        <p className="text-slate-400 text-sm">Step-by-step guides for settling into the US as an international student</p>
+        <h1 className="text-2xl font-bold text-gray-900">New Arrival Guides</h1>
+        <p className="text-gray-500 text-sm">Step-by-step guides for settling into the US as an international student</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -177,7 +177,7 @@ export default function GuidesPage() {
           return (
             <Card
               key={guide.id}
-              className={`transition-all cursor-pointer ${isExpanded ? "md:col-span-2 border-indigo-800/50" : "hover:border-slate-600"}`}
+              className={`transition-all cursor-pointer ${isExpanded ? "md:col-span-2 border-indigo-200" : "hover:border-slate-600"}`}
               onClick={() => setExpanded(isExpanded ? null : guide.id)}
             >
               <CardContent className="p-5">
@@ -185,25 +185,25 @@ export default function GuidesPage() {
                   <span className="text-2xl">{guide.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-semibold text-white">{guide.title}</h3>
-                      <span className="text-slate-500 text-sm">{isExpanded ? "▲" : "▼"}</span>
+                      <h3 className="text-base font-semibold text-gray-900">{guide.title}</h3>
+                      <span className="text-gray-400 text-sm">{isExpanded ? "▲" : "▼"}</span>
                     </div>
-                    <p className="text-sm text-slate-400 mt-0.5">{guide.subtitle}</p>
+                    <p className="text-sm text-gray-500 mt-0.5">{guide.subtitle}</p>
 
                     {isExpanded && (
                       <div className="mt-5 space-y-6" onClick={(e) => e.stopPropagation()}>
                         {/* Steps */}
                         <div>
-                          <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">Steps</p>
+                          <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">Steps</p>
                           <div className="space-y-3">
                             {guide.steps.map((step, i) => (
                               <div key={i} className="flex gap-3">
-                                <div className="w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-700 flex items-center justify-center text-xs text-indigo-300 font-bold flex-shrink-0 mt-0.5">
+                                <div className="w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-700 flex items-center justify-center text-xs text-indigo-700 font-bold flex-shrink-0 mt-0.5">
                                   {i + 1}
                                 </div>
                                 <div>
-                                  <p className="text-sm text-white font-medium">{step.title}</p>
-                                  <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{step.detail}</p>
+                                  <p className="text-sm text-gray-900 font-medium">{step.title}</p>
+                                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{step.detail}</p>
                                 </div>
                               </div>
                             ))}
@@ -212,12 +212,12 @@ export default function GuidesPage() {
 
                         {/* Tips */}
                         <div>
-                          <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">Tips</p>
+                          <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">Tips</p>
                           <div className="space-y-2">
                             {guide.tips.map((tip) => (
                               <div key={tip} className="flex items-start gap-2">
-                                <span className="text-amber-400 text-xs mt-0.5 flex-shrink-0">&#9733;</span>
-                                <p className="text-xs text-slate-300 leading-relaxed">{tip}</p>
+                                <span className="text-amber-600 text-xs mt-0.5 flex-shrink-0">&#9733;</span>
+                                <p className="text-xs text-gray-600 leading-relaxed">{tip}</p>
                               </div>
                             ))}
                           </div>
@@ -251,9 +251,9 @@ export default function GuidesPage() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-lg bg-slate-800/50 border border-slate-800 hover:border-indigo-800/50 transition-colors text-center"
+              className="p-3 rounded-lg bg-gray-100 border border-gray-200 hover:border-indigo-200 transition-colors text-center"
             >
-              <p className="text-xs text-indigo-400 hover:underline">{link.label}</p>
+              <p className="text-xs text-indigo-600 hover:underline">{link.label}</p>
             </a>
           ))}
         </CardContent>

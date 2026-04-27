@@ -171,28 +171,28 @@ export default function OPTTimelinePage() {
   const completedCount = mergedTimeline?.filter((s) => s.isCompleted).length ?? 0;
   const totalCount = mergedTimeline?.length ?? 0;
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading timeline...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading timeline...</div>;
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-slate-500 hover:text-slate-300 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">OPT Application Timeline</h1>
+        <h1 className="text-2xl font-bold text-gray-900">OPT Application Timeline</h1>
       </div>
 
       {/* Intro + processing times */}
       <div className="grid sm:grid-cols-3 gap-3">
         {[
-          { label: "Fastest Processing", value: `${PROCESSING_ESTIMATES.optimistic} weeks`, color: "text-emerald-400" },
-          { label: "Typical Processing", value: `${PROCESSING_ESTIMATES.typical} weeks`, color: "text-amber-400" },
-          { label: "Slow Period", value: `${PROCESSING_ESTIMATES.slow} weeks`, color: "text-red-400" },
+          { label: "Fastest Processing", value: `${PROCESSING_ESTIMATES.optimistic} weeks`, color: "text-emerald-600" },
+          { label: "Typical Processing", value: `${PROCESSING_ESTIMATES.typical} weeks`, color: "text-amber-600" },
+          { label: "Slow Period", value: `${PROCESSING_ESTIMATES.slow} weeks`, color: "text-red-600" },
         ].map((item) => (
           <Card key={item.label}>
             <CardContent className="p-4 text-center">
-              <p className="text-xs text-slate-500 mb-1">{item.label}</p>
+              <p className="text-xs text-gray-400 mb-1">{item.label}</p>
               <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
-              <p className="text-xs text-slate-600 mt-1">EAD processing</p>
+              <p className="text-xs text-gray-400 mt-1">EAD processing</p>
             </CardContent>
           </Card>
         ))}
@@ -203,18 +203,18 @@ export default function OPTTimelinePage() {
         <CardContent className="p-4">
           <div className="flex items-end gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm text-slate-300 mb-1.5">Program End Date</label>
+              <label className="block text-sm text-gray-600 mb-1.5">Program End Date</label>
               <Input type="date"
                 value={customEndDate || profile?.program_end_date || ""}
                 onChange={(e) => setCustomEndDate(e.target.value)}
               />
               {profile?.program_end_date && !customEndDate && (
-                <p className="text-xs text-slate-500 mt-1">From your profile: {profile.program_end_date}</p>
+                <p className="text-xs text-gray-400 mt-1">From your profile: {profile.program_end_date}</p>
               )}
             </div>
             {endDate && (
-              <div className="text-sm text-slate-400 pb-2">
-                Apply by: <span className="text-amber-400 font-medium">
+              <div className="text-sm text-gray-500 pb-2">
+                Apply by: <span className="text-amber-600 font-medium">
                   {format(subDays(parseISO(endDate), 90), "MMM d, yyyy")}
                 </span>
                 {" "}(90 days before end)
@@ -226,11 +226,11 @@ export default function OPTTimelinePage() {
 
       {/* STEM OPT notice */}
       {opt?.opt_type === "stem_extension" && (
-        <Card className="border-emerald-800/50">
+        <Card className="border-emerald-200">
           <CardContent className="p-4 flex items-center justify-between gap-4 flex-wrap">
             <div>
-              <p className="text-emerald-400 font-medium text-sm">✅ You&apos;re on STEM OPT — initial OPT is complete</p>
-              <p className="text-slate-400 text-xs mt-0.5">These steps tracked your original OPT application. Mark them all done to clear the overdue flags.</p>
+              <p className="text-emerald-600 font-medium text-sm">✅ You&apos;re on STEM OPT — initial OPT is complete</p>
+              <p className="text-gray-500 text-xs mt-0.5">These steps tracked your original OPT application. Mark them all done to clear the overdue flags.</p>
             </div>
             <button
               onClick={async () => {
@@ -250,7 +250,7 @@ export default function OPTTimelinePage() {
                 const { data } = await supabase.from("opt_application_steps").select("*").eq("user_id", user.id).order("step_order");
                 setSavedSteps(data ?? []);
               }}
-              className="text-xs px-4 py-2 rounded-lg bg-emerald-600/20 border border-emerald-700 text-emerald-400 hover:bg-emerald-600/30 transition-colors whitespace-nowrap"
+              className="text-xs px-4 py-2 rounded-lg bg-emerald-600/20 border border-emerald-700 text-emerald-600 hover:bg-emerald-600/30 transition-colors whitespace-nowrap"
             >
               Mark All Done ✓
             </button>
@@ -261,10 +261,10 @@ export default function OPTTimelinePage() {
       {/* Progress bar */}
       {mergedTimeline && (
         <div className="flex items-center gap-4">
-          <div className="flex-1 bg-slate-800 rounded-full h-2">
+          <div className="flex-1 bg-gray-100 rounded-full h-2">
             <div className="bg-indigo-500 h-2 rounded-full transition-all" style={{ width: `${(completedCount / totalCount) * 100}%` }} />
           </div>
-          <span className="text-sm text-slate-400 whitespace-nowrap">{completedCount}/{totalCount} steps done</span>
+          <span className="text-sm text-gray-500 whitespace-nowrap">{completedCount}/{totalCount} steps done</span>
         </div>
       )}
 
@@ -272,7 +272,7 @@ export default function OPTTimelinePage() {
       {mergedTimeline ? (
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-slate-800" />
+          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-gray-100" />
 
           <div className="space-y-4">
             {mergedTimeline.map((step, i) => {
@@ -284,25 +284,25 @@ export default function OPTTimelinePage() {
                 <div key={step.id} className="relative flex gap-4 pl-12">
                   {/* Step circle */}
                   <div className={`absolute left-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold flex-shrink-0 z-10 ${
-                    step.isCompleted ? "bg-emerald-600 border-emerald-600 text-white" :
-                    isOverdue ? "bg-red-900/50 border-red-600 text-red-400" :
-                    isUpNext ? "bg-indigo-600/20 border-indigo-500 text-indigo-400" :
-                    "bg-slate-900 border-slate-700 text-slate-500"
+                    step.isCompleted ? "bg-emerald-600 border-emerald-600 text-gray-900" :
+                    isOverdue ? "bg-red-900/50 border-red-600 text-red-600" :
+                    isUpNext ? "bg-indigo-100 border-indigo-500 text-indigo-600" :
+                    "bg-white border-gray-200 text-gray-400"
                   }`}>
                     {step.isCompleted ? "✓" : step.order}
                   </div>
 
                   {/* Card */}
                   <Card className={`flex-1 ${
-                    isUpNext && !step.isCompleted ? "border-indigo-800/50" :
-                    isOverdue ? "border-red-800/30" :
+                    isUpNext && !step.isCompleted ? "border-indigo-200" :
+                    isOverdue ? "border-red-200" :
                     step.isCompleted ? "opacity-70" : ""
                   }`}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-medium ${step.isCompleted ? "text-slate-400 line-through" : "text-white"}`}>
+                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900"}`}>
                               {step.title}
                             </p>
                             {step.isCritical && !step.isCompleted && (
@@ -311,39 +311,39 @@ export default function OPTTimelinePage() {
                             {isUpNext && <Badge variant="info" className="text-xs">Up Next</Badge>}
                             {isOverdue && <Badge variant="critical" className="text-xs">Overdue</Badge>}
                           </div>
-                          <p className="text-sm text-slate-400 leading-relaxed">{step.description}</p>
+                          <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
 
                           {/* Tip */}
-                          <div className="mt-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
-                            <p className="text-xs text-slate-500 font-medium mb-0.5">💡 Tip</p>
-                            <p className="text-xs text-slate-400">{step.tip}</p>
+                          <div className="mt-3 p-3 rounded-lg bg-gray-100 border border-gray-200/50">
+                            <p className="text-xs text-gray-400 font-medium mb-0.5">💡 Tip</p>
+                            <p className="text-xs text-gray-500">{step.tip}</p>
                           </div>
                         </div>
 
                         <div className="flex flex-col items-end gap-2 flex-shrink-0">
                           {step.targetDate && (
                             <div className="text-right">
-                              <p className="text-xs text-slate-500">Target</p>
-                              <p className={`text-sm font-medium ${isOverdue ? "text-red-400" : "text-slate-300"}`}>
+                              <p className="text-xs text-gray-400">Target</p>
+                              <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600"}`}>
                                 {format(step.targetDate, "MMM d, yyyy")}
                               </p>
                               {daysAway !== null && !step.isCompleted && (
-                                <p className={`text-xs ${daysAway < 0 ? "text-red-400" : daysAway < 14 ? "text-amber-400" : "text-slate-500"}`}>
+                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-400"}`}>
                                   {daysAway < 0 ? `${Math.abs(daysAway)}d ago` : `in ${daysAway}d`}
                                 </p>
                               )}
                             </div>
                           )}
                           {step.completedDate && (
-                            <p className="text-xs text-emerald-400">Done {step.completedDate}</p>
+                            <p className="text-xs text-emerald-600">Done {step.completedDate}</p>
                           )}
                           <button
                             onClick={() => toggleStep(step)}
                             disabled={saving === step.id}
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                               step.isCompleted
-                                ? "border-slate-700 text-slate-500 hover:border-slate-600"
-                                : "border-indigo-700 text-indigo-400 hover:bg-indigo-600/10"
+                                ? "border-gray-200 text-gray-400 hover:border-slate-600"
+                                : "border-indigo-700 text-indigo-600 hover:bg-indigo-50"
                             }`}
                           >
                             {saving === step.id ? "..." : step.isCompleted ? "Undo" : "Mark Done ✓"}
@@ -361,8 +361,8 @@ export default function OPTTimelinePage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">📅</p>
-            <p className="text-white font-medium mb-1">Enter your program end date above</p>
-            <p className="text-slate-400 text-sm">We&apos;ll calculate all your OPT deadlines automatically</p>
+            <p className="text-gray-900 font-medium mb-1">Enter your program end date above</p>
+            <p className="text-gray-500 text-sm">We&apos;ll calculate all your OPT deadlines automatically</p>
           </CardContent>
         </Card>
       )}
@@ -383,8 +383,8 @@ export default function OPTTimelinePage() {
               "Not reporting new employer to DSO within 10 days of starting",
               "Traveling internationally while OPT application is pending without re-entry plan",
             ].map((m) => (
-              <li key={m} className="flex gap-2 text-sm text-slate-400">
-                <span className="text-red-400 flex-shrink-0 mt-0.5">✗</span>
+              <li key={m} className="flex gap-2 text-sm text-gray-500">
+                <span className="text-red-600 flex-shrink-0 mt-0.5">✗</span>
                 {m}
               </li>
             ))}

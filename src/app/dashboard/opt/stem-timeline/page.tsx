@@ -169,29 +169,29 @@ export default function STEMTimelinePage() {
   const completedCount = mergedTimeline?.filter((s) => s.isCompleted).length ?? 0;
   const totalCount = mergedTimeline?.length ?? 0;
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading...</div>;
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-slate-500 hover:text-slate-300 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">STEM OPT Application Timeline</h1>
+        <h1 className="text-2xl font-bold text-gray-900">STEM OPT Application Timeline</h1>
       </div>
-      <p className="text-slate-400 text-sm -mt-4">
+      <p className="text-gray-500 text-sm -mt-4">
         Step-by-step guide to apply for your 24-month STEM OPT extension before your OPT EAD expires.
       </p>
 
       {/* Processing time info */}
       <div className="grid sm:grid-cols-3 gap-3">
         {[
-          { label: "Application Window Opens", value: opt?.ead_end_date ? format(subDays(parseISO(opt.ead_end_date), 90), "MMM d, yyyy") : "Set OPT first", color: "text-amber-400" },
-          { label: "USCIS Processing", value: "3–5 months", color: "text-slate-300" },
+          { label: "Application Window Opens", value: opt?.ead_end_date ? format(subDays(parseISO(opt.ead_end_date), 90), "MMM d, yyyy") : "Set OPT first", color: "text-amber-600" },
+          { label: "USCIS Processing", value: "3–5 months", color: "text-gray-600" },
           { label: "STEM OPT Duration", value: "24 months", color: "text-violet-400" },
         ].map((item) => (
           <Card key={item.label}>
             <CardContent className="p-4 text-center">
-              <p className="text-xs text-slate-500 mb-1">{item.label}</p>
+              <p className="text-xs text-gray-400 mb-1">{item.label}</p>
               <p className={`text-base font-bold ${item.color}`}>{item.value}</p>
             </CardContent>
           </Card>
@@ -203,8 +203,8 @@ export default function STEMTimelinePage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">💼</p>
-            <p className="text-white font-medium mb-1">OPT EAD end date not set</p>
-            <p className="text-slate-400 text-sm mb-4">Set up your current OPT EAD dates in the OPT Tracker to see your STEM application timeline.</p>
+            <p className="text-gray-900 font-medium mb-1">OPT EAD end date not set</p>
+            <p className="text-gray-500 text-sm mb-4">Set up your current OPT EAD dates in the OPT Tracker to see your STEM application timeline.</p>
             <Link href="/dashboard/opt"><Button>Set Up OPT →</Button></Link>
           </CardContent>
         </Card>
@@ -212,27 +212,27 @@ export default function STEMTimelinePage() {
 
       {/* Already on STEM OPT */}
       {opt?.opt_type === "stem_extension" && (
-        <div className="p-4 rounded-xl bg-emerald-900/20 border border-emerald-800/30">
-          <p className="text-sm font-semibold text-emerald-300">✅ You&apos;re already on STEM OPT</p>
-          <p className="text-sm text-emerald-200 mt-0.5">Mark the steps below as done to keep this tracker clean. Your active STEM OPT compliance is tracked in STEM Reports.</p>
-          <Link href="/dashboard/opt/stem-reports" className="text-xs text-emerald-400 underline mt-2 block">Go to STEM Reports →</Link>
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+          <p className="text-sm font-semibold text-emerald-700">✅ You&apos;re already on STEM OPT</p>
+          <p className="text-sm text-emerald-800 mt-0.5">Mark the steps below as done to keep this tracker clean. Your active STEM OPT compliance is tracked in STEM Reports.</p>
+          <Link href="/dashboard/opt/stem-reports" className="text-xs text-emerald-600 underline mt-2 block">Go to STEM Reports →</Link>
         </div>
       )}
 
       {/* Progress bar */}
       {mergedTimeline && (
         <div className="flex items-center gap-4">
-          <div className="flex-1 bg-slate-800 rounded-full h-2">
+          <div className="flex-1 bg-gray-100 rounded-full h-2">
             <div className="bg-violet-500 h-2 rounded-full transition-all" style={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }} />
           </div>
-          <span className="text-sm text-slate-400 whitespace-nowrap">{completedCount}/{totalCount} steps done</span>
+          <span className="text-sm text-gray-500 whitespace-nowrap">{completedCount}/{totalCount} steps done</span>
         </div>
       )}
 
       {/* Timeline steps */}
       {mergedTimeline && (
         <div className="relative">
-          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-slate-800" />
+          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-gray-100" />
           <div className="space-y-4">
             {mergedTimeline.map((step, i) => {
               const isOverdue = step.targetDate && step.targetDate < today && !step.isCompleted;
@@ -242,48 +242,48 @@ export default function STEMTimelinePage() {
               return (
                 <div key={step.id} className="relative flex gap-4 pl-12">
                   <div className={`absolute left-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold flex-shrink-0 z-10 ${
-                    step.isCompleted ? "bg-violet-600 border-violet-600 text-white" :
-                    isOverdue ? "bg-red-900/50 border-red-600 text-red-400" :
+                    step.isCompleted ? "bg-violet-600 border-violet-600 text-gray-900" :
+                    isOverdue ? "bg-red-900/50 border-red-600 text-red-600" :
                     isUpNext ? "bg-violet-600/20 border-violet-500 text-violet-400" :
-                    "bg-slate-900 border-slate-700 text-slate-500"
+                    "bg-white border-gray-200 text-gray-400"
                   }`}>
                     {step.isCompleted ? "✓" : step.order}
                   </div>
 
                   <Card className={`flex-1 ${
                     isUpNext && !step.isCompleted ? "border-violet-800/50" :
-                    isOverdue ? "border-red-800/30" :
+                    isOverdue ? "border-red-200" :
                     step.isCompleted ? "opacity-70" : ""
                   }`}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-medium ${step.isCompleted ? "text-slate-400 line-through" : "text-white"}`}>
+                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900"}`}>
                               {step.title}
                             </p>
                             {step.isCritical && !step.isCompleted && <Badge variant="critical" className="text-xs">Critical</Badge>}
                             {isUpNext && <Badge variant="info" className="text-xs">Up Next</Badge>}
                             {isOverdue && !step.isCompleted && <Badge variant="critical" className="text-xs">Overdue</Badge>}
                           </div>
-                          <p className="text-sm text-slate-400 leading-relaxed">{step.description}</p>
-                          {step.cfr && <p className="text-xs text-slate-600 font-mono mt-1">{step.cfr}</p>}
+                          <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
+                          {step.cfr && <p className="text-xs text-gray-400 font-mono mt-1">{step.cfr}</p>}
 
-                          <div className="mt-3 p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
-                            <p className="text-xs text-slate-500 font-medium mb-0.5">💡 Tip</p>
-                            <p className="text-xs text-slate-400">{step.tip}</p>
+                          <div className="mt-3 p-3 rounded-lg bg-gray-100 border border-gray-200/50">
+                            <p className="text-xs text-gray-400 font-medium mb-0.5">💡 Tip</p>
+                            <p className="text-xs text-gray-500">{step.tip}</p>
                           </div>
                         </div>
 
                         <div className="flex flex-col items-end gap-2 flex-shrink-0">
                           {step.targetDate && (
                             <div className="text-right">
-                              <p className="text-xs text-slate-500">Target</p>
-                              <p className={`text-sm font-medium ${isOverdue ? "text-red-400" : "text-slate-300"}`}>
+                              <p className="text-xs text-gray-400">Target</p>
+                              <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600"}`}>
                                 {format(step.targetDate, "MMM d, yyyy")}
                               </p>
                               {daysAway !== null && !step.isCompleted && (
-                                <p className={`text-xs ${daysAway < 0 ? "text-red-400" : daysAway < 14 ? "text-amber-400" : "text-slate-500"}`}>
+                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-400"}`}>
                                   {daysAway < 0 ? `${Math.abs(daysAway)}d ago` : `in ${daysAway}d`}
                                 </p>
                               )}
@@ -295,7 +295,7 @@ export default function STEMTimelinePage() {
                             disabled={saving === step.id}
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                               step.isCompleted
-                                ? "border-slate-700 text-slate-500 hover:border-slate-600"
+                                ? "border-gray-200 text-gray-400 hover:border-slate-600"
                                 : "border-violet-700 text-violet-400 hover:bg-violet-600/10"
                             }`}
                           >
@@ -329,8 +329,8 @@ export default function STEMTimelinePage() {
               "Traveling internationally while STEM OPT application is pending",
               "Not notifying DSO of employer changes within 10 days",
             ].map((m) => (
-              <li key={m} className="flex gap-2 text-sm text-slate-400">
-                <span className="text-red-400 flex-shrink-0 mt-0.5">✗</span>
+              <li key={m} className="flex gap-2 text-sm text-gray-500">
+                <span className="text-red-600 flex-shrink-0 mt-0.5">✗</span>
                 {m}
               </li>
             ))}

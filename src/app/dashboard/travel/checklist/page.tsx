@@ -25,16 +25,16 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
 const STATUS_CONFIG = {
-  pass: { icon: "✅", color: "text-emerald-400", bg: "bg-emerald-900/20 border-emerald-800/30", label: "Good" },
-  warn: { icon: "⚠️", color: "text-amber-400", bg: "bg-amber-900/20 border-amber-800/30", label: "Attention" },
-  fail: { icon: "🚫", color: "text-red-400", bg: "bg-red-900/20 border-red-800/30", label: "Action Required" },
-  unknown: { icon: "❓", color: "text-slate-400", bg: "bg-slate-800/50 border-slate-700", label: "Unknown" },
+  pass: { icon: "✅", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200", label: "Good" },
+  warn: { icon: "⚠️", color: "text-amber-600", bg: "bg-amber-50 border-amber-200", label: "Attention" },
+  fail: { icon: "🚫", color: "text-red-600", bg: "bg-red-50 border-red-200", label: "Action Required" },
+  unknown: { icon: "❓", color: "text-gray-500", bg: "bg-gray-100 border-gray-200", label: "Unknown" },
 };
 
 const OVERALL_CONFIG = {
-  pass: { label: "All Clear — Safe to Travel", color: "text-emerald-400", border: "border-emerald-800/30", bg: "bg-emerald-900/10", icon: "✈️" },
-  warn: { label: "Review Before Traveling", color: "text-amber-400", border: "border-amber-800/30", bg: "bg-amber-900/10", icon: "⚠️" },
-  fail: { label: "Do NOT Travel — Issues Found", color: "text-red-400", border: "border-red-800/30", bg: "bg-red-900/10", icon: "🚫" },
+  pass: { label: "All Clear — Safe to Travel", color: "text-emerald-600", border: "border-emerald-200", bg: "bg-emerald-50", icon: "✈️" },
+  warn: { label: "Review Before Traveling", color: "text-amber-600", border: "border-amber-200", bg: "bg-amber-50", icon: "⚠️" },
+  fail: { label: "Do NOT Travel — Issues Found", color: "text-red-600", border: "border-red-200", bg: "bg-red-50", icon: "🚫" },
 };
 
 export default function TravelChecklistPage() {
@@ -95,7 +95,7 @@ export default function TravelChecklistPage() {
     setProfile((p) => p ? { ...p, i20_travel_signature_date: date } : p);
   }
 
-  if (loading) return <div className="text-slate-400 text-center py-20">Loading your data...</div>;
+  if (loading) return <div className="text-gray-500 text-center py-20">Loading your data...</div>;
 
   const overall = checklist ? getOverallStatus(checklist) : null;
 
@@ -118,11 +118,11 @@ export default function TravelChecklistPage() {
     <div className="space-y-6 max-w-3xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/travel" className="text-slate-500 hover:text-slate-300 transition-colors text-sm">← Travel</Link>
+        <Link href="/dashboard/travel" className="text-gray-400 hover:text-gray-600 transition-colors text-sm">← Travel</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-white">Pre-Travel Checklist</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Pre-Travel Checklist</h1>
       </div>
-      <p className="text-slate-400 text-sm -mt-4">
+      <p className="text-gray-500 text-sm -mt-4">
         Run this before every international trip. We check your documents, signatures, and OPT status automatically.
       </p>
 
@@ -134,25 +134,25 @@ export default function TravelChecklistPage() {
         <CardContent>
           <div className="grid sm:grid-cols-2 gap-4 mb-5">
             <div>
-              <label className="block text-sm text-slate-300 mb-1.5">Departure Date *</label>
+              <label className="block text-sm text-gray-600 mb-1.5">Departure Date *</label>
               <Input type="date" value={departureDate} onChange={(e) => { setDepartureDate(e.target.value); setGenerated(false); }} />
             </div>
             <div>
-              <label className="block text-sm text-slate-300 mb-1.5">Return Date (if known)</label>
+              <label className="block text-sm text-gray-600 mb-1.5">Return Date (if known)</label>
               <Input type="date" value={returnDate} onChange={(e) => { setReturnDate(e.target.value); setGenerated(false); }} />
             </div>
           </div>
 
           {/* I-20 travel signature quick-update */}
-          <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700 mb-5">
-            <p className="text-sm font-medium text-slate-300 mb-2">I-20 Travel Signature Date</p>
-            <p className="text-xs text-slate-500 mb-2">The date your DSO last signed your I-20 for travel (check the bottom of your I-20)</p>
+          <div className="p-3 rounded-lg bg-gray-100 border border-gray-200 mb-5">
+            <p className="text-sm font-medium text-gray-600 mb-2">I-20 Travel Signature Date</p>
+            <p className="text-xs text-gray-400 mb-2">The date your DSO last signed your I-20 for travel (check the bottom of your I-20)</p>
             <div className="flex gap-2 items-center">
               <Input type="date" className="max-w-[200px]"
                 defaultValue={profile?.i20_travel_signature_date ?? ""}
                 onChange={(e) => saveTravelSignatureDate(e.target.value)}
               />
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-gray-400">
                 {profile?.i20_travel_signature_date
                   ? `Saved: ${profile.i20_travel_signature_date}`
                   : "Not set — enter the date from your I-20"}
@@ -168,29 +168,29 @@ export default function TravelChecklistPage() {
 
       {/* Scenario 1: OPT initial pending — HIGH RISK */}
       {isInitialOPTPending && (
-        <div className="p-4 rounded-xl bg-red-900/20 border border-red-800/30">
-          <p className="text-sm font-bold text-red-300 mb-1">🚨 OPT Application Pending — High Travel Risk</p>
-          <p className="text-sm text-red-200 leading-relaxed">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+          <p className="text-sm font-bold text-red-700 mb-1">🚨 OPT Application Pending — High Travel Risk</p>
+          <p className="text-sm text-red-800 leading-relaxed">
             Your OPT application is pending and you have <strong>no active EAD</strong>. USCIS and ICE have historically treated departure as potential abandonment of a pending OPT application. You have no work authorization to return to.
           </p>
-          <ul className="mt-2 text-xs text-red-300 space-y-1">
+          <ul className="mt-2 text-xs text-red-700 space-y-1">
             <li>• Consult your DSO before booking any international travel</li>
             <li>• Get a travel letter from your DSO documenting your pending application</li>
             <li>• Keep your I-797 receipt notice accessible at all times</li>
             <li>• Re-entry as F-1 requires full CBP inspection — carry all application documents</li>
           </ul>
-          <p className="text-xs text-red-500 mt-2 font-mono">USCIS guidance: departure may constitute abandonment of pending OPT application</p>
+          <p className="text-xs text-red-600 mt-2 font-mono">USCIS guidance: departure may constitute abandonment of pending OPT application</p>
         </div>
       )}
 
       {/* Scenario 2: STEM extension pending — travel PERMITTED */}
       {isStemExtensionPending && (
-        <div className="p-4 rounded-xl bg-blue-900/20 border border-blue-800/30">
-          <p className="text-sm font-bold text-blue-300 mb-1">ℹ️ STEM Extension Pending — Travel Permitted</p>
-          <p className="text-sm text-blue-200 leading-relaxed">
+        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
+          <p className="text-sm font-bold text-blue-700 mb-1">ℹ️ STEM Extension Pending — Travel Permitted</p>
+          <p className="text-sm text-blue-800 leading-relaxed">
             Travel is permitted while your STEM OPT extension is pending. Per DHS 81 FR 13103, you may continue to work and travel under your current authorization. If your OPT EAD expires while pending, an automatic 180-day extension applies under 8 CFR 274a.12(b)(6)(iv).
           </p>
-          <ul className="mt-2 text-xs text-blue-300 space-y-1">
+          <ul className="mt-2 text-xs text-blue-700 space-y-1">
             <li>• Carry your I-797 receipt notice — it proves authorized status during the 180-day extension</li>
             <li>• Your EAD card + I-797 together serve as evidence of continued work authorization</li>
             <li>• Ensure your I-20 travel signature is current (within 6 months for OPT/STEM)</li>
@@ -202,17 +202,17 @@ export default function TravelChecklistPage() {
 
       {/* Scenario 3: H-1B COS static warning — shown whenever any OPT application is pending */}
       {(isInitialOPTPending || isStemExtensionPending) && (
-        <div className="p-4 rounded-xl bg-amber-900/20 border border-amber-800/30">
-          <p className="text-sm font-bold text-amber-300 mb-1">⚠️ H-1B Change of Status Pending? — Do NOT Travel</p>
-          <p className="text-sm text-amber-200 leading-relaxed">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+          <p className="text-sm font-bold text-amber-700 mb-1">⚠️ H-1B Change of Status Pending? — Do NOT Travel</p>
+          <p className="text-sm text-amber-800 leading-relaxed">
             If your employer has also filed an H-1B petition with <strong>Change of Status (COS)</strong>, departure from the US <strong>immediately and permanently abandons</strong> the COS. You would need to get an H-1B visa stamp at a US consulate abroad and re-enter.
           </p>
-          <ul className="mt-2 text-xs text-amber-300 space-y-1">
+          <ul className="mt-2 text-xs text-amber-700 space-y-1">
             <li>• Ask your employer&apos;s immigration attorney if a COS is included in your H-1B petition</li>
             <li>• If COS is pending: no international travel under any circumstances before approval</li>
             <li>• Consular processing alternative: get H-1B visa stamp at a US embassy abroad</li>
           </ul>
-          <p className="text-xs text-amber-500 mt-2 font-mono">Per USCIS: departure = abandonment of pending Change of Status petition</p>
+          <p className="text-xs text-amber-600 mt-2 font-mono">Per USCIS: departure = abandonment of pending Change of Status petition</p>
         </div>
       )}
 
@@ -225,7 +225,7 @@ export default function TravelChecklistPage() {
               <span className="text-3xl">{OVERALL_CONFIG[overall].icon}</span>
               <div>
                 <p className={`text-lg font-bold ${OVERALL_CONFIG[overall].color}`}>{OVERALL_CONFIG[overall].label}</p>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-gray-500">
                   {overall === "pass"
                     ? "All checks passed. Keep your documents accessible during travel."
                     : overall === "warn"
@@ -246,17 +246,17 @@ export default function TravelChecklistPage() {
                     <span className="text-lg mt-0.5 flex-shrink-0">{cfg.icon}</span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-white">{item.title}</p>
+                        <p className="font-medium text-gray-900">{item.title}</p>
                         <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
                         {item.cfr && (
-                          <span className="text-xs text-slate-600 font-mono">{item.cfr}</span>
+                          <span className="text-xs text-gray-400 font-mono">{item.cfr}</span>
                         )}
                       </div>
-                      <p className="text-sm text-slate-300 mt-1 leading-relaxed">{item.detail}</p>
+                      <p className="text-sm text-gray-600 mt-1 leading-relaxed">{item.detail}</p>
                       {item.action && (
                         <div className="mt-2 flex items-start gap-2">
-                          <span className="text-indigo-400 text-xs">→</span>
-                          <p className="text-sm text-indigo-300 font-medium">{item.action}</p>
+                          <span className="text-indigo-600 text-xs">→</span>
+                          <p className="text-sm text-indigo-700 font-medium">{item.action}</p>
                         </div>
                       )}
                     </div>
@@ -272,7 +272,7 @@ export default function TravelChecklistPage() {
               <CardTitle className="text-base">📋 Documents to Carry</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-400 mb-3">Bring originals + photocopies of these when traveling internationally:</p>
+              <p className="text-sm text-gray-500 mb-3">Bring originals + photocopies of these when traveling internationally:</p>
               <div className="grid sm:grid-cols-2 gap-2">
                 {[
                   "Valid passport",
@@ -284,14 +284,14 @@ export default function TravelChecklistPage() {
                   "Emergency contact list",
                   "DSO contact information",
                 ].map((doc) => (
-                  <div key={doc} className="flex items-center gap-2 text-sm text-slate-300">
-                    <span className="text-indigo-400 flex-shrink-0">◆</span>
+                  <div key={doc} className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className="text-indigo-600 flex-shrink-0">◆</span>
                     {doc}
                   </div>
                 ))}
               </div>
-              <div className="mt-4 pt-4 border-t border-slate-800">
-                <Link href="/dashboard/dso-email" className="text-sm text-indigo-400 hover:underline">
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <Link href="/dashboard/dso-email" className="text-sm text-indigo-600 hover:underline">
                   ✉️ Need a travel signature? Use the DSO Email Generator →
                 </Link>
               </div>

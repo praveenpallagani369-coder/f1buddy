@@ -65,8 +65,8 @@ export default function HolidaysPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">US Holidays & School Breaks</h1>
-        <p className="text-slate-400 text-sm">Know when banks, USCIS, and schools are closed</p>
+        <h1 className="text-2xl font-bold text-gray-900">US Holidays & School Breaks</h1>
+        <p className="text-gray-500 text-sm">Know when banks, USCIS, and schools are closed</p>
       </div>
 
       {/* Next holiday */}
@@ -75,18 +75,18 @@ export default function HolidaysPage() {
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Next Holiday</p>
-                <p className="text-xl font-bold text-white">{nextHoliday.name}</p>
-                <p className="text-sm text-slate-400">{format(parseISO(nextHoliday.date), "EEEE, MMMM d, yyyy")}</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Next Holiday</p>
+                <p className="text-xl font-bold text-gray-900">{nextHoliday.name}</p>
+                <p className="text-sm text-gray-500">{format(parseISO(nextHoliday.date), "EEEE, MMMM d, yyyy")}</p>
                 {F1_NOTES[nextHoliday.name] && (
-                  <p className="text-xs text-indigo-300 mt-2">{F1_NOTES[nextHoliday.name]}</p>
+                  <p className="text-xs text-indigo-700 mt-2">{F1_NOTES[nextHoliday.name]}</p>
                 )}
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-indigo-400">
+                <p className="text-3xl font-bold text-indigo-600">
                   {daysToNext === 0 ? "Today!" : `${daysToNext}d`}
                 </p>
-                <p className="text-xs text-slate-500">{daysToNext === 0 ? "" : "away"}</p>
+                <p className="text-xs text-gray-400">{daysToNext === 0 ? "" : "away"}</p>
               </div>
             </div>
           </CardContent>
@@ -97,16 +97,16 @@ export default function HolidaysPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Typical University Breaks</CardTitle>
-          <p className="text-xs text-slate-500">Check your school&apos;s academic calendar for exact dates</p>
+          <p className="text-xs text-gray-400">Check your school&apos;s academic calendar for exact dates</p>
         </CardHeader>
         <CardContent className="space-y-3">
           {SCHOOL_BREAKS.map((b) => (
-            <div key={b.name} className="p-3 rounded-lg bg-slate-800/50 border border-slate-800">
+            <div key={b.name} className="p-3 rounded-lg bg-gray-100 border border-gray-200">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-sm text-white font-medium">{b.name}</p>
+                <p className="text-sm text-gray-900 font-medium">{b.name}</p>
                 <Badge variant="info" className="text-xs">{b.period}</Badge>
               </div>
-              <p className="text-xs text-slate-400">{b.note}</p>
+              <p className="text-xs text-gray-500">{b.note}</p>
             </div>
           ))}
         </CardContent>
@@ -121,10 +121,10 @@ export default function HolidaysPage() {
           {loading ? (
             <div className="text-center py-8">
               <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-sm text-slate-400">Loading holidays...</p>
+              <p className="text-sm text-gray-500">Loading holidays...</p>
             </div>
           ) : holidays.length === 0 ? (
-            <p className="text-sm text-slate-400 text-center py-8">Could not load holidays</p>
+            <p className="text-sm text-gray-500 text-center py-8">Could not load holidays</p>
           ) : (
             <div className="space-y-2">
               {holidays.map((h) => {
@@ -135,26 +135,26 @@ export default function HolidaysPage() {
                     key={h.date}
                     className={`flex items-center justify-between p-3 rounded-lg border ${
                       isPast
-                        ? "bg-slate-900/30 border-slate-800/50 opacity-50"
+                        ? "bg-white/30 border-gray-200 opacity-50"
                         : days <= 7
-                        ? "bg-indigo-900/10 border-indigo-800/30"
-                        : "bg-slate-800/50 border-slate-800"
+                        ? "bg-indigo-50 border-indigo-800/30"
+                        : "bg-gray-100 border-gray-200"
                     }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium ${isPast ? "text-slate-500" : "text-white"}`}>{h.name}</p>
-                      <p className="text-xs text-slate-500">{format(parseISO(h.date), "EEEE, MMMM d")}</p>
+                      <p className={`text-sm font-medium ${isPast ? "text-gray-400" : "text-gray-900"}`}>{h.name}</p>
+                      <p className="text-xs text-gray-400">{format(parseISO(h.date), "EEEE, MMMM d")}</p>
                       {F1_NOTES[h.name] && !isPast && (
-                        <p className="text-xs text-slate-400 mt-0.5">{F1_NOTES[h.name]}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{F1_NOTES[h.name]}</p>
                       )}
                     </div>
                     <div className="text-right flex-shrink-0 ml-3">
                       {isPast ? (
-                        <span className="text-xs text-slate-600">Passed</span>
+                        <span className="text-xs text-gray-400">Passed</span>
                       ) : days === 0 ? (
                         <Badge variant="success" className="text-xs">Today</Badge>
                       ) : (
-                        <span className="text-sm text-slate-400">{days}d</span>
+                        <span className="text-sm text-gray-500">{days}d</span>
                       )}
                     </div>
                   </div>

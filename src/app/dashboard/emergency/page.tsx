@@ -60,14 +60,14 @@ export default function EmergencyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Emergency Resources</h1>
-        <p className="text-slate-400 text-sm">Critical contacts, USCIS offices, and know-your-rights information</p>
+        <h1 className="text-2xl font-bold text-gray-900">Emergency Resources</h1>
+        <p className="text-gray-500 text-sm">Critical contacts, USCIS offices, and know-your-rights information</p>
       </div>
 
       {/* Emergency banner */}
-      <div className="p-5 rounded-xl bg-red-900/20 border-2 border-red-800/50">
-        <p className="text-lg font-bold text-red-300">If you are in immediate danger, call 911</p>
-        <p className="text-sm text-red-400/80 mt-1">
+      <div className="p-5 rounded-xl bg-red-50 border-2 border-red-200">
+        <p className="text-lg font-bold text-red-700">If you are in immediate danger, call 911</p>
+        <p className="text-sm text-red-600/80 mt-1">
           Emergency services in the US are free to call regardless of immigration status.
           You will NOT be asked about your visa status when calling 911.
         </p>
@@ -78,10 +78,10 @@ export default function EmergencyPage() {
         <CardHeader><CardTitle className="text-base">Important Phone Numbers</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {EMERGENCY_CONTACTS.map((c) => (
-            <div key={c.name} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800">
+            <div key={c.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-100 border border-gray-200">
               <div className="flex-1 min-w-0 mr-3">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-sm text-white font-medium">{c.name}</p>
+                  <p className="text-sm text-gray-900 font-medium">{c.name}</p>
                   <Badge
                     variant={c.category === "emergency" ? "critical" : c.category === "immigration" ? "info" : c.category === "health" ? "warning" : "success"}
                     className="text-xs"
@@ -89,11 +89,11 @@ export default function EmergencyPage() {
                     {c.category}
                   </Badge>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">{c.note}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{c.note}</p>
               </div>
               <a
                 href={`tel:${c.number.replace(/[^0-9+]/g, "")}`}
-                className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-700 text-indigo-300 text-sm font-mono hover:bg-indigo-600/30 transition-colors"
+                className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-indigo-100 border border-indigo-700 text-indigo-700 text-sm font-mono hover:bg-indigo-600/30 transition-colors"
               >
                 {c.number}
               </a>
@@ -106,7 +106,7 @@ export default function EmergencyPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Government Portals</CardTitle>
-          <p className="text-xs text-slate-500">Quick links to official government services</p>
+          <p className="text-xs text-gray-400">Quick links to official government services</p>
         </CardHeader>
         <CardContent className="space-y-2">
           {USCIS_OFFICES.map((o) => (
@@ -115,13 +115,13 @@ export default function EmergencyPage() {
               href={o.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-3 rounded-lg bg-slate-800/50 border border-slate-800 hover:border-indigo-800/50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg bg-gray-100 border border-gray-200 hover:border-indigo-200 transition-colors"
             >
               <div>
-                <p className="text-sm text-white font-medium">{o.name}</p>
-                <p className="text-xs text-slate-400">{o.desc}</p>
+                <p className="text-sm text-gray-900 font-medium">{o.name}</p>
+                <p className="text-xs text-gray-500">{o.desc}</p>
               </div>
-              <span className="text-indigo-400 text-sm flex-shrink-0">&rarr;</span>
+              <span className="text-indigo-600 text-sm flex-shrink-0">&rarr;</span>
             </a>
           ))}
         </CardContent>
@@ -136,8 +136,8 @@ export default function EmergencyPage() {
           <CardContent>
             <ul className="space-y-2">
               {section.items.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-sm text-slate-300">
-                  <span className="text-indigo-400 mt-0.5 flex-shrink-0">&#9679;</span>
+                <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
+                  <span className="text-indigo-600 mt-0.5 flex-shrink-0">&#9679;</span>
                   {item}
                 </li>
               ))}
@@ -150,14 +150,14 @@ export default function EmergencyPage() {
       <Card>
         <CardHeader><CardTitle className="text-base">Find Your Embassy / Consulate</CardTitle></CardHeader>
         <CardContent>
-          <p className="text-sm text-slate-300 mb-3">
+          <p className="text-sm text-gray-600 mb-3">
             Your home country&apos;s embassy or consulate can help with passport renewal, emergency travel documents, and legal assistance.
           </p>
           <a
             href="https://www.usembassy.gov/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600/20 border border-indigo-700 text-indigo-300 text-sm hover:bg-indigo-600/30 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 border border-indigo-700 text-indigo-700 text-sm hover:bg-indigo-600/30 transition-colors"
           >
             Find embassies on usembassy.gov &rarr;
           </a>
@@ -165,7 +165,7 @@ export default function EmergencyPage() {
       </Card>
 
       {/* Disclaimer */}
-      <div className="text-xs text-slate-600 text-center p-4">
+      <div className="text-xs text-gray-400 text-center p-4">
         This information is for general guidance only. For legal advice, consult an immigration attorney.
         Information is current as of 2024 but laws and policies may change.
       </div>
