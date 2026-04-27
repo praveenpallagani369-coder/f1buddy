@@ -76,7 +76,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   return (
     <aside className="w-60 flex-shrink-0 border-r border-gray-100 bg-white flex flex-col shadow-sm">
       {/* Logo */}
-      <div className="px-5 py-4 border-b border-gray-100">
+      <div className="px-4 py-3 border-b border-gray-100">
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-base shadow-md shadow-indigo-200">
             🎓
@@ -89,7 +89,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-3 overflow-y-auto space-y-4">
+      <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-3">
         {SECTIONS.map((section, si) => (
           <div key={si}>
             {section.label && (

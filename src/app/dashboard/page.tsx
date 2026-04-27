@@ -52,6 +52,16 @@ const PHASE_CONFIG = {
   program_ended:     { label: "Program Ended",                   icon: "📋", gradient: "from-gray-50 to-slate-50",   border: "border-gray-200",   text: "text-gray-500",  badge: "bg-gray-100 text-gray-600",    tagline: "Your OPT/grace period has ended. Contact your DSO immediately if you are still in the US." },
 };
 
+const ICON_BG: Record<string, string> = {
+  "bg-orange-400": "bg-orange-100",
+  "bg-sky-400":    "bg-sky-100",
+  "bg-violet-400": "bg-violet-100",
+  "bg-emerald-400":"bg-emerald-100",
+  "bg-red-500":    "bg-red-100",
+  "bg-amber-400":  "bg-amber-100",
+  "bg-amber-500":  "bg-amber-100",
+};
+
 function StatCard({
   label, value, sub, accent, icon, children,
 }: {
@@ -62,17 +72,18 @@ function StatCard({
   icon: string;
   children?: React.ReactNode;
 }) {
+  const iconBg = ICON_BG[accent] ?? "bg-gray-100";
   return (
-    <div className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-5 relative overflow-hidden hover:shadow-md transition-shadow`}>
-      <div className={`absolute inset-y-0 left-0 w-1 ${accent} rounded-l-2xl`} />
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 relative overflow-hidden hover:shadow-md transition-shadow">
+      <div className={`absolute inset-y-0 left-0 w-1.5 ${accent} rounded-l-2xl`} />
       <div className="flex items-start justify-between mb-3">
         <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
-        <div className={`w-8 h-8 rounded-xl ${accent.replace("bg-", "bg-").replace("-500", "-100")} flex items-center justify-center text-base flex-shrink-0`}>
+        <div className={`w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center text-lg flex-shrink-0`}>
           {icon}
         </div>
       </div>
-      <div className="text-3xl font-bold text-gray-900 leading-none mb-1">{value}</div>
-      {sub && <div className="text-xs text-gray-400 mt-1">{sub}</div>}
+      <div className="text-4xl font-bold text-gray-900 leading-none mb-1">{value}</div>
+      {sub && <div className="text-xs text-gray-400 mt-1.5">{sub}</div>}
       {children}
     </div>
   );
@@ -155,9 +166,9 @@ export default async function DashboardPage() {
       : "green";
 
   const statusConfig = {
-    green:  { dot: "bg-emerald-400", text: "All Clear",     textColor: "text-emerald-600", ring: "ring-emerald-100" },
-    yellow: { dot: "bg-amber-400",   text: "Action Needed", textColor: "text-amber-600",   ring: "ring-amber-100"   },
-    red:    { dot: "bg-red-400",     text: "Urgent",        textColor: "text-red-600",      ring: "ring-red-100"     },
+    green:  { dot: "bg-emerald-400", text: "All Clear",     textColor: "text-emerald-700", bg: "bg-emerald-50 border-emerald-200" },
+    yellow: { dot: "bg-amber-400",   text: "Action Needed", textColor: "text-amber-700",   bg: "bg-amber-50 border-amber-200"   },
+    red:    { dot: "bg-red-400",     text: "Urgent",        textColor: "text-red-700",      bg: "bg-red-50 border-red-200"       },
   }[overallStatus];
 
   const unemployPct = Math.min(100, (liveUnemploymentDays / unemploymentLimit) * 100);
@@ -188,7 +199,7 @@ export default async function DashboardPage() {
           </h1>
           <p className="text-gray-400 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
         </div>
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-gray-100 shadow-sm ring-4 ${statusConfig.ring}`}>
+        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm ${statusConfig.bg}`}>
           <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`} />
           <span className={`text-sm font-semibold ${statusConfig.textColor}`}>{statusConfig.text}</span>
         </div>
@@ -291,8 +302,8 @@ export default async function DashboardPage() {
               : <span className="text-gray-900">{profile?.program_end_date ? `${differenceInCalendarDays(parseISO(profile.program_end_date), today)}d` : "—"}</span>
           }
           sub={eadEnd ? opt?.ead_end_date ?? undefined : profile?.program_end_date ?? undefined}
-          accent={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "bg-red-500" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "bg-amber-500" : "bg-violet-400"}
-          icon="🪪"
+          accent={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "bg-red-500" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "bg-amber-400" : "bg-violet-400"}
+          icon="📋"
         />
 
         {/* Expiring Documents */}
