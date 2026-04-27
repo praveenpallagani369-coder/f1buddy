@@ -11,7 +11,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#020817]">
+    <div className="min-h-screen bg-[#070f1c]">
       <nav className="border-b border-slate-800 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-sm">🎓</div>

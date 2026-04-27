@@ -11,10 +11,14 @@ const NAV = [
   { href: "/dashboard/deadlines", label: "Deadlines", icon: "📅", group: null },
   // OPT group
   { href: "/dashboard/opt", label: "OPT Tracker", icon: "💼", group: "OPT" },
-  { href: "/dashboard/opt/timeline", label: "Application Timeline", icon: "📆", group: "OPT" },
+  { href: "/dashboard/opt/timeline", label: "OPT Application Steps", icon: "📆", group: "OPT" },
+  { href: "/dashboard/opt/stem-timeline", label: "STEM Application Steps", icon: "🔬", group: "OPT" },
+  { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: "📋", group: "OPT" },
+  { href: "/dashboard/opt/h1b", label: "H-1B Timeline", icon: "🏢", group: "OPT" },
   { href: "/dashboard/opt/calculator", label: "Auth Calculator", icon: "🧮", group: "OPT" },
-  { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: "🔬", group: "OPT" },
-  { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: "📋", group: "OPT" },
+  { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: "📄", group: "OPT" },
+  // CPT (standalone)
+  { href: "/dashboard/cpt", label: "CPT Tracker", icon: "📚", group: null },
   // Travel group
   { href: "/dashboard/travel", label: "Travel", icon: "✈️", group: "Travel" },
   { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: "🗂️", group: "Travel" },
@@ -24,6 +28,12 @@ const NAV = [
   { href: "/dashboard/dso-email", label: "DSO Emails", icon: "✉️", group: null },
   { href: "/dashboard/ai", label: "AI Assistant", icon: "🤖", group: null },
   { href: "/dashboard/community", label: "Community", icon: "💬", group: null },
+  // Tools & Resources
+  { href: "/dashboard/currency", label: "Currency Converter", icon: "💱", group: "Tools" },
+  { href: "/dashboard/holidays", label: "US Holidays", icon: "🗓️", group: "Tools" },
+  { href: "/dashboard/news", label: "Immigration News", icon: "📰", group: "Tools" },
+  { href: "/dashboard/guides", label: "New Arrival Guides", icon: "📖", group: "Tools" },
+  { href: "/dashboard/emergency", label: "Emergency Info", icon: "🆘", group: "Tools" },
 ];
 
 export function Sidebar({ user }: { user: { name: string; email: string; role: string } }) {
@@ -42,9 +52,11 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
       {/* Logo */}
       <div className="p-5 border-b border-slate-800">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-lg">🎓</div>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-lg shadow-lg shadow-indigo-900/40">
+            🎓
+          </div>
           <div>
-            <p className="font-bold text-white text-sm">F1Buddy</p>
+            <p className="font-bold text-white text-sm tracking-wide">F1Buddy</p>
             <p className="text-xs text-slate-500">Student Manager</p>
           </div>
         </Link>
@@ -60,13 +72,13 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 rounded-lg text-sm transition-colors",
+                "flex items-center gap-3 rounded-lg text-sm transition-all duration-150",
                 isSubItem ? "px-3 py-1.5 ml-4 text-xs" : "px-3 py-2.5",
                 active
-                  ? "bg-indigo-600/20 text-indigo-300 font-medium"
+                  ? "bg-indigo-600/20 text-indigo-300 font-medium border border-indigo-700/30"
                   : isSubItem
-                  ? "text-slate-500 hover:bg-slate-800 hover:text-slate-300"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  ? "text-slate-500 hover:bg-slate-800/70 hover:text-slate-300"
+                  : "text-slate-400 hover:bg-slate-800/70 hover:text-white"
               )}
             >
               <span className={isSubItem ? "text-sm" : "text-base"}>{icon}</span>
@@ -80,9 +92,9 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
       <div className="p-3 border-t border-slate-800">
         <Link
           href="/dashboard/profile"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/70 hover:text-white transition-colors"
         >
-          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md shadow-indigo-900/40">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
