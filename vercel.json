@@ -5,6 +5,7 @@
       "schedule": "0 14 * * *"
     }
   ],
-  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npm run build",
   "framework": "nextjs"
 }
