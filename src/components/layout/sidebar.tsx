@@ -5,7 +5,10 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 
-const SECTIONS = [
+type NavItem = { href: string; label: string; icon: string; top?: boolean };
+type NavSection = { label: string | null; items: NavItem[] };
+
+const SECTIONS: NavSection[] = [
   {
     label: null,
     items: [
