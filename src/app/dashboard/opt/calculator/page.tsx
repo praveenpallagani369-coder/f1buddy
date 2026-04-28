@@ -40,6 +40,15 @@ function calculate(input: {
     note: "Apply on or before this date to get the earliest possible EAD start date.",
   });
 
+  if (!input.eadEndDate) {
+    results.push({
+      label: "Grace Period (without OPT)",
+      value: `${format(addDays(progEnd, 1), "MMM d, yyyy")} → ${format(addDays(progEnd, 60), "MMM d, yyyy")}`,
+      status: "info",
+      note: "If you don't apply for OPT, your 60-day grace period starts the day after program end. You CANNOT work during this time.",
+    });
+  }
+
   if (input.optStartDate) {
     const optStart = parseISO(input.optStartDate);
     results.push({
@@ -47,13 +56,6 @@ function calculate(input: {
       value: format(optStart, "MMM d, yyyy"),
       status: "success",
       note: "This is the date printed on your EAD. You CANNOT work before this date, even if application is approved early.",
-    });
-
-    results.push({
-      label: "60-Day Grace Period Starts",
-      value: format(optStart, "MMM d, yyyy"),
-      status: "info",
-      note: `You have a 60-day grace period after your OPT expires to prepare to leave or change status. NOT extra work authorization.`,
     });
 
     // Gap between program end and OPT start
@@ -83,9 +85,16 @@ function calculate(input: {
     });
 
     results.push({
+      label: "60-Day Grace Period Starts",
+      value: format(addDays(eadEnd, 1), "MMM d, yyyy"),
+      status: "info",
+      note: "Grace period begins the day after your OPT authorization ends. You CANNOT work during this period.",
+    });
+
+    results.push({
       label: "60-Day Grace Period Ends",
       value: format(gracePeriod, "MMM d, yyyy"),
-      status: "info",
+      status: daysToEnd < 0 ? "critical" : "info",
       note: "Last day to depart, change status, or have STEM extension approved. You CANNOT work during grace period.",
     });
 
