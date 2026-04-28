@@ -5,6 +5,13 @@ import { calculateUnemploymentDays } from "@/lib/immigration/rules";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
+import {
+  GraduationCap, Hourglass, Briefcase, FlaskConical, RefreshCw,
+  Timer, ClipboardList, Plane, CalendarClock, FolderOpen,
+  Building2, ListChecks, ClipboardCheck, Sparkles, BookOpen,
+  ArrowLeftRight, CalendarDays, Newspaper, BookMarked, ShieldAlert,
+  CircleCheck,
+} from "lucide-react";
 
 type Phase = "f1_active" | "opt_pending" | "opt_active" | "stem_opt_active" | "stem_180_extension" | "grace_period" | "program_ended";
 
@@ -42,14 +49,14 @@ function detectPhase(opt: OPTRow | null, today: Date): Phase {
   return "program_ended";
 }
 
-const PHASE_CONFIG = {
-  f1_active:         { label: "F-1 Student — Active",            icon: "🎓", gradient: "from-indigo-50 to-blue-50",   border: "border-indigo-200", text: "text-indigo-700", badge: "bg-indigo-100 text-indigo-700", tagline: "Enrolled and in status. Keep enrollment full-time and report address changes within 10 days." },
-  opt_pending:       { label: "OPT Application Pending",         icon: "⏳", gradient: "from-amber-50 to-yellow-50",  border: "border-amber-200",  text: "text-amber-700",  badge: "bg-amber-100 text-amber-700",  tagline: "You CANNOT work yet. Wait for the physical EAD card before starting any job." },
-  opt_active:        { label: "OPT Active",                      icon: "💼", gradient: "from-emerald-50 to-teal-50",  border: "border-emerald-200",text: "text-emerald-700",badge: "bg-emerald-100 text-emerald-700",tagline: "Work must be directly related to your degree. Track unemployment days carefully." },
-  stem_opt_active:   { label: "STEM OPT Active",                 icon: "🔬", gradient: "from-violet-50 to-purple-50", border: "border-violet-200", text: "text-violet-700", badge: "bg-violet-100 text-violet-700", tagline: "150-day cumulative unemployment cap. Submit validation reports on time. Employer must stay E-Verify enrolled." },
-  stem_180_extension:{ label: "STEM OPT — 180-Day Auto-Extension",icon: "🔄", gradient: "from-blue-50 to-sky-50",     border: "border-blue-200",   text: "text-blue-700",  badge: "bg-blue-100 text-blue-700",    tagline: "Work authorization continues automatically while STEM extension is pending. Keep your I-797 receipt as proof." },
-  grace_period:      { label: "60-Day Grace Period",             icon: "⏱️", gradient: "from-red-50 to-rose-50",     border: "border-red-200",    text: "text-red-700",   badge: "bg-red-100 text-red-700",      tagline: "YOU CANNOT WORK during the grace period. Use this time to change status, depart, or confirm H-1B cap-gap." },
-  program_ended:     { label: "Program Ended",                   icon: "📋", gradient: "from-gray-50 to-slate-50",   border: "border-gray-200",   text: "text-gray-500",  badge: "bg-gray-100 text-gray-600",    tagline: "Your OPT/grace period has ended. Contact your DSO immediately if you are still in the US." },
+const PHASE_CONFIG: Record<Phase, { label: string; icon: React.ReactNode; gradient: string; border: string; text: string; badge: string; tagline: string }> = {
+  f1_active:         { label: "F-1 Student — Active",            icon: <GraduationCap className="w-4 h-4" />, gradient: "from-indigo-50 to-blue-50",   border: "border-indigo-200", text: "text-indigo-700", badge: "bg-indigo-100 text-indigo-700", tagline: "Enrolled and in status. Keep enrollment full-time and report address changes within 10 days." },
+  opt_pending:       { label: "OPT Application Pending",         icon: <Hourglass className="w-4 h-4" />, gradient: "from-amber-50 to-yellow-50",  border: "border-amber-200",  text: "text-amber-700",  badge: "bg-amber-100 text-amber-700",  tagline: "You CANNOT work yet. Wait for the physical EAD card before starting any job." },
+  opt_active:        { label: "OPT Active",                      icon: <Briefcase className="w-4 h-4" />, gradient: "from-emerald-50 to-teal-50",  border: "border-emerald-200",text: "text-emerald-700",badge: "bg-emerald-100 text-emerald-700",tagline: "Work must be directly related to your degree. Track unemployment days carefully." },
+  stem_opt_active:   { label: "STEM OPT Active",                 icon: <FlaskConical className="w-4 h-4" />, gradient: "from-violet-50 to-purple-50", border: "border-violet-200", text: "text-violet-700", badge: "bg-violet-100 text-violet-700", tagline: "150-day cumulative unemployment cap. Submit validation reports on time. Employer must stay E-Verify enrolled." },
+  stem_180_extension:{ label: "STEM OPT — 180-Day Auto-Extension",icon: <RefreshCw className="w-4 h-4" />, gradient: "from-blue-50 to-sky-50",     border: "border-blue-200",   text: "text-blue-700",  badge: "bg-blue-100 text-blue-700",    tagline: "Work authorization continues automatically while STEM extension is pending. Keep your I-797 receipt as proof." },
+  grace_period:      { label: "60-Day Grace Period",             icon: <Timer className="w-4 h-4" />, gradient: "from-red-50 to-rose-50",     border: "border-red-200",    text: "text-red-700",   badge: "bg-red-100 text-red-700",      tagline: "YOU CANNOT WORK during the grace period. Use this time to change status, depart, or confirm H-1B cap-gap." },
+  program_ended:     { label: "Program Ended",                   icon: <ClipboardList className="w-4 h-4" />, gradient: "from-gray-50 to-slate-50",   border: "border-gray-200",   text: "text-gray-500",  badge: "bg-gray-100 text-gray-600",    tagline: "Your OPT/grace period has ended. Contact your DSO immediately if you are still in the US." },
 };
 
 const ICON_BG: Record<string, string> = {
@@ -62,6 +69,16 @@ const ICON_BG: Record<string, string> = {
   "bg-amber-500":  "bg-amber-100",
 };
 
+const ICON_COLOR: Record<string, string> = {
+  "bg-orange-400": "text-orange-500",
+  "bg-sky-400":    "text-sky-500",
+  "bg-violet-400": "text-violet-500",
+  "bg-emerald-400":"text-emerald-500",
+  "bg-red-500":    "text-red-500",
+  "bg-amber-400":  "text-amber-500",
+  "bg-amber-500":  "text-amber-500",
+};
+
 function StatCard({
   label, value, sub, accent, icon, children,
 }: {
@@ -69,16 +86,17 @@ function StatCard({
   value: React.ReactNode;
   sub?: React.ReactNode;
   accent: string;
-  icon: string;
+  icon: React.ReactNode;
   children?: React.ReactNode;
 }) {
   const iconBg = ICON_BG[accent] ?? "bg-gray-100";
+  const iconColor = ICON_COLOR[accent] ?? "text-gray-500";
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 relative overflow-hidden hover:shadow-md transition-shadow">
       <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-2xl`} />
       <div className="flex items-start justify-between mb-2">
         <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
-        <div className={`w-7 h-7 rounded-lg ${iconBg} flex items-center justify-center text-sm flex-shrink-0`}>
+        <div className={`w-7 h-7 rounded-lg ${iconBg} ${iconColor} flex items-center justify-center flex-shrink-0`}>
           {icon}
         </div>
       </div>
@@ -178,14 +196,14 @@ export default async function DashboardPage() {
   const hour = today.getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
-  const QUICK_LINKS: Record<Phase, { href: string; icon: string; label: string; color: string }[]> = {
-    f1_active:          [{ href: "/dashboard/opt/timeline", icon: "📆", label: "Plan OPT",      color: "bg-indigo-50 text-indigo-600" }, { href: "/dashboard/cpt", icon: "📚", label: "CPT Tracker",  color: "bg-purple-50 text-purple-600" }, { href: "/dashboard/travel", icon: "✈️", label: "Log Trip",    color: "bg-sky-50 text-sky-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI",       color: "bg-violet-50 text-violet-600" }],
-    opt_pending:        [{ href: "/dashboard/opt/timeline", icon: "📆", label: "Track App",     color: "bg-amber-50 text-amber-600" },  { href: "/dashboard/documents", icon: "📁", label: "Upload Docs", color: "bg-blue-50 text-blue-600" },   { href: "/dashboard/travel/checklist", icon: "🗂️", label: "Travel Check", color: "bg-teal-50 text-teal-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
-    opt_active:         [{ href: "/dashboard/opt", icon: "💼", label: "Log Employer", color: "bg-emerald-50 text-emerald-600" }, { href: "/dashboard/opt/stem-timeline", icon: "🔬", label: "Plan STEM", color: "bg-violet-50 text-violet-600" }, { href: "/dashboard/travel", icon: "✈️", label: "Log Trip", color: "bg-sky-50 text-sky-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-indigo-50 text-indigo-600" }],
-    stem_opt_active:    [{ href: "/dashboard/opt/stem-reports", icon: "📋", label: "STEM Reports", color: "bg-violet-50 text-violet-600" }, { href: "/dashboard/opt", icon: "💼", label: "Log Employer", color: "bg-emerald-50 text-emerald-600" }, { href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Timeline", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-indigo-50 text-indigo-600" }],
-    stem_180_extension: [{ href: "/dashboard/opt/stem-reports", icon: "📋", label: "STEM Reports", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: "📁", label: "Documents", color: "bg-indigo-50 text-indigo-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
-    grace_period:       [{ href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Info", color: "bg-red-50 text-red-600" }, { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: "📁", label: "Documents", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
-    program_ended:      [{ href: "/dashboard/opt/h1b", icon: "🏢", label: "H-1B Info", color: "bg-gray-50 text-gray-600" }, { href: "/dashboard/deadlines", icon: "📅", label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: "📁", label: "Documents", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: "🤖", label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+  const QUICK_LINKS: Record<Phase, { href: string; icon: React.ReactNode; label: string; color: string }[]> = {
+    f1_active:          [{ href: "/dashboard/opt/timeline", icon: <ListChecks className="w-4 h-4" />, label: "Plan OPT", color: "bg-indigo-50 text-indigo-600" }, { href: "/dashboard/cpt", icon: <BookOpen className="w-4 h-4" />, label: "CPT Tracker", color: "bg-purple-50 text-purple-600" }, { href: "/dashboard/travel", icon: <Plane className="w-4 h-4" />, label: "Log Trip", color: "bg-sky-50 text-sky-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    opt_pending:        [{ href: "/dashboard/opt/timeline", icon: <ListChecks className="w-4 h-4" />, label: "Track App", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Upload Docs", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/travel/checklist", icon: <ClipboardCheck className="w-4 h-4" />, label: "Travel Check", color: "bg-teal-50 text-teal-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    opt_active:         [{ href: "/dashboard/opt", icon: <Briefcase className="w-4 h-4" />, label: "Log Employer", color: "bg-emerald-50 text-emerald-600" }, { href: "/dashboard/opt/stem-timeline", icon: <FlaskConical className="w-4 h-4" />, label: "Plan STEM", color: "bg-violet-50 text-violet-600" }, { href: "/dashboard/travel", icon: <Plane className="w-4 h-4" />, label: "Log Trip", color: "bg-sky-50 text-sky-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-indigo-50 text-indigo-600" }],
+    stem_opt_active:    [{ href: "/dashboard/opt/stem-reports", icon: <ClipboardList className="w-4 h-4" />, label: "STEM Reports", color: "bg-violet-50 text-violet-600" }, { href: "/dashboard/opt", icon: <Briefcase className="w-4 h-4" />, label: "Log Employer", color: "bg-emerald-50 text-emerald-600" }, { href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Timeline", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-indigo-50 text-indigo-600" }],
+    stem_180_extension: [{ href: "/dashboard/opt/stem-reports", icon: <ClipboardList className="w-4 h-4" />, label: "STEM Reports", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-indigo-50 text-indigo-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    grace_period:       [{ href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Info", color: "bg-red-50 text-red-600" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
+    program_ended:      [{ href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Info", color: "bg-gray-50 text-gray-600" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-blue-50 text-blue-600" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600" }],
   };
 
   return (
@@ -261,7 +279,7 @@ export default async function DashboardPage() {
           value={opt ? <span className={liveUnemploymentDays >= 85 ? "text-red-600" : liveUnemploymentDays >= 60 ? "text-amber-600" : "text-gray-900"}>{liveUnemploymentDays}</span> : "—"}
           sub={opt ? `${unemploymentLimit - liveUnemploymentDays} of ${unemploymentLimit} days remaining` : undefined}
           accent={unemployAccent}
-          icon="💼"
+          icon={<Briefcase className="w-3.5 h-3.5" />}
         >
           {opt && (
             <div className="mt-3">
@@ -282,7 +300,7 @@ export default async function DashboardPage() {
             "Within safe limit"
           }
           accent="bg-sky-400"
-          icon="✈️"
+          icon={<Plane className="w-3.5 h-3.5" />}
         >
           <div className="mt-2">
             {currentlyAbroad  && <Badge variant="warning"  className="text-xs">Currently Abroad</Badge>}
@@ -303,7 +321,7 @@ export default async function DashboardPage() {
           }
           sub={eadEnd ? opt?.ead_end_date ?? undefined : profile?.program_end_date ?? undefined}
           accent={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "bg-red-500" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "bg-amber-400" : "bg-violet-400"}
-          icon="📋"
+          icon={<CalendarClock className="w-3.5 h-3.5" />}
         />
 
         {/* Expiring Documents */}
@@ -312,7 +330,7 @@ export default async function DashboardPage() {
           value={<span className={expiringDocs.length > 0 ? "text-amber-600" : "text-gray-900"}>{expiringDocs.length}</span>}
           sub={expiringDocs.length > 0 ? "Expiring within 90 days" : "All documents valid"}
           accent={expiringDocs.length > 0 ? "bg-amber-400" : "bg-emerald-400"}
-          icon="📁"
+          icon={<FolderOpen className="w-3.5 h-3.5" />}
         >
           {expiringDocs.length > 0 && (
             <Link href="/dashboard/documents" className="text-xs text-amber-600 hover:underline mt-2 block">
@@ -349,7 +367,7 @@ export default async function DashboardPage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-sm">📅</div>
+              <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><CalendarClock className="w-4 h-4" /></div>
               <p className="font-semibold text-gray-900 text-sm">Upcoming Deadlines</p>
             </div>
             <Link href="/dashboard/deadlines" className="text-xs text-indigo-600 hover:underline font-medium">View all →</Link>
@@ -357,7 +375,7 @@ export default async function DashboardPage() {
           <div className="px-5 pb-5 space-y-2">
             {deadlines.length === 0 ? (
               <div className="text-center py-5">
-                <p className="text-xl mb-1.5">✅</p>
+                <CircleCheck className="w-6 h-6 text-emerald-400 mx-auto mb-1.5" />
                 <p className="text-gray-400 text-sm">No pending deadlines</p>
               </div>
             ) : (
@@ -389,7 +407,7 @@ export default async function DashboardPage() {
           {/* Current Employment */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center text-sm">💼</div>
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><Building2 className="w-4 h-4" /></div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current Employment</p>
             </div>
             {currentEmployer ? (
@@ -413,7 +431,7 @@ export default async function DashboardPage() {
           {/* Program Info */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center text-sm">🎓</div>
+              <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Program Info</p>
             </div>
             <div className="space-y-2 text-sm">
@@ -436,7 +454,7 @@ export default async function DashboardPage() {
             {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
                 className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-sm hover:border-gray-200 transition-all text-center`}>
-                <span className={`w-8 h-8 rounded-lg ${color.split(" ")[0]} flex items-center justify-center text-base`}>{icon}</span>
+                <span className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center`}>{icon}</span>
                 <span className="text-xs text-gray-600 font-medium leading-tight">{label}</span>
               </Link>
             ))}
@@ -449,15 +467,15 @@ export default async function DashboardPage() {
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
-            { href: "/dashboard/currency", icon: "💱", label: "Currency",  desc: "Exchange rates", color: "bg-green-50"  },
-            { href: "/dashboard/holidays", icon: "🗓️", label: "Holidays",  desc: "Bank closures",  color: "bg-blue-50"   },
-            { href: "/dashboard/news",     icon: "📰", label: "News",       desc: "Rule changes",   color: "bg-orange-50" },
-            { href: "/dashboard/guides",   icon: "📖", label: "Guides",     desc: "SSN, bank, etc.",color: "bg-violet-50" },
-            { href: "/dashboard/emergency",icon: "🆘", label: "Emergency",  desc: "Contacts & rights",color: "bg-red-50"  },
+            { href: "/dashboard/currency", icon: <ArrowLeftRight className="w-5 h-5" />, label: "Currency",  desc: "Exchange rates", color: "bg-green-50 text-green-600"  },
+            { href: "/dashboard/holidays", icon: <CalendarDays className="w-5 h-5" />, label: "Holidays",  desc: "Bank closures",  color: "bg-blue-50 text-blue-600"   },
+            { href: "/dashboard/news",     icon: <Newspaper className="w-5 h-5" />, label: "News",       desc: "Rule changes",   color: "bg-orange-50 text-orange-600" },
+            { href: "/dashboard/guides",   icon: <BookMarked className="w-5 h-5" />, label: "Guides",     desc: "SSN, bank, etc.",color: "bg-violet-50 text-violet-600" },
+            { href: "/dashboard/emergency",icon: <ShieldAlert className="w-5 h-5" />, label: "Emergency",  desc: "Contacts & rights",color: "bg-red-50 text-red-600"  },
           ].map(({ href, icon, label, desc, color }) => (
             <Link key={href} href={href}
               className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white border border-gray-100 text-center hover:shadow-md hover:border-gray-200 transition-all">
-              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center text-xl`}>{icon}</div>
+              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
               <span className="text-sm text-gray-800 font-semibold">{label}</span>
               <span className="text-xs text-gray-400">{desc}</span>
             </Link>
