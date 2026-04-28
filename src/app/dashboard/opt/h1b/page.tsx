@@ -30,11 +30,11 @@ function Countdown({ targetDate, label, color }: { targetDate: Date; label: stri
   return (
     <Card className={isPast ? "opacity-60" : ""}>
       <CardContent className="p-4 text-center">
-        <p className="text-xs text-gray-400 mb-1">{label}</p>
-        <p className={`text-2xl font-bold ${isPast ? "text-gray-400" : color}`}>
+        <p className="text-xs text-gray-500 mb-1">{label}</p>
+        <p className={`text-2xl font-bold ${isPast ? "text-gray-500" : color}`}>
           {isPast ? "Done" : `${days}d`}
         </p>
-        <p className="text-xs text-gray-400 mt-1">{format(targetDate, "MMM d, yyyy")}</p>
+        <p className="text-xs text-gray-500 mt-1">{format(targetDate, "MMM d, yyyy")}</p>
         {!isPast && days <= 14 && <Badge variant="warning" className="text-xs mt-1">Coming up</Badge>}
       </CardContent>
     </Card>
@@ -76,7 +76,7 @@ export default function H1BPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">H-1B Lottery Timeline</h1>
       </div>
@@ -93,7 +93,7 @@ export default function H1BPage() {
       </div>
 
       {/* Cap-gap checker */}
-      <Card className="border-blue-800/40">
+      <Card className="border-blue-200">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">🏢 Cap-Gap Status Checker</CardTitle>
         </CardHeader>
@@ -160,9 +160,9 @@ export default function H1BPage() {
               { label: "Lottery Odds", value: "~35–50% (varies)", note: "Higher odds for Master's cap applicants" },
             ].map((item) => (
               <div key={item.label} className="p-3 rounded-lg bg-gray-100 border border-gray-200/50">
-                <p className="text-gray-400 text-xs">{item.label}</p>
+                <p className="text-gray-500 text-xs">{item.label}</p>
                 <p className="text-gray-900 font-medium">{item.value}</p>
-                <p className="text-gray-400 text-xs mt-0.5">{item.note}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{item.note}</p>
               </div>
             ))}
           </div>
@@ -190,7 +190,7 @@ export default function H1BPage() {
         </CardContent>
       </Card>
 
-      <div className="p-3 rounded-lg bg-gray-100 border border-gray-200 text-xs text-gray-400">
+      <div className="p-3 rounded-lg bg-gray-100 border border-gray-200 text-xs text-gray-500">
         ⚠️ H-1B dates are approximate based on USCIS historical patterns. Exact dates change each year. Always confirm with your employer&apos;s immigration attorney or USCIS.gov. This is informational only and not legal advice.
       </div>
     </div>

@@ -18,6 +18,7 @@ function calculate(input: {
   eadEndDate: string;
   stemEndDate: string;
   optType: string;
+  stemStatus: string;
 }): ResultItem[] {
   const results: ResultItem[] = [];
   const today = new Date();
@@ -30,7 +31,7 @@ function calculate(input: {
     label: "OPT Application Window",
     value: `${format(applyWindow.start, "MMM d, yyyy")} → ${format(applyWindow.end, "MMM d, yyyy")}`,
     status: "info",
-    note: "You must FILE with USCIS in this window. Apply as early as possible.",
+    note: "You must FILE with USCIS in this window. Apply as early as possible. [8 CFR 214.2(f)(10)(ii)(A)]",
   });
 
   results.push({
@@ -42,10 +43,10 @@ function calculate(input: {
 
   if (!input.eadEndDate) {
     results.push({
-      label: "Grace Period (without OPT)",
+      label: "Grace Period (No OPT Filed)",
       value: `${format(addDays(progEnd, 1), "MMM d, yyyy")} → ${format(addDays(progEnd, 60), "MMM d, yyyy")}`,
       status: "info",
-      note: "If you don't apply for OPT, your 60-day grace period starts the day after program end. You CANNOT work during this time.",
+      note: "If you don't apply for OPT, your 60-day grace period starts the day after your I-20 program end date. You CANNOT work during this time. Use it to depart the US, transfer, or change status. [8 CFR 214.2(f)(5)(iv)]",
     });
   }
 
@@ -55,10 +56,9 @@ function calculate(input: {
       label: "Earliest Work Start Date",
       value: format(optStart, "MMM d, yyyy"),
       status: "success",
-      note: "This is the date printed on your EAD. You CANNOT work before this date, even if application is approved early.",
+      note: "This is the date printed on your EAD. You CANNOT work before this date, even if your application is approved early.",
     });
 
-    // Gap between program end and OPT start
     const gapDays = differenceInCalendarDays(optStart, progEnd);
     if (gapDays > 0) {
       results.push({
@@ -75,44 +75,92 @@ function calculate(input: {
   if (input.eadEndDate) {
     const eadEnd = parseISO(input.eadEndDate);
     const daysToEnd = differenceInCalendarDays(eadEnd, today);
-    const gracePeriod = addDays(eadEnd, 60);
 
     results.push({
       label: "OPT Authorization Ends",
       value: format(eadEnd, "MMM d, yyyy"),
       status: daysToEnd < 30 ? "critical" : daysToEnd < 90 ? "warning" : "info",
-      note: `${daysToEnd > 0 ? `${daysToEnd} days remaining` : "Expired"}. You must stop working on this date unless STEM extension is approved.`,
+      note: `${daysToEnd > 0 ? `${daysToEnd} days remaining` : "Expired"}. You must stop working on this date unless a STEM extension is filed and pending.`,
     });
 
-    results.push({
-      label: "60-Day Grace Period Starts",
-      value: format(addDays(eadEnd, 1), "MMM d, yyyy"),
-      status: "info",
-      note: "Grace period begins the day after your OPT authorization ends. You CANNOT work during this period.",
-    });
-
-    results.push({
-      label: "60-Day Grace Period Ends",
-      value: format(gracePeriod, "MMM d, yyyy"),
-      status: daysToEnd < 0 ? "critical" : "info",
-      note: "Last day to depart, change status, or have STEM extension approved. You CANNOT work during grace period.",
-    });
-
-    // STEM extension deadline
     if (input.optType === "stem_eligible") {
       const stemApplyBy = subDays(eadEnd, 90);
+      const daysToApply = differenceInCalendarDays(stemApplyBy, today);
       results.push({
-        label: "STEM Extension Apply By",
+        label: "STEM Extension — File By",
         value: format(stemApplyBy, "MMM d, yyyy"),
-        status: isAfter(today, stemApplyBy) ? "critical" : differenceInCalendarDays(stemApplyBy, today) < 30 ? "warning" : "info",
-        note: "Must FILE STEM extension application at least 90 days before OPT expires. If pending when OPT expires, you have a 180-day automatic extension to continue working.",
+        status: isAfter(today, stemApplyBy) ? "critical" : daysToApply < 30 ? "warning" : "info",
+        note: "Must FILE STEM extension with USCIS before your OPT EAD expires. Your employer must be E-Verify enrolled. [8 CFR 214.2(f)(10)(ii)(C)]",
+      });
+
+      const autoExtEnd = addDays(eadEnd, 180);
+
+      if (input.stemStatus === "pending") {
+        results.push({
+          label: "180-Day Auto-Extension (STEM Pending)",
+          value: `${format(addDays(eadEnd, 1), "MMM d, yyyy")} → ${format(autoExtEnd, "MMM d, yyyy")}`,
+          status: "success",
+          note: "Your STEM extension was timely filed. You MAY continue working for up to 180 days past your OPT expiry while USCIS adjudicates. Your EAD is automatically extended. [8 CFR 274a.12(b)(6)(iv)]",
+        });
+
+        results.push({
+          label: "Grace Period (if STEM Approved During Auto-Ext)",
+          value: "60 days after STEM EAD end date",
+          status: "info",
+          note: "If STEM is approved, your 60-day grace period starts after your new STEM EAD expires — NOT after the original OPT. The auto-extension merges into STEM authorization.",
+        });
+
+        results.push({
+          label: "Grace Period (if STEM Denied During Auto-Ext)",
+          value: "Starts on denial date",
+          status: "warning",
+          note: "If USCIS denies your STEM extension, the 60-day grace period begins on the date of denial. You must STOP working immediately on denial. Use the grace period to depart, transfer, or change status. [SEVP FAQ; 8 CFR 214.2(f)(5)(iv)]",
+        });
+
+        results.push({
+          label: "Auto-Extension Expires (if no decision)",
+          value: format(autoExtEnd, "MMM d, yyyy"),
+          status: "warning",
+          note: "If USCIS hasn't decided your STEM case by this date, the 180-day auto-extension ends. You must STOP working. Your 60-day grace period then begins.",
+        });
+
+        const autoExtGraceEnd = addDays(autoExtEnd, 60);
+        results.push({
+          label: "Grace Period After Auto-Ext Expires",
+          value: `${format(addDays(autoExtEnd, 1), "MMM d, yyyy")} → ${format(autoExtGraceEnd, "MMM d, yyyy")}`,
+          status: "info",
+          note: "If the 180-day auto-extension runs out with no USCIS decision, this is your final 60-day grace period. NO work allowed. Depart US, change status, or transfer.",
+        });
+      } else if (input.stemStatus === "not_filed") {
+        const graceStart = addDays(eadEnd, 1);
+        const graceEnd = addDays(eadEnd, 60);
+        results.push({
+          label: "60-Day Grace Period (No STEM Filed)",
+          value: `${format(graceStart, "MMM d, yyyy")} → ${format(graceEnd, "MMM d, yyyy")}`,
+          status: "warning",
+          note: "Without a timely STEM extension filing, your 60-day grace period starts the day after your OPT EAD expires. You CANNOT work during this period. [8 CFR 214.2(f)(5)(iv)]",
+        });
+      } else {
+        results.push({
+          label: "60-Day Grace Period (After OPT Ends)",
+          value: `${format(addDays(eadEnd, 1), "MMM d, yyyy")} → ${format(addDays(eadEnd, 60), "MMM d, yyyy")}`,
+          status: "info",
+          note: "Grace period begins the day after your OPT authorization ends. You CANNOT work during this period. Use it to depart, transfer, or change status. [8 CFR 214.2(f)(5)(iv)]",
+        });
+      }
+    } else {
+      results.push({
+        label: "60-Day Grace Period Starts",
+        value: format(addDays(eadEnd, 1), "MMM d, yyyy"),
+        status: "info",
+        note: "Grace period begins the day after your OPT authorization ends. You CANNOT work during this period. [8 CFR 214.2(f)(5)(iv)]",
       });
 
       results.push({
-        label: "Cap-Gap Work Authorization (if STEM pending)",
-        value: "180 days past OPT expiry",
-        status: "info",
-        note: "If STEM extension was timely filed and is pending when OPT expires, you get an automatic 180-day extension to keep working.",
+        label: "60-Day Grace Period Ends",
+        value: format(addDays(eadEnd, 60), "MMM d, yyyy"),
+        status: daysToEnd < 0 ? "critical" : "info",
+        note: "Last day to depart, change status, or transfer. You CANNOT work during the grace period.",
       });
     }
   }
@@ -124,13 +172,20 @@ function calculate(input: {
       label: "STEM Extension Ends",
       value: format(stemEnd, "MMM d, yyyy"),
       status: daysToStem < 30 ? "critical" : daysToStem < 90 ? "warning" : "info",
-      note: "After this date, your work authorization ends. Options: H-1B cap-gap, change of status, or depart US.",
+      note: `${daysToStem > 0 ? `${daysToStem} days remaining` : "Expired"}. After this date, your work authorization ends. Options: H-1B cap-gap, change of status, or depart US.`,
     });
 
     results.push({
-      label: "Total OPT Work Authorization",
+      label: "Grace Period After STEM Ends",
+      value: `${format(addDays(stemEnd, 1), "MMM d, yyyy")} → ${format(addDays(stemEnd, 60), "MMM d, yyyy")}`,
+      status: daysToStem < 0 ? "critical" : "info",
+      note: "60-day grace period after STEM OPT expires. NO work allowed. This is your final grace period — depart US, change status, or have H-1B cap-gap. [8 CFR 214.2(f)(5)(iv)]",
+    });
+
+    results.push({
+      label: "Total OPT + STEM Work Authorization",
       value: input.optStartDate
-        ? `${differenceInCalendarDays(stemEnd, parseISO(input.optStartDate))} days`
+        ? `${differenceInCalendarDays(stemEnd, parseISO(input.optStartDate))} days (~${Math.round(differenceInCalendarDays(stemEnd, parseISO(input.optStartDate)) / 30.44)} months)`
         : "—",
       status: "success",
       note: "12 months OPT + 24 months STEM extension = up to 36 months total for eligible STEM degree holders.",
@@ -154,6 +209,7 @@ export default function CalculatorPage() {
     optStartDate: "",
     eadEndDate: "",
     stemEndDate: "",
+    stemStatus: "not_filed",
   });
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
@@ -162,11 +218,11 @@ export default function CalculatorPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-700 text-sm font-medium">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">Employment Authorization Calculator</h1>
       </div>
-      <p className="text-gray-500 text-sm -mt-4">
+      <p className="text-gray-600 text-sm -mt-4">
         Enter your dates to see exactly when you can work, when you must stop, and all critical deadlines.
       </p>
 
@@ -184,9 +240,9 @@ export default function CalculatorPage() {
                     { value: "stem_eligible", label: "STEM OPT", sub: "12 + 24 months" },
                   ].map((opt) => (
                     <button key={opt.value} onClick={() => set("optType", opt.value)}
-                      className={`p-3 rounded-lg border text-left transition-colors ${form.optType === opt.value ? "border-indigo-600 bg-indigo-50" : "border-gray-200 hover:border-slate-600"}`}>
+                      className={`p-3 rounded-lg border text-left transition-colors ${form.optType === opt.value ? "border-indigo-600 bg-indigo-50" : "border-gray-200 hover:border-gray-400"}`}>
                       <p className="text-sm font-medium text-gray-900">{opt.label}</p>
-                      <p className="text-xs text-gray-400">{opt.sub}</p>
+                      <p className="text-xs text-gray-500">{opt.sub}</p>
                     </button>
                   ))}
                 </div>
@@ -194,40 +250,72 @@ export default function CalculatorPage() {
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">Program End Date *</label>
                 <Input type="date" value={form.programEndDate} onChange={(e) => set("programEndDate", e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1">The I-20 program end date (not graduation date)</p>
+                <p className="text-xs text-gray-500 mt-1">The I-20 program end date (not graduation date)</p>
               </div>
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">OPT Start Date (EAD)</label>
                 <Input type="date" value={form.optStartDate} onChange={(e) => set("optStartDate", e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1">The start date printed on your EAD card</p>
+                <p className="text-xs text-gray-500 mt-1">The start date printed on your EAD card</p>
               </div>
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">OPT End Date (EAD)</label>
                 <Input type="date" value={form.eadEndDate} onChange={(e) => set("eadEndDate", e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1">The end date printed on your EAD card</p>
+                <p className="text-xs text-gray-500 mt-1">The end date printed on your EAD card</p>
               </div>
               {form.optType === "stem_eligible" && (
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1.5">STEM Extension End Date</label>
-                  <Input type="date" value={form.stemEndDate} onChange={(e) => set("stemEndDate", e.target.value)} />
-                  <p className="text-xs text-gray-400 mt-1">If STEM extension approved: end date on new EAD</p>
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1.5">STEM Extension Status</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { value: "not_filed", label: "Not Filed", sub: "Haven't applied yet" },
+                        { value: "pending", label: "Pending", sub: "Filed, awaiting decision" },
+                        { value: "approved", label: "Approved", sub: "Have new EAD" },
+                      ].map((opt) => (
+                        <button key={opt.value} onClick={() => set("stemStatus", opt.value)}
+                          className={`p-2.5 rounded-lg border text-left transition-colors ${form.stemStatus === opt.value ? "border-indigo-600 bg-indigo-50" : "border-gray-200 hover:border-gray-400"}`}>
+                          <p className="text-xs font-medium text-gray-900">{opt.label}</p>
+                          <p className="text-[10px] text-gray-500">{opt.sub}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {form.stemStatus === "approved" && (
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1.5">STEM Extension End Date</label>
+                      <Input type="date" value={form.stemEndDate} onChange={(e) => set("stemEndDate", e.target.value)} />
+                      <p className="text-xs text-gray-500 mt-1">End date on your new STEM EAD card</p>
+                    </div>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>
 
           {/* Key rules */}
           <Card>
-            <CardHeader className="pb-3"><CardTitle className="text-sm text-gray-500">Key Rules — Know These</CardTitle></CardHeader>
+            <CardHeader className="pb-3"><CardTitle className="text-sm text-gray-700">Key Rules — Know These</CardTitle></CardHeader>
             <CardContent>
-              <ul className="space-y-2 text-xs text-gray-400">
+              <ul className="space-y-2 text-xs text-gray-600">
                 <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work before EAD start date printed on card</li>
-                <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work after EAD end date (unless STEM extension approved)</li>
+                <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work after EAD end date (unless STEM pending → 180-day auto-ext)</li>
                 <li className="flex gap-2"><span className="text-red-600">✗</span> Receipt notice does NOT authorize work — only physical EAD card</li>
-                <li className="flex gap-2"><span className="text-amber-600">△</span> STEM: must have E-Verify employer</li>
-                <li className="flex gap-2"><span className="text-amber-600">△</span> STEM: timely filed = 180-day automatic extension</li>
-                <li className="flex gap-2"><span className="text-emerald-600">✓</span> Grace period = 60 days to change status, NOT to work</li>
+                <li className="flex gap-2"><span className="text-red-600">✗</span> CANNOT work during any grace period</li>
+                <li className="flex gap-2"><span className="text-amber-600">△</span> STEM: must have E-Verify employer + timely file before OPT expires</li>
+                <li className="flex gap-2"><span className="text-amber-600">△</span> STEM pending at OPT expiry = 180-day auto-extension to keep working</li>
+                <li className="flex gap-2"><span className="text-amber-600">△</span> If STEM denied during auto-ext, grace period starts on denial date</li>
+                <li className="flex gap-2"><span className="text-emerald-600">✓</span> Grace period = 60 days to depart, transfer, or change status</li>
+                <li className="flex gap-2"><span className="text-emerald-600">✓</span> Each authorization type gets its own grace period after it ends</li>
               </ul>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3"><CardTitle className="text-sm text-amber-600">Proposed Rule Change</CardTitle></CardHeader>
+            <CardContent>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                USCIS has proposed reducing the post-completion OPT grace period from <strong className="text-gray-800">60 days to 30 days</strong> (NPRM published January 2025). This is NOT yet final — the current rule remains 60 days. Monitor the Federal Register for updates. This calculator uses the current 60-day rule.
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -235,7 +323,7 @@ export default function CalculatorPage() {
         {/* Results */}
         <div className="space-y-3">
           {results.length === 0 ? (
-            <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-48 text-gray-500 text-sm">
               Enter your program end date to see results
             </div>
           ) : (
@@ -246,9 +334,9 @@ export default function CalculatorPage() {
                   <div className="flex items-start gap-2 mb-1">
                     <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${s.dot}`} />
                     <div className="flex-1">
-                      <p className="text-xs text-gray-400 mb-0.5">{r.label}</p>
+                      <p className="text-xs text-gray-500 font-medium mb-0.5">{r.label}</p>
                       <p className={`font-semibold text-sm ${s.text}`}>{r.value}</p>
-                      {r.note && <p className="text-xs text-gray-500 mt-1 leading-relaxed">{r.note}</p>}
+                      {r.note && <p className="text-xs text-gray-600 mt-1 leading-relaxed">{r.note}</p>}
                     </div>
                   </div>
                 </div>
@@ -257,7 +345,7 @@ export default function CalculatorPage() {
           )}
 
           {results.length > 0 && (
-            <div className="text-xs text-gray-400 text-center pt-2">
+            <div className="text-xs text-gray-500 text-center pt-2">
               Always verify with your DSO or immigration attorney. Rules change.
             </div>
           )}

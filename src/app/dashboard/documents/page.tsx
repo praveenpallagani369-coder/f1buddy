@@ -101,7 +101,7 @@ export default function DocumentsPage() {
     <div className="flex items-center justify-center py-20">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-gray-500 text-sm">Loading documents...</p>
+        <p className="text-gray-600 text-sm">Loading documents...</p>
       </div>
     </div>
   );
@@ -111,7 +111,7 @@ export default function DocumentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Document Vault</h1>
-          <p className="text-gray-500 text-sm">Store and track expiration of your important documents (PDF, JPG, PNG — max 10 MB)</p>
+          <p className="text-gray-600 text-sm">Store and track expiration of your important documents (PDF, JPG, PNG — max 10 MB)</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Document</Button>
       </div>
@@ -157,7 +157,7 @@ export default function DocumentsPage() {
                   <div>
                     <p className="text-2xl mb-1">📎</p>
                     <p className="text-gray-900 font-medium text-sm">{selectedFile.name}</p>
-                    <p className="text-gray-400 text-xs mt-1">{(selectedFile.size / 1024).toFixed(0)} KB</p>
+                    <p className="text-gray-500 text-xs mt-1">{(selectedFile.size / 1024).toFixed(0)} KB</p>
                     <button className="text-xs text-indigo-600 mt-2 hover:underline" onClick={(e) => { e.stopPropagation(); setSelectedFile(null); if (fileRef.current) fileRef.current.value = ""; }}>
                       Remove
                     </button>
@@ -165,8 +165,8 @@ export default function DocumentsPage() {
                 ) : (
                   <div>
                     <p className="text-3xl mb-2">📁</p>
-                    <p className="text-gray-500 text-sm">Click to select or drag & drop</p>
-                    <p className="text-gray-400 text-xs mt-1">PDF, JPG, PNG up to 10 MB</p>
+                    <p className="text-gray-600 text-sm">Click to select or drag & drop</p>
+                    <p className="text-gray-500 text-xs mt-1">PDF, JPG, PNG up to 10 MB</p>
                   </div>
                 )}
               </div>
@@ -215,13 +215,13 @@ export default function DocumentsPage() {
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
                     <span className="text-2xl">{DOC_ICONS[d.doc_type]}</span>
-                    <button onClick={() => deleteDoc(d.id)} className="text-gray-400 hover:text-red-600 text-xs transition-colors p-1">✕</button>
+                    <button onClick={() => deleteDoc(d.id)} className="text-gray-500 hover:text-red-600 text-xs transition-colors p-1">✕</button>
                   </div>
                   <p className="font-medium text-gray-900">{DOC_LABELS[d.doc_type]}</p>
-                  <p className="text-xs text-gray-400 mt-0.5 truncate">{d.file_name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5 truncate">{d.file_name}</p>
                   {d.expiration_date && (
                     <div className="mt-2">
-                      <p className="text-xs text-gray-400">Expires: {d.expiration_date}</p>
+                      <p className="text-xs text-gray-500">Expires: {d.expiration_date}</p>
                       {daysToExp !== null && (
                         <Badge variant={expStatus === "expired" || expStatus === "critical" ? "critical" : expStatus === "warning" ? "warning" : "success"} className="text-xs mt-1">
                           {daysToExp < 0 ? "Expired" : daysToExp === 0 ? "Expires today" : `${daysToExp}d left`}
@@ -236,7 +236,7 @@ export default function DocumentsPage() {
                       View document →
                     </a>
                   )}
-                  {d.notes && <p className="text-xs text-gray-400 mt-2 italic">{d.notes}</p>}
+                  {d.notes && <p className="text-xs text-gray-500 mt-2 italic">{d.notes}</p>}
                 </CardContent>
               </Card>
             );

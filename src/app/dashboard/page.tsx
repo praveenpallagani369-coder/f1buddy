@@ -92,16 +92,16 @@ function StatCard({
   const iconBg = ICON_BG[accent] ?? "bg-gray-100";
   const iconColor = ICON_COLOR[accent] ?? "text-gray-500";
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 relative overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-4 relative overflow-hidden hover:shadow-md transition-shadow">
       <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-2xl`} />
       <div className="flex items-start justify-between mb-2">
-        <p className="text-[11px] text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
+        <p className="text-[11px] text-gray-500 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
         <div className={`w-7 h-7 rounded-lg ${iconBg} ${iconColor} flex items-center justify-center flex-shrink-0`}>
           {icon}
         </div>
       </div>
       <div className="text-3xl font-bold text-gray-900 leading-none mb-1">{value}</div>
-      {sub && <div className="text-xs text-gray-400 mt-1.5">{sub}</div>}
+      {sub && <div className="text-xs text-gray-500 mt-1.5">{sub}</div>}
       {children}
     </div>
   );
@@ -215,7 +215,7 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-bold text-gray-900">
             {greeting}, {profile?.name?.split(" ")[0] ?? "Student"} 👋
           </h1>
-          <p className="text-gray-500 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
+          <p className="text-gray-600 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
         </div>
         <div className={`flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm ${statusConfig.bg}`}>
           <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`} />
@@ -364,7 +364,7 @@ export default async function DashboardPage() {
       <div className="grid lg:grid-cols-2 gap-6">
 
         {/* Deadlines card */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+        <div className="bg-white rounded-2xl border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><CalendarClock className="w-4 h-4" /></div>
@@ -376,17 +376,17 @@ export default async function DashboardPage() {
             {deadlines.length === 0 ? (
               <div className="text-center py-5">
                 <CircleCheck className="w-6 h-6 text-emerald-400 mx-auto mb-1.5" />
-                <p className="text-gray-400 text-sm">No pending deadlines</p>
+                <p className="text-gray-500 text-sm">No pending deadlines</p>
               </div>
             ) : (
               deadlines.map((d) => {
                 const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
                 return (
-                  <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 hover:border-gray-200 transition-colors">
+                  <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-200 hover:border-gray-300 transition-colors">
                     <div className={`w-2 h-2 rounded-full flex-shrink-0 ${d.severity === "critical" ? "bg-red-400" : d.severity === "warning" ? "bg-amber-400" : "bg-blue-400"}`} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-gray-800 font-medium truncate">{d.title}</p>
-                      <p className="text-xs text-gray-400">{d.deadline_date}</p>
+                      <p className="text-xs text-gray-500">{d.deadline_date}</p>
                     </div>
                     <Badge variant={days <= 7 ? "critical" : days <= 30 ? "warning" : "info"} className="flex-shrink-0">
                       {days === 0 ? "Today" : days < 0 ? "Overdue" : `${days}d`}
@@ -405,15 +405,15 @@ export default async function DashboardPage() {
         <div className="space-y-4">
 
           {/* Current Employment */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-white rounded-2xl border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><Building2 className="w-4 h-4" /></div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Current Employment</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Current Employment</p>
             </div>
             {currentEmployer ? (
               <div>
                 <p className="text-gray-900 font-semibold">{currentEmployer.employer_name}</p>
-                <p className="text-gray-500 text-sm mt-0.5">{currentEmployer.position_title ?? currentEmployer.employment_type?.replace("_", " ")}</p>
+                <p className="text-gray-600 text-sm mt-0.5">{currentEmployer.position_title ?? currentEmployer.employment_type?.replace("_", " ")}</p>
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {!currentEmployer.reported_to_school && <Badge variant="warning" className="text-xs">Not reported to DSO</Badge>}
                   {currentEmployer.e_verify_employer   && <Badge variant="success" className="text-xs">E-Verify ✓</Badge>}
@@ -422,17 +422,17 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div>
-                <p className="text-gray-400 text-sm">No current employer logged</p>
+                <p className="text-gray-500 text-sm">No current employer logged</p>
                 <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-1 block">Add employer →</Link>
               </div>
             )}
           </div>
 
           {/* Program Info */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-white rounded-2xl border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Program Info</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Program Info</p>
             </div>
             <div className="space-y-2 text-sm">
               {[
@@ -442,7 +442,7 @@ export default async function DashboardPage() {
                 ["DSO", profile?.dso_name],
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between items-center">
-                  <span className="text-gray-400">{label}</span>
+                  <span className="text-gray-500">{label}</span>
                   <span className="text-gray-700 font-medium truncate max-w-[160px] text-right">{value ?? "—"}</span>
                 </div>
               ))}
@@ -453,7 +453,7 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-4 gap-3">
             {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-100 bg-white hover:shadow-sm hover:border-gray-200 transition-all text-center`}>
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 bg-white hover:shadow-sm hover:border-gray-300 transition-all text-center`}>
                 <span className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center`}>{icon}</span>
                 <span className="text-xs text-gray-600 font-medium leading-tight">{label}</span>
               </Link>
@@ -464,7 +464,7 @@ export default async function DashboardPage() {
 
       {/* ── Tools & Resources ────────────────────────────────────── */}
       <div>
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Tools & Resources</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
             { href: "/dashboard/currency", icon: <ArrowLeftRight className="w-5 h-5" />, label: "Currency",  desc: "Exchange rates", color: "bg-green-50 text-green-600"  },
@@ -474,10 +474,10 @@ export default async function DashboardPage() {
             { href: "/dashboard/emergency",icon: <ShieldAlert className="w-5 h-5" />, label: "Emergency",  desc: "Contacts & rights",color: "bg-red-50 text-red-600"  },
           ].map(({ href, icon, label, desc, color }) => (
             <Link key={href} href={href}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white border border-gray-100 text-center hover:shadow-md hover:border-gray-200 transition-all">
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white border border-gray-200 text-center hover:shadow-md hover:border-gray-300 transition-all">
               <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
               <span className="text-sm text-gray-800 font-semibold">{label}</span>
-              <span className="text-xs text-gray-400">{desc}</span>
+              <span className="text-xs text-gray-500">{desc}</span>
             </Link>
           ))}
         </div>

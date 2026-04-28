@@ -73,11 +73,11 @@ export default function CurrencyPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Currency Converter</h1>
-        <p className="text-gray-500 text-sm">Live exchange rates for sending money home</p>
+        <p className="text-gray-600 text-sm">Live exchange rates for sending money home</p>
       </div>
 
       {/* Converter */}
-      <Card className="border-indigo-800/30">
+      <Card className="border-indigo-200">
         <CardContent className="p-6">
           <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-end">
             <div>
@@ -92,7 +92,7 @@ export default function CurrencyPage() {
                 step="0.01"
               />
             </div>
-            <div className="flex items-center justify-center text-2xl text-gray-400 pb-1">&rarr;</div>
+            <div className="flex items-center justify-center text-2xl text-gray-500 pb-1">&rarr;</div>
             <div>
               <label className="block text-sm text-gray-600 mb-1.5">To Currency</label>
               <Select value={to} onChange={(e) => setTo(e.target.value)}>
@@ -113,7 +113,7 @@ export default function CurrencyPage() {
               <p className="text-sm text-gray-500 mt-1">
                 1 USD = {result.rate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })} {to}
               </p>
-              <p className="text-xs text-gray-400 mt-2">Mid-market rate via Frankfurter API (ECB data)</p>
+              <p className="text-xs text-gray-500 mt-2">Mid-market rate via Frankfurter API (ECB data)</p>
             </div>
           )}
           {loading && (
@@ -146,7 +146,7 @@ export default function CurrencyPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Money Transfer Services</CardTitle>
-          <p className="text-xs text-gray-400">Compare services to find the best rate and lowest fees</p>
+          <p className="text-xs text-gray-500">Compare services to find the best rate and lowest fees</p>
         </CardHeader>
         <CardContent className="space-y-3">
           {TRANSFER_SERVICES.map((svc) => (

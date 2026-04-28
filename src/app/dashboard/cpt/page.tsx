@@ -16,7 +16,7 @@ function Field({ label, children, hint }: { label: string; children: React.React
     <div>
       <label className="block text-sm text-gray-600 mb-1.5">{label}</label>
       {children}
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+      {hint && <p className="text-xs text-gray-500 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -114,7 +114,7 @@ export default function CPTPage() {
               <p>Go to: supabase.com → your project → SQL Editor</p>
               <p className="mt-1">Run the file: <strong>supabase/migrations/003_cpt_records.sql</strong></p>
             </div>
-            <p className="text-xs text-gray-400 mt-3">After running the migration, refresh this page.</p>
+            <p className="text-xs text-gray-500 mt-3">After running the migration, refresh this page.</p>
           </CardContent>
         </Card>
       </div>
@@ -126,7 +126,7 @@ export default function CPTPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">CPT Tracker</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Curricular Practical Training — authorization tied to your I-20 and a specific course</p>
+          <p className="text-gray-600 text-sm mt-0.5">Curricular Practical Training — authorization tied to your I-20 and a specific course</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add CPT Record</Button>
       </div>
@@ -155,22 +155,22 @@ export default function CPTPage() {
       <div className="grid sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 mb-1">Total CPT Records</p>
+            <p className="text-xs text-gray-500 mb-1">Total CPT Records</p>
             <p className="text-2xl font-bold text-gray-900">{records.length}</p>
           </CardContent>
         </Card>
         <Card className={optEligibilityRisk ? "border-red-200" : optEligibilityWarning ? "border-amber-200" : ""}>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 mb-1">Full-time CPT Days</p>
+            <p className="text-xs text-gray-500 mb-1">Full-time CPT Days</p>
             <p className={`text-2xl font-bold ${optEligibilityRisk ? "text-red-600" : optEligibilityWarning ? "text-amber-600" : "text-gray-900"}`}>
               {fullTimeDays}
             </p>
-            <p className="text-xs text-gray-400">/ {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS} day OPT limit</p>
+            <p className="text-xs text-gray-500">/ {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS} day OPT limit</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 mb-1">OPT Eligibility</p>
+            <p className="text-xs text-gray-500 mb-1">OPT Eligibility</p>
             <p className={`text-lg font-bold ${optEligibilityRisk ? "text-red-600" : optEligibilityWarning ? "text-amber-600" : "text-emerald-600"}`}>
               {optEligibilityRisk ? "At Risk" : optEligibilityWarning ? "Watch" : "Eligible"}
             </p>
@@ -282,12 +282,12 @@ export default function CPTPage() {
                         {!r.is_authorized_on_i20 && <Badge variant="critical" className="text-xs">⚠ I-20 not verified</Badge>}
                       </div>
                       {r.position_title && <p className="text-sm text-gray-500 mt-0.5">{r.position_title}</p>}
-                      {r.course_name && <p className="text-xs text-gray-400 mt-0.5">Course: {r.course_name}</p>}
-                      <p className="text-xs text-gray-400 mt-1">
+                      {r.course_name && <p className="text-xs text-gray-500 mt-0.5">Course: {r.course_name}</p>}
+                      <p className="text-xs text-gray-500 mt-1">
                         {r.start_date} → {r.end_date ?? "Present"} · {duration} days
                       </p>
                     </div>
-                    <button onClick={() => deleteRecord(r.id)} className="text-gray-400 hover:text-red-600 text-xs ml-4 flex-shrink-0">
+                    <button onClick={() => deleteRecord(r.id)} className="text-gray-500 hover:text-red-600 text-xs ml-4 flex-shrink-0">
                       Remove
                     </button>
                   </div>

@@ -52,11 +52,11 @@ export default function ProfilePage() {
 
   const Field = ({ label, value, field, type = "text" }: { label: string; value: string | null | undefined; field: string; type?: string }) => (
     <div>
-      <label className="block text-xs text-gray-400 mb-1">{label}</label>
+      <label className="block text-xs text-gray-500 mb-1">{label}</label>
       {editing ? (
         <Input type={type} value={form[field] ?? ""} onChange={(e) => setForm((f) => ({ ...f, [field]: e.target.value }))} />
       ) : (
-        <p className="text-sm text-gray-900">{value || <span className="text-gray-400">—</span>}</p>
+        <p className="text-sm text-gray-900">{value || <span className="text-gray-500">—</span>}</p>
       )}
     </div>
   );
@@ -66,7 +66,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-          <p className="text-gray-500 text-sm">Your student and visa information</p>
+          <p className="text-gray-600 text-sm">Your student and visa information</p>
         </div>
         {editing ? (
           <div className="flex gap-2">
@@ -85,7 +85,7 @@ export default function ProfilePage() {
         </div>
         <div>
           <p className="text-gray-900 font-semibold text-lg">{profile?.name ?? "Student"}</p>
-          <p className="text-gray-500 text-sm">{profile?.email}</p>
+          <p className="text-gray-600 text-sm">{profile?.email}</p>
           <div className="flex gap-2 mt-1">
             <Badge variant="info">{profile?.visa_type ?? "F-1"}</Badge>
             <Badge variant={profile?.role === "premium" ? "warning" : "outline"}>{profile?.role ?? "student"}</Badge>
@@ -131,20 +131,20 @@ export default function ProfilePage() {
           <span className="text-xl">🏠</span>
           <div>
             <p className="text-sm font-medium text-gray-900">US Address & SEVIS Reporting</p>
-            <p className="text-xs text-gray-400">Manage your address and 10-day DSO reporting requirement</p>
+            <p className="text-xs text-gray-500">Manage your address and 10-day DSO reporting requirement</p>
           </div>
         </div>
-        <span className="text-gray-400 group-hover:text-gray-500 transition-colors">→</span>
+        <span className="text-gray-500 group-hover:text-gray-500 transition-colors">→</span>
       </Link>
 
       <Section title="Account">
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-400">Subscription</span>
+            <span className="text-gray-500">Subscription</span>
             <Badge variant="outline">{profile?.role === "premium" ? "Premium" : "Free"}</Badge>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-400">Member since</span>
+            <span className="text-gray-500">Member since</span>
             <span className="text-gray-600">{profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"}</span>
           </div>
         </div>

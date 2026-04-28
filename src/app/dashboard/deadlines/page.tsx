@@ -55,7 +55,7 @@ export default function DeadlinesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Deadlines</h1>
-          <p className="text-gray-500 text-sm">All your F-1 compliance deadlines in one place</p>
+          <p className="text-gray-600 text-sm">All your F-1 compliance deadlines in one place</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Deadline</Button>
       </div>
@@ -64,7 +64,7 @@ export default function DeadlinesPage() {
       <div className="flex gap-2 flex-wrap">
         {["all","pending","opt","visa","travel","tax","sevis","document","custom"].map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors capitalize ${filter === f ? "bg-indigo-600 text-gray-900" : "bg-gray-100 text-gray-500 hover:bg-slate-700"}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors capitalize ${filter === f ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
             {f}
           </button>
         ))}
@@ -120,7 +120,7 @@ export default function DeadlinesPage() {
       {/* Deadlines list */}
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-gray-600">
             <p className="text-3xl mb-2">✅</p>
             <p>No deadlines in this category</p>
           </div>
@@ -147,12 +147,12 @@ export default function DeadlinesPage() {
                           <Badge variant="outline" className="capitalize">{d.category}</Badge>
                         </div>
                       </div>
-                      {d.description && <p className="text-sm text-gray-500 mt-1">{d.description}</p>}
-                      <p className="text-xs text-gray-400 mt-1">Due: {d.deadline_date}</p>
+                      {d.description && <p className="text-sm text-gray-600 mt-1">{d.description}</p>}
+                      <p className="text-xs text-gray-500 mt-1">Due: {d.deadline_date}</p>
                       {d.status !== "completed" && (
                         <div className="flex gap-2 mt-3">
                           <button onClick={() => updateStatus(d.id, "acknowledged")}
-                            className="text-xs text-gray-500 hover:text-gray-900 border border-gray-200 px-2 py-1 rounded hover:border-slate-500 transition-colors">
+                            className="text-xs text-gray-600 hover:text-gray-900 border border-gray-200 px-2 py-1 rounded hover:border-gray-400 transition-colors">
                             Acknowledge
                           </button>
                           <button onClick={() => updateStatus(d.id, "completed")}

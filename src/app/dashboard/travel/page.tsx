@@ -98,7 +98,7 @@ export default function TravelPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Travel Tracker</h1>
-          <p className="text-gray-500 text-sm">Stay within the 5-month limit. Traveling while unemployed still counts toward OPT unemployment days.</p>
+          <p className="text-gray-600 text-sm">Stay within the 5-month limit. Traveling while unemployed still counts toward OPT unemployment days.</p>
         </div>
         <div className="flex gap-2">
           <Link href="/dashboard/travel/checklist">
@@ -131,30 +131,30 @@ export default function TravelPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Total Days Outside ({thisYear})</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Days Outside ({thisYear})</p>
             <p className={`text-3xl font-bold ${atLimit ? "text-red-600" : approachingLimit ? "text-amber-600" : "text-gray-900"}`}>
               {totalDaysThisYear}
             </p>
-            <p className="text-xs text-gray-400 mt-1">of 150 max</p>
+            <p className="text-xs text-gray-500 mt-1">of 150 max</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Personal Travel</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Personal Travel</p>
             <p className="text-2xl font-bold text-gray-900">{personalDays}</p>
-            <p className="text-xs text-gray-400 mt-1">days</p>
+            <p className="text-xs text-gray-500 mt-1">days</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Employer-Required</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Employer-Required</p>
             <p className="text-2xl font-bold text-indigo-600">{employerDays}</p>
-            <p className="text-xs text-gray-400 mt-1">days</p>
+            <p className="text-xs text-gray-500 mt-1">days</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Status</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Status</p>
             <p className={`text-base font-bold mt-1 ${currentlyAbroad ? "text-amber-600" : "text-emerald-600"}`}>
               {currentlyAbroad ? "Abroad ✈️" : "In US ✅"}
             </p>
@@ -245,7 +245,7 @@ export default function TravelPage() {
                         : <Badge variant="outline" className="text-xs">Personal</Badge>}
                     </div>
                     <p className="text-sm text-gray-500 mt-0.5">{t.departure_date} → {t.return_date ?? "Present"}</p>
-                    <p className="text-xs text-gray-400 mt-0.5 capitalize">{t.purpose} · {t.days_outside} days</p>
+                    <p className="text-xs text-gray-500 mt-0.5 capitalize">{t.purpose} · {t.days_outside} days</p>
                   </div>
                   <Badge variant={t.days_outside >= 60 ? "warning" : "outline"}>{t.days_outside}d</Badge>
                 </div>

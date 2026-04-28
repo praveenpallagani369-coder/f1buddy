@@ -174,7 +174,7 @@ export default function STEMTimelinePage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">STEM OPT Application Timeline</h1>
       </div>
@@ -191,7 +191,7 @@ export default function STEMTimelinePage() {
         ].map((item) => (
           <Card key={item.label}>
             <CardContent className="p-4 text-center">
-              <p className="text-xs text-gray-400 mb-1">{item.label}</p>
+              <p className="text-xs text-gray-500 mb-1">{item.label}</p>
               <p className={`text-base font-bold ${item.color}`}>{item.value}</p>
             </CardContent>
           </Card>
@@ -245,7 +245,7 @@ export default function STEMTimelinePage() {
                     step.isCompleted ? "bg-violet-600 border-violet-600 text-gray-900" :
                     isOverdue ? "bg-red-900/50 border-red-600 text-red-600" :
                     isUpNext ? "bg-violet-600/20 border-violet-500 text-violet-400" :
-                    "bg-white border-gray-200 text-gray-400"
+                    "bg-white border-gray-200 text-gray-500"
                   }`}>
                     {step.isCompleted ? "✓" : step.order}
                   </div>
@@ -267,10 +267,10 @@ export default function STEMTimelinePage() {
                             {isOverdue && !step.isCompleted && <Badge variant="critical" className="text-xs">Overdue</Badge>}
                           </div>
                           <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
-                          {step.cfr && <p className="text-xs text-gray-400 font-mono mt-1">{step.cfr}</p>}
+                          {step.cfr && <p className="text-xs text-gray-500 font-mono mt-1">{step.cfr}</p>}
 
                           <div className="mt-3 p-3 rounded-lg bg-gray-100 border border-gray-200/50">
-                            <p className="text-xs text-gray-400 font-medium mb-0.5">💡 Tip</p>
+                            <p className="text-xs text-gray-500 font-medium mb-0.5">💡 Tip</p>
                             <p className="text-xs text-gray-500">{step.tip}</p>
                           </div>
                         </div>
@@ -278,12 +278,12 @@ export default function STEMTimelinePage() {
                         <div className="flex flex-col items-end gap-2 flex-shrink-0">
                           {step.targetDate && (
                             <div className="text-right">
-                              <p className="text-xs text-gray-400">Target</p>
+                              <p className="text-xs text-gray-500">Target</p>
                               <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600"}`}>
                                 {format(step.targetDate, "MMM d, yyyy")}
                               </p>
                               {daysAway !== null && !step.isCompleted && (
-                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-400"}`}>
+                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-500"}`}>
                                   {daysAway < 0 ? `${Math.abs(daysAway)}d ago` : `in ${daysAway}d`}
                                 </p>
                               )}
@@ -295,7 +295,7 @@ export default function STEMTimelinePage() {
                             disabled={saving === step.id}
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                               step.isCompleted
-                                ? "border-gray-200 text-gray-400 hover:border-slate-600"
+                                ? "border-gray-200 text-gray-500 hover:border-slate-600"
                                 : "border-violet-700 text-violet-400 hover:bg-violet-600/10"
                             }`}
                           >

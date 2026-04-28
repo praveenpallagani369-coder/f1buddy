@@ -92,7 +92,7 @@ export default function AddressPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/profile" className="text-gray-400 hover:text-gray-600 text-sm">← Profile</Link>
+        <Link href="/dashboard/profile" className="text-gray-500 hover:text-gray-600 text-sm">← Profile</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">US Address & SEVIS Reporting</h1>
       </div>
@@ -195,7 +195,7 @@ export default function AddressPage() {
               <p className="text-gray-900 font-medium">{profile.current_address_line1}</p>
               <p className="text-gray-600">{profile.current_address_city}, {profile.current_address_state} {profile.current_address_zip}</p>
               {profile.address_updated_at && (
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-gray-500 mt-2">
                   Last updated: {format(parseISO(profile.address_updated_at as string), "MMM d, yyyy")}
                   {daysSinceUpdate !== null && ` (${daysSinceUpdate} days ago)`}
                 </p>
@@ -204,8 +204,8 @@ export default function AddressPage() {
           ) : (
             <div className="text-center py-6">
               <p className="text-3xl mb-2">🏠</p>
-              <p className="text-gray-500 text-sm">No US address on file</p>
-              <p className="text-gray-400 text-xs mt-1">Add your current address to enable SEVIS reporting reminders</p>
+              <p className="text-gray-600 text-sm">No US address on file</p>
+              <p className="text-gray-500 text-xs mt-1">Add your current address to enable SEVIS reporting reminders</p>
             </div>
           )}
         </CardContent>
@@ -228,7 +228,7 @@ export default function AddressPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-900">{item.text}</p>
-                  <p className="text-xs text-gray-400">{item.note}</p>
+                  <p className="text-xs text-gray-500">{item.note}</p>
                 </div>
               </li>
             ))}

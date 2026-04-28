@@ -58,7 +58,7 @@ export default function AIPage() {
       {/* Header */}
       <div className="mb-4">
         <h1 className="text-2xl font-bold text-gray-900">AI Immigration Assistant</h1>
-        <p className="text-gray-500 text-sm">Powered by Groq + Llama 3.3 · Ask any F-1 compliance question</p>
+        <p className="text-gray-600 text-sm">Powered by Groq + Llama 3.3 · Ask any F-1 compliance question</p>
       </div>
 
       {/* Chat area */}
@@ -111,7 +111,7 @@ export default function AIPage() {
       </div>
 
       {/* Disclaimer */}
-      <div className="text-xs text-gray-400 text-center mb-3">
+      <div className="text-xs text-gray-500 text-center mb-3">
         AI responses are informational only and not legal advice. Verify with your DSO or immigration attorney.
       </div>
 

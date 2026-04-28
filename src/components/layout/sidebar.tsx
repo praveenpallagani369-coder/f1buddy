@@ -100,15 +100,15 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   }
 
   return (
-    <aside className="w-60 flex-shrink-0 border-r border-gray-100 bg-white flex flex-col shadow-sm">
-      <div className="px-4 py-3 border-b border-gray-100">
+    <aside className="w-60 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col shadow-sm">
+      <div className="px-4 py-3 border-b border-gray-200">
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
           <div>
             <p className="font-bold text-gray-900 text-sm leading-none">F1Buddy</p>
-            <p className="text-[10px] text-gray-400 mt-0.5 leading-none">Student Manager</p>
+            <p className="text-[10px] text-gray-500 mt-0.5 leading-none">Student Manager</p>
           </div>
         </Link>
       </div>
@@ -119,7 +119,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
             {section.label && (
               <button
                 onClick={() => toggleSection(section.label!)}
-                className="flex items-center justify-between w-full text-[10px] font-semibold text-gray-400 uppercase tracking-widest px-3 mb-1 hover:text-gray-500 transition-colors"
+                className="flex items-center justify-between w-full text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 mb-1 hover:text-gray-700 transition-colors"
               >
                 <span>{section.label}</span>
                 <span className={cn("text-[9px] transition-transform", isSectionOpen(section) && "rotate-90")}>▸</span>
@@ -140,7 +140,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
                       isTop ? "px-3 py-2 text-sm" : "px-3 py-1.5 ml-3 text-xs",
                       active
                         ? "bg-indigo-50 text-indigo-700 font-semibold"
-                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     )}
                   >
                     <Icon className={cn("flex-shrink-0", isTop ? "w-[18px] h-[18px]" : "w-4 h-4")} />
@@ -154,7 +154,7 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
         ))}
       </nav>
 
-      <div className="px-2 py-3 border-t border-gray-100">
+      <div className="px-2 py-3 border-t border-gray-200">
         <Link
           href="/dashboard/profile"
           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors group"
@@ -164,12 +164,12 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold text-gray-800 truncate">{user.name}</p>
-            <p className="text-[10px] text-gray-400 truncate">{user.email}</p>
+            <p className="text-[10px] text-gray-500 truncate">{user.email}</p>
           </div>
         </Link>
         <button
           onClick={handleSignOut}
-          className="w-full mt-1 flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+          className="w-full mt-1 flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors"
         >
           <LogOut className="w-4 h-4" /> Sign out
         </button>

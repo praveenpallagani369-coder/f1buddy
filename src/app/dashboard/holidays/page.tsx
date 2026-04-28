@@ -66,16 +66,16 @@ export default function HolidaysPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">US Holidays & School Breaks</h1>
-        <p className="text-gray-500 text-sm">Know when banks, USCIS, and schools are closed</p>
+        <p className="text-gray-600 text-sm">Know when banks, USCIS, and schools are closed</p>
       </div>
 
       {/* Next holiday */}
       {nextHoliday && (
-        <Card className="border-indigo-800/30">
+        <Card className="border-indigo-200">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Next Holiday</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Next Holiday</p>
                 <p className="text-xl font-bold text-gray-900">{nextHoliday.name}</p>
                 <p className="text-sm text-gray-500">{format(parseISO(nextHoliday.date), "EEEE, MMMM d, yyyy")}</p>
                 {F1_NOTES[nextHoliday.name] && (
@@ -86,7 +86,7 @@ export default function HolidaysPage() {
                 <p className="text-3xl font-bold text-indigo-600">
                   {daysToNext === 0 ? "Today!" : `${daysToNext}d`}
                 </p>
-                <p className="text-xs text-gray-400">{daysToNext === 0 ? "" : "away"}</p>
+                <p className="text-xs text-gray-500">{daysToNext === 0 ? "" : "away"}</p>
               </div>
             </div>
           </CardContent>
@@ -97,7 +97,7 @@ export default function HolidaysPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Typical University Breaks</CardTitle>
-          <p className="text-xs text-gray-400">Check your school&apos;s academic calendar for exact dates</p>
+          <p className="text-xs text-gray-500">Check your school&apos;s academic calendar for exact dates</p>
         </CardHeader>
         <CardContent className="space-y-3">
           {SCHOOL_BREAKS.map((b) => (
@@ -137,20 +137,20 @@ export default function HolidaysPage() {
                       isPast
                         ? "bg-white/30 border-gray-200 opacity-50"
                         : days <= 7
-                        ? "bg-indigo-50 border-indigo-800/30"
+                        ? "bg-indigo-50 border-indigo-200"
                         : "bg-gray-100 border-gray-200"
                     }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium ${isPast ? "text-gray-400" : "text-gray-900"}`}>{h.name}</p>
-                      <p className="text-xs text-gray-400">{format(parseISO(h.date), "EEEE, MMMM d")}</p>
+                      <p className={`text-sm font-medium ${isPast ? "text-gray-500" : "text-gray-900"}`}>{h.name}</p>
+                      <p className="text-xs text-gray-500">{format(parseISO(h.date), "EEEE, MMMM d")}</p>
                       {F1_NOTES[h.name] && !isPast && (
                         <p className="text-xs text-gray-500 mt-0.5">{F1_NOTES[h.name]}</p>
                       )}
                     </div>
                     <div className="text-right flex-shrink-0 ml-3">
                       {isPast ? (
-                        <span className="text-xs text-gray-400">Passed</span>
+                        <span className="text-xs text-gray-500">Passed</span>
                       ) : days === 0 ? (
                         <Badge variant="success" className="text-xs">Today</Badge>
                       ) : (

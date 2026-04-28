@@ -21,7 +21,7 @@ function stemOptAlert(opt: OPTRow | null) {
   if (daysLeft > 90) return null;
   if (daysLeft <= 0) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700", label: "EXPIRED", msg: `Your OPT EAD has expired. If you haven't applied for STEM OPT, contact your DSO immediately.` };
   if (daysLeft <= 30) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700", label: "CRITICAL", msg: `Only ${daysLeft} days left on your OPT EAD. You must apply for STEM OPT now — file Form I-765 immediately or you'll lose work authorization.` };
-  if (daysLeft <= 60) return { daysLeft, cls: "bg-orange-900/20 border-orange-800/30 text-orange-300", label: "URGENT", msg: `${daysLeft} days left on OPT. Apply for STEM OPT now — USCIS processing can take 3–5 months.` };
+  if (daysLeft <= 60) return { daysLeft, cls: "bg-orange-50 border-orange-200 text-orange-700", label: "URGENT", msg: `${daysLeft} days left on OPT. Apply for STEM OPT now — USCIS processing can take 3–5 months.` };
   return { daysLeft, cls: "bg-amber-50 border-amber-200 text-amber-700", label: "ACTION NEEDED", msg: `${daysLeft} days left on OPT. You're now in the 90-day STEM OPT application window. File Form I-765 with your employer's I-983 Training Plan.` };
 }
 
@@ -169,7 +169,7 @@ export default function OPTPage() {
   const unemployAlert = at85
     ? { msg: `🚨 CRITICAL: ${unemployed}/${limit} days used — only ${limit - unemployed} days left. Contact your DSO immediately.`, cls: "bg-red-50 border-red-200 text-red-700" }
     : at75
-    ? { msg: `⚠️ WARNING: ${unemployed}/${limit} days used. Find employment within ${limit - unemployed} days to avoid OPT termination.`, cls: "bg-orange-900/20 border-orange-800/30 text-orange-300" }
+    ? { msg: `⚠️ WARNING: ${unemployed}/${limit} days used. Find employment within ${limit - unemployed} days to avoid OPT termination.`, cls: "bg-orange-50 border-orange-200 text-orange-700" }
     : at60
     ? { msg: `⚠️ NOTICE: ${unemployed}/${limit} days used. Start your job search now — 30 days left before the 75-day warning.`, cls: "bg-amber-50 border-amber-200 text-amber-700" }
     : null;
@@ -179,7 +179,7 @@ export default function OPTPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">OPT Employment Tracker</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Track your employment authorization and unemployment days</p>
+          <p className="text-gray-600 text-sm mt-0.5">Track your employment authorization and unemployment days</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowOptForm(true)}>
@@ -230,24 +230,24 @@ export default function OPTPage() {
           <CardContent className="p-6">
             <div className="grid md:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">OPT Type</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">OPT Type</p>
                 <p className="text-gray-900 font-medium capitalize">{(opt.opt_type ?? "").replace("_", " ")}</p>
-                <p className="text-sm text-gray-500">EAD Category: {opt.ead_category ?? "—"}</p>
+                <p className="text-sm text-gray-600">EAD Category: {opt.ead_category ?? "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">EAD Validity</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">EAD Validity</p>
                 <p className="text-gray-900 font-medium">{opt.ead_start_date} → {opt.ead_end_date}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Unemployment Days</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-2">Unemployment Days</p>
                 <div className="flex items-baseline gap-1 mb-2">
                   <span className="text-2xl font-bold text-gray-900">{opt.unemployment_days_used}</span>
                   <span className="text-gray-500">/ {opt.unemployment_limit} days</span>
                 </div>
                 <Progress value={opt.unemployment_days_used} max={opt.unemployment_limit} color={unemployColor} />
-                <p className="text-xs text-gray-500 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
+                <p className="text-xs text-gray-600 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
                 {opt.opt_type === "stem_extension" && (
-                  <p className="text-xs text-gray-400 mt-1">150 total = 90 OPT + 60 STEM (cumulative, never resets) — 8 CFR 214.2(f)(10)(ii)(E)</p>
+                  <p className="text-xs text-gray-500 mt-1">150 total = 90 OPT + 60 STEM (cumulative, never resets) — 8 CFR 214.2(f)(10)(ii)(E)</p>
                 )}
               </div>
             </div>
@@ -263,7 +263,7 @@ export default function OPTPage() {
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">💼</p>
             <p className="text-gray-900 font-medium mb-1">No OPT set up yet</p>
-            <p className="text-gray-500 text-sm mb-4">Add your EAD details to start tracking unemployment days</p>
+            <p className="text-gray-600 text-sm mb-4">Add your EAD details to start tracking unemployment days</p>
             <Button onClick={() => setShowOptForm(true)}>Set Up OPT →</Button>
           </CardContent>
         </Card>
@@ -309,7 +309,7 @@ export default function OPTPage() {
               </div>
             </div>
             {optForm.optType === "stem_extension" && (
-              <div className="p-3 rounded-lg bg-violet-900/20 border border-violet-800/30 text-sm text-violet-300 md:col-span-2">
+              <div className="p-3 rounded-lg bg-violet-50 border border-violet-200 text-sm text-violet-700 md:col-span-2">
                 <p className="font-medium mb-1">🔬 STEM OPT Requirements — verify before saving</p>
                 <ul className="text-xs space-y-1 opacity-90">
                   <li>• Degree must be on DHS STEM Designated Degree Program List (stemlist.uscis.gov)</li>
@@ -403,18 +403,18 @@ export default function OPTPage() {
         </CardHeader>
         <CardContent>
           {employers.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No employers logged yet</div>
+            <div className="text-center py-8 text-gray-600">No employers logged yet</div>
           ) : (
             <div className="space-y-3">
               {employers.map((e) => (
-                <div key={e.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
+                <div key={e.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-50 border border-gray-200">
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="text-gray-900 font-medium">{e.employer_name}</p>
                       {e.is_current && <Badge variant="success" className="text-xs">Current</Badge>}
                     </div>
-                    <p className="text-sm text-gray-500">{e.position_title ?? e.employment_type.replace("_", " ")}</p>
-                    <p className="text-xs text-gray-400 mt-1">{e.start_date} → {e.end_date ?? "Present"}</p>
+                    <p className="text-sm text-gray-600">{e.position_title ?? e.employment_type.replace("_", " ")}</p>
+                    <p className="text-xs text-gray-500 mt-1">{e.start_date} → {e.end_date ?? "Present"}</p>
                     <div className="flex gap-2 mt-2">
                       {e.is_stem_related && <Badge variant="info" className="text-xs">STEM</Badge>}
                       {e.e_verify_employer && <Badge variant="info" className="text-xs">E-Verify</Badge>}

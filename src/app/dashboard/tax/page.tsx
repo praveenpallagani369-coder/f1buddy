@@ -49,7 +49,7 @@ export default function TaxPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tax Filing</h1>
-          <p className="text-gray-500 text-sm">Track your annual tax filing status</p>
+          <p className="text-gray-600 text-sm">Track your annual tax filing status</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Tax Year</Button>
       </div>
@@ -66,21 +66,21 @@ export default function TaxPage() {
       <div className="grid md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Filing Type</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Filing Type</p>
             <p className="text-gray-900 font-medium">Form 1040-NR</p>
             <p className="text-sm text-gray-500">For nonresident aliens (most F-1 students)</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Always Required</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Always Required</p>
             <p className="text-gray-900 font-medium">Form 8843</p>
             <p className="text-sm text-gray-500">Even if you earned zero income in the US</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Free Resources</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Free Resources</p>
             <div className="space-y-1">
               <a href="https://www.sprintax.com" target="_blank" rel="noopener noreferrer" className="block text-sm text-indigo-600 hover:underline">Sprintax</a>
               <a href="https://www.glaciertax.com" target="_blank" rel="noopener noreferrer" className="block text-sm text-indigo-600 hover:underline">Glacier Tax Prep</a>
@@ -157,7 +157,7 @@ export default function TaxPage() {
                   <div>
                     <p className="text-gray-900 font-medium">Tax Year {r.tax_year}</p>
                     <p className="text-sm text-gray-500 capitalize mt-0.5">{r.filing_status?.replace(/_/g, " ") ?? "Unknown status"}</p>
-                    {r.treaty_country && <p className="text-xs text-gray-400">Treaty: {r.treaty_country}</p>}
+                    {r.treaty_country && <p className="text-xs text-gray-500">Treaty: {r.treaty_country}</p>}
                   </div>
                   <div className="flex gap-2 flex-wrap justify-end">
                     {r.form_8843_filed && <Badge variant="success" className="text-xs">8843 ✓</Badge>}

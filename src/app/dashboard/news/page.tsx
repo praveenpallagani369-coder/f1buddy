@@ -18,7 +18,7 @@ const TYPE_COLORS: Record<string, string> = {
   Rule: "bg-red-500/10 text-red-600 border-red-200",
   "Proposed Rule": "bg-amber-500/10 text-amber-600 border-amber-200",
   Notice: "bg-blue-500/10 text-blue-600 border-blue-200",
-  "Presidential Document": "bg-purple-500/10 text-purple-400 border-purple-800/30",
+  "Presidential Document": "bg-purple-100 text-purple-700 border-purple-200",
 };
 
 export default function NewsPage() {
@@ -43,7 +43,7 @@ export default function NewsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Immigration News</h1>
-        <p className="text-gray-500 text-sm">Latest Federal Register updates affecting international students</p>
+        <p className="text-gray-600 text-sm">Latest Federal Register updates affecting international students</p>
       </div>
 
       {/* Alert banner */}
@@ -75,7 +75,7 @@ export default function NewsPage() {
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-2">📰</p>
             <p className="text-gray-500">No recent immigration news found</p>
-            <p className="text-xs text-gray-400 mt-1">Check back later — the Federal Register publishes daily on weekdays</p>
+            <p className="text-xs text-gray-500 mt-1">Check back later — the Federal Register publishes daily on weekdays</p>
           </CardContent>
         </Card>
       ) : (
@@ -98,7 +98,7 @@ export default function NewsPage() {
                         >
                           {article.type}
                         </Badge>
-                        <span className="text-xs text-gray-400">{article.agency}</span>
+                        <span className="text-xs text-gray-500">{article.agency}</span>
                       </div>
                       <h3 className="text-sm text-gray-900 font-medium leading-snug mb-1">{article.title}</h3>
                       {article.summary && (
@@ -106,7 +106,7 @@ export default function NewsPage() {
                       )}
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-xs text-gray-400">{format(parseISO(article.date), "MMM d, yyyy")}</p>
+                      <p className="text-xs text-gray-500">{format(parseISO(article.date), "MMM d, yyyy")}</p>
                       <p className="text-xs text-indigo-600 mt-1">Read &rarr;</p>
                     </div>
                   </div>

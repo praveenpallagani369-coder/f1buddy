@@ -118,7 +118,7 @@ export default function TravelChecklistPage() {
     <div className="space-y-6 max-w-3xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/travel" className="text-gray-400 hover:text-gray-600 transition-colors text-sm">← Travel</Link>
+        <Link href="/dashboard/travel" className="text-gray-500 hover:text-gray-600 transition-colors text-sm">← Travel</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">Pre-Travel Checklist</h1>
       </div>
@@ -146,13 +146,13 @@ export default function TravelChecklistPage() {
           {/* I-20 travel signature quick-update */}
           <div className="p-3 rounded-lg bg-gray-100 border border-gray-200 mb-5">
             <p className="text-sm font-medium text-gray-600 mb-2">I-20 Travel Signature Date</p>
-            <p className="text-xs text-gray-400 mb-2">The date your DSO last signed your I-20 for travel (check the bottom of your I-20)</p>
+            <p className="text-xs text-gray-500 mb-2">The date your DSO last signed your I-20 for travel (check the bottom of your I-20)</p>
             <div className="flex gap-2 items-center">
               <Input type="date" className="max-w-[200px]"
                 defaultValue={profile?.i20_travel_signature_date ?? ""}
                 onChange={(e) => saveTravelSignatureDate(e.target.value)}
               />
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-500">
                 {profile?.i20_travel_signature_date
                   ? `Saved: ${profile.i20_travel_signature_date}`
                   : "Not set — enter the date from your I-20"}
@@ -249,7 +249,7 @@ export default function TravelChecklistPage() {
                         <p className="font-medium text-gray-900">{item.title}</p>
                         <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
                         {item.cfr && (
-                          <span className="text-xs text-gray-400 font-mono">{item.cfr}</span>
+                          <span className="text-xs text-gray-500 font-mono">{item.cfr}</span>
                         )}
                       </div>
                       <p className="text-sm text-gray-600 mt-1 leading-relaxed">{item.detail}</p>

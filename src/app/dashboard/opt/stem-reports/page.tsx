@@ -208,7 +208,7 @@ export default function STEMReportsPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">STEM OPT Validation Reports</h1>
       </div>
@@ -375,7 +375,7 @@ export default function STEMReportsPage() {
                                 onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
                                 className="mt-0.5 flex-shrink-0"
                               />
-                              <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-400 line-through" : "text-gray-600"}`}>
+                              <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-500 line-through" : "text-gray-600"}`}>
                                 {item.label}
                                 {item.critical && <span className="text-red-600 ml-1 text-xs">*required</span>}
                               </span>
@@ -383,8 +383,8 @@ export default function STEMReportsPage() {
                           ))}
                         </div>
                         {report.requiresSelfEvaluation && (
-                          <div className="mt-4 p-3 rounded-lg bg-violet-900/20 border border-violet-800/30">
-                            <p className="text-sm font-medium text-violet-300 mb-2">Also required at {report.month} months: Self-Evaluation (I-983 page 5)</p>
+                          <div className="mt-4 p-3 rounded-lg bg-violet-50 border border-violet-200">
+                            <p className="text-sm font-medium text-violet-700 mb-2">Also required at {report.month} months: Self-Evaluation (I-983 page 5)</p>
                             <div className="space-y-2">
                               {[
                                 { id: "self_eval_student", label: "Student completes I-983 page 5 (Student Self-Evaluation)", critical: true },
@@ -398,7 +398,7 @@ export default function STEMReportsPage() {
                                     onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
                                     className="mt-0.5 flex-shrink-0"
                                   />
-                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-400 line-through" : "text-violet-200"}`}>
+                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-500 line-through" : "text-violet-200"}`}>
                                     {item.label}
                                     {item.critical && <span className="text-red-600 ml-1 text-xs">*required</span>}
                                   </span>
@@ -436,14 +436,14 @@ export default function STEMReportsPage() {
                 <div className="flex gap-1">
                   {REPORT_MONTHS.map(m => (
                     <div key={m} className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      completedReports.has(m) ? "bg-emerald-600 text-gray-900" : "bg-gray-100 text-gray-400"
+                      completedReports.has(m) ? "bg-emerald-600 text-gray-900" : "bg-gray-100 text-gray-500"
                     }`}>
                       {completedReports.has(m) ? "✓" : `${m}M`}
                     </div>
                   ))}
                 </div>
               </div>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 {completedReports.size} of 4 required reports submitted
               </p>
             </CardContent>

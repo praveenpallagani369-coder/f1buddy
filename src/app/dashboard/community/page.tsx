@@ -128,7 +128,7 @@ export default function CommunityPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Community Q&A</h1>
-          <p className="text-gray-500 text-sm">Ask questions, share knowledge with fellow F-1 students</p>
+          <p className="text-gray-600 text-sm">Ask questions, share knowledge with fellow F-1 students</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Ask a Question</Button>
       </div>
@@ -137,7 +137,7 @@ export default function CommunityPage() {
       <div className="flex gap-2 flex-wrap">
         {["All", ...CATEGORIES].map(c => (
           <button key={c} onClick={() => setFilter(c)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filter === c ? "bg-indigo-600 text-gray-900" : "bg-gray-100 text-gray-500 hover:bg-slate-700"}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filter === c ? "bg-indigo-600 text-gray-900" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
             {c}
           </button>
         ))}
@@ -212,7 +212,7 @@ export default function CommunityPage() {
                           <Badge variant="info" className="text-xs flex-shrink-0">{post.category}</Badge>
                         </div>
                         <p className="text-sm text-gray-500 line-clamp-2">{post.body}</p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                           <span>{post.is_anonymous ? "Anonymous" : (post.users?.name ?? "Student")}</span>
                           <span>·</span>
                           <span>{formatDistanceToNow(parseISO(post.created_at), { addSuffix: true })}</span>
@@ -232,7 +232,7 @@ export default function CommunityPage() {
                             {/* Answers */}
                             {postAnswers.length > 0 ? (
                               <div className="space-y-3 mb-4">
-                                <p className="text-xs text-gray-400 uppercase tracking-wider">{postAnswers.length} Answer{postAnswers.length !== 1 ? "s" : ""}</p>
+                                <p className="text-xs text-gray-500 uppercase tracking-wider">{postAnswers.length} Answer{postAnswers.length !== 1 ? "s" : ""}</p>
                                 {postAnswers.map((ans) => (
                                   <div key={ans.id} className="flex gap-3 p-3 rounded-lg bg-gray-100 border border-gray-200">
                                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
@@ -240,14 +240,14 @@ export default function CommunityPage() {
                                         className="w-6 h-6 rounded bg-slate-700 hover:bg-indigo-100 text-gray-500 hover:text-indigo-600 flex items-center justify-center transition-colors text-xs">
                                         ▲
                                       </button>
-                                      <span className="text-xs text-gray-400">{ans.upvotes}</span>
+                                      <span className="text-xs text-gray-500">{ans.upvotes}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       {ans.is_verified && (
                                         <Badge variant="success" className="text-xs mb-1">✓ Verified</Badge>
                                       )}
                                       <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{ans.body}</p>
-                                      <p className="text-xs text-gray-400 mt-1">
+                                      <p className="text-xs text-gray-500 mt-1">
                                         {ans.users?.name ?? "Student"} · {formatDistanceToNow(parseISO(ans.created_at), { addSuffix: true })}
                                       </p>
                                     </div>
@@ -255,7 +255,7 @@ export default function CommunityPage() {
                                 ))}
                               </div>
                             ) : (
-                              <p className="text-sm text-gray-400 mb-3">No answers yet — be the first to help!</p>
+                              <p className="text-sm text-gray-500 mb-3">No answers yet — be the first to help!</p>
                             )}
 
                             {/* Answer form */}

@@ -143,7 +143,7 @@ export default function I983Page() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">Employment Change + I-983 Guide</h1>
       </div>
@@ -182,12 +182,12 @@ export default function I983Page() {
       {currentEmployer && (
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Current Employer</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Current Employer</p>
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-gray-900 font-medium">{currentEmployer.employer_name}</p>
-                <p className="text-gray-500 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type}</p>
-                <p className="text-xs text-gray-400">Started: {currentEmployer.start_date}</p>
+                <p className="text-gray-600 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type}</p>
+                <p className="text-xs text-gray-500">Started: {currentEmployer.start_date}</p>
               </div>
               <div className="flex flex-col gap-1 items-end">
                 {currentEmployer.reported_to_school
@@ -232,7 +232,7 @@ export default function I983Page() {
                   </button>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className={`font-medium text-sm ${done ? "line-through text-gray-400" : "text-gray-900"}`}>{step.title}</p>
+                      <p className={`font-medium text-sm ${done ? "line-through text-gray-500" : "text-gray-900"}`}>{step.title}</p>
                       {step.critical && !done && <span className="text-xs text-red-600 font-medium">Required</span>}
                     </div>
                     <p className="text-sm text-gray-500 leading-relaxed">{step.detail}</p>

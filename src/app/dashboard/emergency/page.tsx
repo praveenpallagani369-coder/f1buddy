@@ -61,7 +61,7 @@ export default function EmergencyPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Emergency Resources</h1>
-        <p className="text-gray-500 text-sm">Critical contacts, USCIS offices, and know-your-rights information</p>
+        <p className="text-gray-600 text-sm">Critical contacts, USCIS offices, and know-your-rights information</p>
       </div>
 
       {/* Emergency banner */}
@@ -106,7 +106,7 @@ export default function EmergencyPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Government Portals</CardTitle>
-          <p className="text-xs text-gray-400">Quick links to official government services</p>
+          <p className="text-xs text-gray-500">Quick links to official government services</p>
         </CardHeader>
         <CardContent className="space-y-2">
           {USCIS_OFFICES.map((o) => (
@@ -165,7 +165,7 @@ export default function EmergencyPage() {
       </Card>
 
       {/* Disclaimer */}
-      <div className="text-xs text-gray-400 text-center p-4">
+      <div className="text-xs text-gray-500 text-center p-4">
         This information is for general guidance only. For legal advice, consult an immigration attorney.
         Information is current as of 2024 but laws and policies may change.
       </div>

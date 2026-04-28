@@ -266,7 +266,7 @@ function DSOEmailContent() {
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">DSO Email Generator</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Professional, pre-written emails for common DSO requests — fill in a few fields, copy, and send.</p>
+        <p className="text-gray-600 text-sm mt-0.5">Professional, pre-written emails for common DSO requests — fill in a few fields, copy, and send.</p>
       </div>
 
       {/* Template selector */}
@@ -276,7 +276,7 @@ function DSOEmailContent() {
             className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white hover:border-gray-200"}`}>
             <span className="text-xl mb-2 block">{t.icon}</span>
             <p className="text-sm font-medium text-gray-900">{t.title}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{t.description}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{t.description}</p>
           </button>
         ))}
       </div>
@@ -312,7 +312,7 @@ function DSOEmailContent() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-gray-400 uppercase tracking-wider">Subject Line</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Subject Line</p>
                 <button onClick={() => copy("subject")}
                   className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors">
                   {copied === "subject" ? "✓ Copied!" : "Copy"}
@@ -326,7 +326,7 @@ function DSOEmailContent() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs text-gray-400 uppercase tracking-wider">Email Body</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Email Body</p>
                 <button onClick={() => copy("body")}
                   className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors">
                   {copied === "body" ? "✓ Copied!" : "Copy"}
@@ -350,7 +350,7 @@ function DSOEmailContent() {
             )}
           </div>
           {!profile.dso_email && (
-            <p className="text-xs text-gray-400 text-center">
+            <p className="text-xs text-gray-500 text-center">
               Add your DSO email in <a href="/dashboard/profile" className="text-indigo-600 hover:underline">Profile</a> to enable one-click mail
             </p>
           )}

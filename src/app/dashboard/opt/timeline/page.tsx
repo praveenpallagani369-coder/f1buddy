@@ -176,7 +176,7 @@ export default function OPTTimelinePage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-400 hover:text-gray-600 text-sm">← OPT Tracker</Link>
+        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
         <h1 className="text-2xl font-bold text-gray-900">OPT Application Timeline</h1>
       </div>
@@ -190,9 +190,9 @@ export default function OPTTimelinePage() {
         ].map((item) => (
           <Card key={item.label}>
             <CardContent className="p-4 text-center">
-              <p className="text-xs text-gray-400 mb-1">{item.label}</p>
+              <p className="text-xs text-gray-500 mb-1">{item.label}</p>
               <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
-              <p className="text-xs text-gray-400 mt-1">EAD processing</p>
+              <p className="text-xs text-gray-500 mt-1">EAD processing</p>
             </CardContent>
           </Card>
         ))}
@@ -209,7 +209,7 @@ export default function OPTTimelinePage() {
                 onChange={(e) => setCustomEndDate(e.target.value)}
               />
               {profile?.program_end_date && !customEndDate && (
-                <p className="text-xs text-gray-400 mt-1">From your profile: {profile.program_end_date}</p>
+                <p className="text-xs text-gray-500 mt-1">From your profile: {profile.program_end_date}</p>
               )}
             </div>
             {endDate && (
@@ -287,7 +287,7 @@ export default function OPTTimelinePage() {
                     step.isCompleted ? "bg-emerald-600 border-emerald-600 text-gray-900" :
                     isOverdue ? "bg-red-900/50 border-red-600 text-red-600" :
                     isUpNext ? "bg-indigo-100 border-indigo-500 text-indigo-600" :
-                    "bg-white border-gray-200 text-gray-400"
+                    "bg-white border-gray-200 text-gray-500"
                   }`}>
                     {step.isCompleted ? "✓" : step.order}
                   </div>
@@ -315,7 +315,7 @@ export default function OPTTimelinePage() {
 
                           {/* Tip */}
                           <div className="mt-3 p-3 rounded-lg bg-gray-100 border border-gray-200/50">
-                            <p className="text-xs text-gray-400 font-medium mb-0.5">💡 Tip</p>
+                            <p className="text-xs text-gray-500 font-medium mb-0.5">💡 Tip</p>
                             <p className="text-xs text-gray-500">{step.tip}</p>
                           </div>
                         </div>
@@ -323,12 +323,12 @@ export default function OPTTimelinePage() {
                         <div className="flex flex-col items-end gap-2 flex-shrink-0">
                           {step.targetDate && (
                             <div className="text-right">
-                              <p className="text-xs text-gray-400">Target</p>
+                              <p className="text-xs text-gray-500">Target</p>
                               <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600"}`}>
                                 {format(step.targetDate, "MMM d, yyyy")}
                               </p>
                               {daysAway !== null && !step.isCompleted && (
-                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-400"}`}>
+                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-500"}`}>
                                   {daysAway < 0 ? `${Math.abs(daysAway)}d ago` : `in ${daysAway}d`}
                                 </p>
                               )}
@@ -342,7 +342,7 @@ export default function OPTTimelinePage() {
                             disabled={saving === step.id}
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                               step.isCompleted
-                                ? "border-gray-200 text-gray-400 hover:border-slate-600"
+                                ? "border-gray-200 text-gray-500 hover:border-slate-600"
                                 : "border-indigo-700 text-indigo-600 hover:bg-indigo-50"
                             }`}
                           >
@@ -362,7 +362,7 @@ export default function OPTTimelinePage() {
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">📅</p>
             <p className="text-gray-900 font-medium mb-1">Enter your program end date above</p>
-            <p className="text-gray-500 text-sm">We&apos;ll calculate all your OPT deadlines automatically</p>
+            <p className="text-gray-600 text-sm">We&apos;ll calculate all your OPT deadlines automatically</p>
           </CardContent>
         </Card>
       )}
