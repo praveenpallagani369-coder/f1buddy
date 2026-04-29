@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node *)",
+      "Bash(npm install *)",
+      "Bash(move *)",
+      "Bash(git add *)",
+      "Bash(git restore *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(npm --version)",
+      "Bash(npm ls *)",
+      "Bash(git commit *)",
+      "Bash(npx vitest *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(git -C /c/Users/palla/projects/f1buddy status)",
+      "Bash(git -C /c/Users/palla/projects/f1buddy remote -v)",
+      "Bash(git *)",
+      "Skill(design-audit)"
+    ]
+  }
+}

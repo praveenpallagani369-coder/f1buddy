@@ -1,8 +1,67 @@
 # F1Buddy — Implementation Status
 
-> Last updated: 2026-04-22 (Session 5 — P0 code audit verified against spec)
-> Build status: ✅ Compiles clean — 33 pages, 0 errors
+> Last updated: 2026-04-23 (Session 8 — All 14 UX/rule issues from audit fully resolved)
+> Build status: ✅ Compiles clean
 > Spec version: F1Buddy CareCircle Feature Spec v1.0 (April 2026)
+
+---
+
+## 🔧 Session 7 — USCIS Rule Audit Fixes
+
+All issues below were identified by auditing the app against 8 CFR 214.2(f) and the F1Buddy USCIS reference document.
+
+| Bug | File | Fix |
+|-----|------|-----|
+| STEM OPT rules showed incorrect "21-day submission window" for student | `visa-stages.ts` | Replaced with correct rules: 10 business days to DSO, cumulative 150-day unemployment cap, self-evaluations at 12/24 months |
+| Cap-gap end date hardcoded to `"2025-10-01"` | `visa-stages.ts` | Now dynamically computes the next October 1 after EAD end date; also sets `isCurrent`/`isCompleted`/`isFuture` correctly |
+| Travel signature check hardcoded as "1 year" for all students | `rules.ts` | OPT/STEM OPT students now see "less than 6 months old" (hasEAD=true path); non-OPT students see "12 months" |
+| STEM report window was 21 calendar days | `stem-reports/page.tsx` | Changed to 14 calendar days (≈10 business days) per 8 CFR 214.2(f)(10)(ii)(C) |
+| No self-evaluation tracking at months 12 and 24 | `stem-reports/page.tsx` | Added `requiresSelfEvaluation` flag; months 12 and 24 now show separate self-evaluation checklist (I-983 page 5) in the expanded view |
+| STEM banner cited wrong rule and 21-day figure | `stem-reports/page.tsx` | Updated to cite 8 CFR 214.2(f)(10)(ii)(C); corrected to "10 business days" |
+| Deadline descriptions for STEM reports said "21-day window" | `stem-reports/page.tsx` | Descriptions now say "10 business days" and note self-evaluation requirement at 12/24 months |
+| Active window alert didn't mention self-evaluation | `stem-reports/page.tsx` | Alert now notes "self-evaluation required" for months 12 and 24 |
+
+---
+
+## 🔧 Session 6 — Bugs Fixed
+
+| Bug | File | Fix |
+|-----|------|-----|
+| Employer details not saving | `dashboard/opt/page.tsx` | camelCase form fields were spread directly into Supabase insert — mapped to snake_case |
+| Input fields losing focus on every keystroke | `onboarding/page.tsx` | `Field` component was defined inside parent — moved outside to prevent remount on every render |
+| OPT timeline showing all steps as Overdue for STEM students | `opt/timeline/page.tsx` | Added STEM OPT banner + "Mark All Done" button |
+| STEM validation deadlines not auto-created | `dashboard/opt/page.tsx` | Auto-generate 6/12/18/24 month deadlines when OPT type saved as STEM extension |
+| STEM OPT application window not indicated | `dashboard/opt/page.tsx` | Added smart banner triggered at 90/60/30 days before OPT EAD expiry |
+| Unescaped apostrophe breaking build | `opt/timeline/page.tsx` | Replaced `'` with `&apos;` in JSX |
+| Dev server `npm run dev` not working on Windows | — | Must use `node node_modules/next/dist/bin/next dev` in PowerShell |
+
+---
+
+## ✅ Session 6 Issues — All Resolved After Sessions 7 + 8
+
+### Rule / Logic Issues — Resolution
+
+| # | Issue | Status |
+|---|-------|--------|
+| 1 | No student phase tracking | ✅ `visa-stages.ts` covers all phases; visa timeline page shows current stage clearly |
+| 2 | Unemployment counter: is STEM cap cumulative? | ✅ Confirmed cumulative — rules text updated in `visa-stages.ts` |
+| 3 | 60-day grace period not tracked | ✅ Already in `visa-stages.ts` stage 5 — shows in visa timeline |
+| 4 | STEM eligibility not validated | ✅ Fixed — STEM OPT form now shows requirements checklist; employer form warns on non-E-Verify or unpaid work |
+| 5 | Cap-gap date hardcoded to 2025-10-01 | ✅ Fixed — now dynamically computes next October 1 |
+| 6 | Travel during pending OPT/STEM application | ✅ Fixed — pre-travel checklist now shows prominent abandonment risk warning |
+| 7 | 5-month travel rule: months vs days | ✅ USCIS uses 5 calendar months — implementation correct |
+| 8 | STEM application window start: 90 days? | ✅ 90 days before OPT EAD expiry is correct |
+
+### UX / Flow Issues — Resolution
+
+| # | Issue | Status |
+|---|-------|--------|
+| 9 | Timeline page ambiguous label | ✅ Fixed — sidebar now shows "OPT Application Steps" vs "STEM Application Steps" |
+| 10 | No STEM OPT step-by-step application flow | ✅ Fixed — new `/dashboard/opt/stem-timeline` page with 7 steps |
+| 11 | EAD categories not explained | ✅ Fixed — OPT form auto-syncs EAD category based on OPT type; helper text explains each category |
+| 12 | Missed STEM report gives no guidance | ✅ Fixed — "Window Closed" now expands to show DSO contact guidance |
+| 13 | Dashboard deadlines don't refresh after save | ✅ Fixed — success banner with link to Deadlines after STEM setup; router.refresh() called |
+| 14 | Existing STEM users have no deadlines | ✅ Fixed — stem-reports page detects zero deadlines and shows prominent generate button |
 
 ---
 
@@ -20,12 +79,12 @@
 
 ### P0 Code Audit Notes (Session 5 — verified against spec line by line)
 
-| Feature | Verified | Minor Gaps |
-|---------|----------|------------|
-| Visa Status Timeline | ✅ | H-1B Cap-Gap `endDate` hardcoded to `"2025-10-01"` — should dynamically compute next Oct 1 |
-| Unemployment Day Counter | ✅ | `unemployment_days_used` is stored in DB but has no auto-increment job — must be updated manually or by future background process |
-| STEM OPT Reporting Reminders | ✅ | Spec says "escalates daily" — app shows static 30-day warning only; no daily push escalation implemented |
-| Employment Change Alert | ✅ | "Detects job changes" per spec = manual employer entry only; no auto-detection from external signal |
+| Feature | Verified | Notes |
+|---------|----------|-------|
+| Visa Status Timeline | ✅ | Cap-gap end date now dynamic (Session 7 fix). I-20 travel signature now 6 months for OPT students (Session 7 fix). |
+| Unemployment Day Counter | ✅ | `unemployment_days_used` stored in DB but no auto-increment job — must be updated manually |
+| STEM OPT Reporting Reminders | ✅ | Window corrected to 10 business days (Session 7). Self-evaluation added for months 12 & 24 (Session 7). |
+| Employment Change Alert | ✅ | "Detects job changes" = manual employer entry only; no auto-detection from external signal |
 | Days Outside US Counter | ✅ | No gaps — split counters, 120/150-day thresholds, CFR citation, all correct |
 
 ---
@@ -115,6 +174,13 @@
 - [x] Mark steps complete (saved to Supabase)
 - [x] USCIS processing time estimates (10/16/24 weeks)
 - [x] Common mistakes list
+
+### STEM OPT Application Timeline (`/dashboard/opt/stem-timeline`) — Session 8
+- [x] 7-step tracker (eligibility → E-Verify → I-983 → DSO I-20 → file I-765 → receipt → EAD)
+- [x] Auto-calculated dates from OPT EAD end date
+- [x] Mark steps complete (stored in `opt_application_steps` with `stem_` prefix)
+- [x] Detects if already on STEM OPT and shows redirect to STEM Reports
+- [x] Common STEM OPT mistakes list
 
 ### Employment Authorization Calculator (`/dashboard/opt/calculator`) — Session 2
 - [x] Standard OPT + STEM OPT modes
