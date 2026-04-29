@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,8 +57,8 @@ export default function AIPage() {
     <div className="flex flex-col h-[calc(100vh-7rem)]">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">AI Immigration Assistant</h1>
-        <p className="text-gray-600 text-sm">Powered by Groq + Llama 3.3 · Ask any F-1 compliance question</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">AI Immigration Assistant</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Powered by Groq + Llama 3.3 · Ask any F-1 compliance question</p>
       </div>
 
       {/* Chat area */}

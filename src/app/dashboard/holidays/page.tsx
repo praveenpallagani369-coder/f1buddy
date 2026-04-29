@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,8 +65,8 @@ export default function HolidaysPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">US Holidays & School Breaks</h1>
-        <p className="text-gray-600 text-sm">Know when banks, USCIS, and schools are closed</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">US Holidays & School Breaks</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Know when banks, USCIS, and schools are closed</p>
       </div>
 
       {/* Next holiday */}
@@ -76,7 +76,7 @@ export default function HolidaysPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Next Holiday</p>
-                <p className="text-xl font-bold text-gray-900">{nextHoliday.name}</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{nextHoliday.name}</p>
                 <p className="text-sm text-gray-500">{format(parseISO(nextHoliday.date), "EEEE, MMMM d, yyyy")}</p>
                 {F1_NOTES[nextHoliday.name] && (
                   <p className="text-xs text-indigo-700 mt-2">{F1_NOTES[nextHoliday.name]}</p>
@@ -101,7 +101,7 @@ export default function HolidaysPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           {SCHOOL_BREAKS.map((b) => (
-            <div key={b.name} className="p-3 rounded-lg bg-gray-100 border border-gray-200">
+            <div key={b.name} className="p-3 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-sm text-gray-900 font-medium">{b.name}</p>
                 <Badge variant="info" className="text-xs">{b.period}</Badge>
@@ -138,11 +138,11 @@ export default function HolidaysPage() {
                         ? "bg-white/30 border-gray-200 opacity-50"
                         : days <= 7
                         ? "bg-indigo-50 border-indigo-200"
-                        : "bg-gray-100 border-gray-200"
+                        : "bg-gray-100 border-gray-200 dark:border-gray-700"
                     }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium ${isPast ? "text-gray-500" : "text-gray-900"}`}>{h.name}</p>
+                      <p className={`text-sm font-medium ${isPast ? "text-gray-500 dark:text-gray-400" : "text-gray-900 dark:text-gray-100"}`}>{h.name}</p>
                       <p className="text-xs text-gray-500">{format(parseISO(h.date), "EEEE, MMMM d")}</p>
                       {F1_NOTES[h.name] && !isPast && (
                         <p className="text-xs text-gray-500 mt-0.5">{F1_NOTES[h.name]}</p>

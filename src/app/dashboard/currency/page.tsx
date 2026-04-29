@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -72,8 +72,8 @@ export default function CurrencyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Currency Converter</h1>
-        <p className="text-gray-600 text-sm">Live exchange rates for sending money home</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Currency Converter</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Live exchange rates for sending money home</p>
       </div>
 
       {/* Converter */}

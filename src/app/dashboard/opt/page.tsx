@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -155,7 +155,7 @@ export default function OPTPage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading OPT data...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading OPT data...</div>;
 
   const stemAlert = stemOptAlert(opt);
   const unemployed = opt?.unemployment_days_used ?? 0;
@@ -178,8 +178,8 @@ export default function OPTPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">OPT Employment Tracker</h1>
-          <p className="text-gray-600 text-sm mt-0.5">Track your employment authorization and unemployment days</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">OPT Employment Tracker</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mt-0.5">Track your employment authorization and unemployment days</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowOptForm(true)}>
@@ -230,19 +230,19 @@ export default function OPTPage() {
           <CardContent className="p-6">
             <div className="grid md:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">OPT Type</p>
-                <p className="text-gray-900 font-medium capitalize">{(opt.opt_type ?? "").replace("_", " ")}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">OPT Type</p>
+                <p className="text-gray-900 dark:text-gray-100 font-medium capitalize">{(opt.opt_type ?? "").replace("_", " ")}</p>
                 <p className="text-sm text-gray-600">EAD Category: {opt.ead_category ?? "—"}</p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-1">EAD Validity</p>
-                <p className="text-gray-900 font-medium">{opt.ead_start_date} → {opt.ead_end_date}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold mb-1">EAD Validity</p>
+                <p className="text-gray-900 dark:text-gray-100 font-medium">{opt.ead_start_date} → {opt.ead_end_date}</p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-2">Unemployment Days</p>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-2xl font-bold text-gray-900">{opt.unemployment_days_used}</span>
-                  <span className="text-gray-500">/ {opt.unemployment_limit} days</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{opt.unemployment_days_used}</span>
+                  <span className="text-gray-500 dark:text-gray-400">/ {opt.unemployment_limit} days</span>
                 </div>
                 <Progress value={opt.unemployment_days_used} max={opt.unemployment_limit} color={unemployColor} />
                 <p className="text-xs text-gray-600 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
@@ -262,8 +262,8 @@ export default function OPTPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">💼</p>
-            <p className="text-gray-900 font-medium mb-1">No OPT set up yet</p>
-            <p className="text-gray-600 text-sm mb-4">Add your EAD details to start tracking unemployment days</p>
+            <p className="text-gray-900 dark:text-gray-100 font-medium mb-1">No OPT set up yet</p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Add your EAD details to start tracking unemployment days</p>
             <Button onClick={() => setShowOptForm(true)}>Set Up OPT →</Button>
           </CardContent>
         </Card>
@@ -276,7 +276,7 @@ export default function OPTPage() {
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">OPT Type</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">OPT Type</label>
                 <Select value={optForm.optType} onChange={(e) => {
                   const t = e.target.value;
                   setOptForm(f => ({
@@ -291,7 +291,7 @@ export default function OPTPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">EAD Category</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">EAD Category</label>
                 <Select value={optForm.eadCategory} onChange={(e) => setOptForm(f => ({ ...f, eadCategory: e.target.value }))}>
                   <option value="C3A">C3A (Pre-Completion OPT)</option>
                   <option value="C3B">C3B (Post-Completion OPT)</option>
@@ -300,11 +300,11 @@ export default function OPTPage() {
                 <p className="text-xs text-gray-400 mt-1">Check the category printed on your physical EAD card</p>
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">EAD Start Date</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">EAD Start Date</label>
                 <Input type="date" value={optForm.eadStartDate} onChange={(e) => setOptForm(f => ({ ...f, eadStartDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">EAD End Date</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">EAD End Date</label>
                 <Input type="date" value={optForm.eadEndDate} onChange={(e) => setOptForm(f => ({ ...f, eadEndDate: e.target.value }))} />
               </div>
             </div>
@@ -335,15 +335,15 @@ export default function OPTPage() {
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Employer Name *</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">Employer Name *</label>
                 <Input placeholder="Acme Corporation" value={empForm.employerName} onChange={(e) => setEmpForm(f => ({ ...f, employerName: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Position Title</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">Position Title</label>
                 <Input placeholder="Software Engineer" value={empForm.positionTitle} onChange={(e) => setEmpForm(f => ({ ...f, positionTitle: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Employment Type</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">Employment Type</label>
                 <Select value={empForm.employmentType} onChange={(e) => setEmpForm(f => ({ ...f, employmentType: e.target.value }))}>
                   <option value="full_time">Full Time (40h/wk)</option>
                   <option value="part_time">Part Time (20h/wk)</option>
@@ -352,11 +352,11 @@ export default function OPTPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Start Date *</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">Start Date *</label>
                 <Input type="date" value={empForm.startDate} onChange={(e) => setEmpForm(f => ({ ...f, startDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">End Date (leave blank if current)</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">End Date (leave blank if current)</label>
                 <Input type="date" value={empForm.endDate} onChange={(e) => setEmpForm(f => ({ ...f, endDate: e.target.value }))} />
               </div>
             </div>
@@ -407,10 +407,10 @@ export default function OPTPage() {
           ) : (
             <div className="space-y-3">
               {employers.map((e) => (
-                <div key={e.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-50 border border-gray-200">
+                <div key={e.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-gray-900 font-medium">{e.employer_name}</p>
+                      <p className="text-gray-900 dark:text-gray-100 font-medium">{e.employer_name}</p>
                       {e.is_current && <Badge variant="success" className="text-xs">Current</Badge>}
                     </div>
                     <p className="text-sm text-gray-600">{e.position_title ?? e.employment_type.replace("_", " ")}</p>

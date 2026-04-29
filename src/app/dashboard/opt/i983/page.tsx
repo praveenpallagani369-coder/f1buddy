@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { differenceInCalendarDays, parseISO } from "date-fns";
@@ -145,7 +145,7 @@ export default function I983Page() {
       <div className="flex items-center gap-3">
         <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">Employment Change + I-983 Guide</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Employment Change + I-983 Guide</h1>
       </div>
 
       {/* 10-day countdown alert */}
@@ -186,7 +186,7 @@ export default function I983Page() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-gray-900 font-medium">{currentEmployer.employer_name}</p>
-                <p className="text-gray-600 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type}</p>
+                <p className="text-gray-600 dark:text-gray-400 text-sm">{currentEmployer.position_title ?? currentEmployer.employment_type}</p>
                 <p className="text-xs text-gray-500">Started: {currentEmployer.start_date}</p>
               </div>
               <div className="flex flex-col gap-1 items-end">
@@ -215,7 +215,7 @@ export default function I983Page() {
 
       {/* I-983 Steps */}
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-gray-900">I-983 Training Plan — Step by Step</h2>
+        <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">I-983 Training Plan — Step by Step</h2>
         {I983_STEPS.map((step, i) => {
           const done = completedSteps.has(step.id);
           return (
@@ -232,7 +232,7 @@ export default function I983Page() {
                   </button>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className={`font-medium text-sm ${done ? "line-through text-gray-500" : "text-gray-900"}`}>{step.title}</p>
+                      <p className={`font-medium text-sm ${done ? "line-through text-gray-500" : "text-gray-900 dark:text-gray-100"}`}>{step.title}</p>
                       {step.critical && !done && <span className="text-xs text-red-600 font-medium">Required</span>}
                     </div>
                     <p className="text-sm text-gray-500 leading-relaxed">{step.detail}</p>
@@ -264,7 +264,7 @@ export default function I983Page() {
               </li>
             ))}
           </ul>
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Link href="/dashboard/opt/stem-reports">
               <button className="text-sm text-indigo-600 hover:underline">→ Go to STEM Validation Reports (6/12/18/24 month)</button>
             </Link>

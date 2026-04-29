@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { addDays, subDays, parseISO, differenceInCalendarDays, format } from "date-fns";
@@ -169,14 +169,14 @@ export default function STEMTimelinePage() {
   const completedCount = mergedTimeline?.filter((s) => s.isCompleted).length ?? 0;
   const totalCount = mergedTimeline?.length ?? 0;
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading...</div>;
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
         <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">STEM OPT Application Timeline</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">STEM OPT Application Timeline</h1>
       </div>
       <p className="text-gray-500 text-sm -mt-4">
         Step-by-step guide to apply for your 24-month STEM OPT extension before your OPT EAD expires.
@@ -186,7 +186,7 @@ export default function STEMTimelinePage() {
       <div className="grid sm:grid-cols-3 gap-3">
         {[
           { label: "Application Window Opens", value: opt?.ead_end_date ? format(subDays(parseISO(opt.ead_end_date), 90), "MMM d, yyyy") : "Set OPT first", color: "text-amber-600" },
-          { label: "USCIS Processing", value: "3–5 months", color: "text-gray-600" },
+          { label: "USCIS Processing", value: "3–5 months", color: "text-gray-600 dark:text-gray-400" },
           { label: "STEM OPT Duration", value: "24 months", color: "text-violet-400" },
         ].map((item) => (
           <Card key={item.label}>
@@ -259,7 +259,7 @@ export default function STEMTimelinePage() {
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900"}`}>
+                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900 dark:text-gray-100"}`}>
                               {step.title}
                             </p>
                             {step.isCritical && !step.isCompleted && <Badge variant="critical" className="text-xs">Critical</Badge>}
@@ -279,11 +279,11 @@ export default function STEMTimelinePage() {
                           {step.targetDate && (
                             <div className="text-right">
                               <p className="text-xs text-gray-500">Target</p>
-                              <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600"}`}>
+                              <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600 dark:text-gray-400"}`}>
                                 {format(step.targetDate, "MMM d, yyyy")}
                               </p>
                               {daysAway !== null && !step.isCompleted && (
-                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-500"}`}>
+                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-500 dark:text-gray-400"}`}>
                                   {daysAway < 0 ? `${Math.abs(daysAway)}d ago` : `in ${daysAway}d`}
                                 </p>
                               )}

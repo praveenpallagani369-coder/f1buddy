@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,8 +42,8 @@ export default function NewsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Immigration News</h1>
-        <p className="text-gray-600 text-sm">Latest Federal Register updates affecting international students</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Immigration News</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Latest Federal Register updates affecting international students</p>
       </div>
 
       {/* Alert banner */}
@@ -74,7 +74,7 @@ export default function NewsPage() {
         <Card>
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-2">📰</p>
-            <p className="text-gray-500">No recent immigration news found</p>
+            <p className="text-gray-500 dark:text-gray-400">No recent immigration news found</p>
             <p className="text-xs text-gray-500 mt-1">Check back later — the Federal Register publishes daily on weekdays</p>
           </CardContent>
         </Card>
@@ -94,7 +94,7 @@ export default function NewsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1.5">
                         <Badge
-                          className={`text-xs border ${TYPE_COLORS[article.type] ?? "bg-gray-100 text-gray-500 border-gray-200"}`}
+                          className={`text-xs border ${TYPE_COLORS[article.type] ?? "bg-gray-100 text-gray-500 border-gray-200 dark:border-gray-700"}`}
                         >
                           {article.type}
                         </Badge>

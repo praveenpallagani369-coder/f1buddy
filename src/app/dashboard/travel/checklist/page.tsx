@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { generateTravelChecklist, getOverallStatus } from "@/lib/immigration/travel-checklist";
@@ -28,7 +28,7 @@ const STATUS_CONFIG = {
   pass: { icon: "✅", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200", label: "Good" },
   warn: { icon: "⚠️", color: "text-amber-600", bg: "bg-amber-50 border-amber-200", label: "Attention" },
   fail: { icon: "🚫", color: "text-red-600", bg: "bg-red-50 border-red-200", label: "Action Required" },
-  unknown: { icon: "❓", color: "text-gray-500", bg: "bg-gray-100 border-gray-200", label: "Unknown" },
+  unknown: { icon: "❓", color: "text-gray-500 dark:text-gray-400", bg: "bg-gray-100 border-gray-200 dark:border-gray-700", label: "Unknown" },
 };
 
 const OVERALL_CONFIG = {
@@ -95,7 +95,7 @@ export default function TravelChecklistPage() {
     setProfile((p) => p ? { ...p, i20_travel_signature_date: date } : p);
   }
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading your data...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading your data...</div>;
 
   const overall = checklist ? getOverallStatus(checklist) : null;
 
@@ -120,7 +120,7 @@ export default function TravelChecklistPage() {
       <div className="flex items-center gap-3">
         <Link href="/dashboard/travel" className="text-gray-500 hover:text-gray-600 transition-colors text-sm">← Travel</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">Pre-Travel Checklist</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Pre-Travel Checklist</h1>
       </div>
       <p className="text-gray-500 text-sm -mt-4">
         Run this before every international trip. We check your documents, signatures, and OPT status automatically.
@@ -290,7 +290,7 @@ export default function TravelChecklistPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Link href="/dashboard/dso-email" className="text-sm text-indigo-600 hover:underline">
                   ✉️ Need a travel signature? Use the DSO Email Generator →
                 </Link>

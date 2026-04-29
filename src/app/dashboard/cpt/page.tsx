@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { differenceInCalendarDays, parseISO } from "date-fns";
@@ -98,12 +98,12 @@ export default function CPTPage() {
   const optEligibilityRisk = fullTimeDays >= FULL_TIME_CPT_OPT_DISQUALIFY_DAYS;
   const optEligibilityWarning = fullTimeDays >= 300 && !optEligibilityRisk;
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading CPT records...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading CPT records...</div>;
 
   if (!tableExists) {
     return (
       <div className="max-w-2xl space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">CPT Tracker</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">CPT Tracker</h1>
         <Card className="border-amber-200">
           <CardContent className="p-6">
             <p className="text-amber-700 font-medium mb-2">🔧 Database setup required</p>
@@ -125,7 +125,7 @@ export default function CPTPage() {
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">CPT Tracker</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">CPT Tracker</h1>
           <p className="text-gray-600 text-sm mt-0.5">Curricular Practical Training — authorization tied to your I-20 and a specific course</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add CPT Record</Button>
@@ -156,13 +156,13 @@ export default function CPTPage() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-gray-500 mb-1">Total CPT Records</p>
-            <p className="text-2xl font-bold text-gray-900">{records.length}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{records.length}</p>
           </CardContent>
         </Card>
         <Card className={optEligibilityRisk ? "border-red-200" : optEligibilityWarning ? "border-amber-200" : ""}>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-gray-500 mb-1">Full-time CPT Days</p>
-            <p className={`text-2xl font-bold ${optEligibilityRisk ? "text-red-600" : optEligibilityWarning ? "text-amber-600" : "text-gray-900"}`}>
+            <p className={`text-2xl font-bold ${optEligibilityRisk ? "text-red-600" : optEligibilityWarning ? "text-amber-600" : "text-gray-900 dark:text-gray-100"}`}>
               {fullTimeDays}
             </p>
             <p className="text-xs text-gray-500">/ {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS} day OPT limit</p>
@@ -195,7 +195,7 @@ export default function CPTPage() {
             ].map((item) => (
               <div key={item.rule} className="flex items-start gap-2">
                 <span className={`flex-shrink-0 mt-0.5 ${item.crit ? "text-red-600" : "text-emerald-600"}`}>{item.crit ? "⚠" : "✓"}</span>
-                <span className="text-gray-500">{item.rule}</span>
+                <span className="text-gray-500 dark:text-gray-400">{item.rule}</span>
               </div>
             ))}
           </div>
@@ -271,7 +271,7 @@ export default function CPTPage() {
                 const end = r.end_date ? parseISO(r.end_date) : today;
                 const duration = differenceInCalendarDays(end, start);
                 return (
-                  <div key={r.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
+                  <div key={r.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-gray-900 font-medium">{r.employer_name}</p>

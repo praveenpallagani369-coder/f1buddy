@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -127,8 +127,8 @@ export default function CommunityPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Community Q&A</h1>
-          <p className="text-gray-600 text-sm">Ask questions, share knowledge with fellow F-1 students</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Community Q&A</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Ask questions, share knowledge with fellow F-1 students</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Ask a Question</Button>
       </div>
@@ -191,7 +191,7 @@ export default function CommunityPage() {
             const postAnswers = answers[post.id] ?? [];
 
             return (
-              <Card key={post.id} className={`transition-colors ${isExpanded ? "border-gray-200" : "hover:border-gray-200"}`}>
+              <Card key={post.id} className={`transition-colors ${isExpanded ? "border-gray-200 dark:border-gray-700" : "hover:border-gray-200 dark:border-gray-700"}`}>
                 <CardContent className="p-5">
                   {/* Post header */}
                   <div className="flex items-start gap-3">
@@ -234,7 +234,7 @@ export default function CommunityPage() {
                               <div className="space-y-3 mb-4">
                                 <p className="text-xs text-gray-500 uppercase tracking-wider">{postAnswers.length} Answer{postAnswers.length !== 1 ? "s" : ""}</p>
                                 {postAnswers.map((ans) => (
-                                  <div key={ans.id} className="flex gap-3 p-3 rounded-lg bg-gray-100 border border-gray-200">
+                                  <div key={ans.id} className="flex gap-3 p-3 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
                                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
                                       <button onClick={() => upvoteAnswer(post.id, ans.id)}
                                         className="w-6 h-6 rounded bg-slate-700 hover:bg-indigo-100 text-gray-500 hover:text-indigo-600 flex items-center justify-center transition-colors text-xs">

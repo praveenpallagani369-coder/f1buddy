@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { addMonths, parseISO, differenceInCalendarDays, format, addDays } from "date-fns";
@@ -210,7 +210,7 @@ export default function STEMReportsPage() {
       <div className="flex items-center gap-3">
         <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">STEM OPT Validation Reports</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">STEM OPT Validation Reports</h1>
       </div>
 
       {/* Critical warning banner */}
@@ -286,7 +286,7 @@ export default function STEMReportsPage() {
               const urgencyStyles = {
                 critical: "border-red-200 bg-red-50",
                 warning:  "border-amber-200 bg-amber-50",
-                ok:       "border-gray-200",
+                ok:       "border-gray-200 dark:border-gray-700",
                 missed:   "border-gray-200 opacity-60",
               }[report.urgency];
 
@@ -307,7 +307,7 @@ export default function STEMReportsPage() {
 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-semibold ${isDone ? "text-gray-500 line-through" : "text-gray-900"}`}>
+                            <p className={`font-semibold ${isDone ? "text-gray-500 line-through" : "text-gray-900 dark:text-gray-100"}`}>
                               {report.label}
                             </p>
                             {isDone && <Badge variant="success" className="text-xs">✓ Submitted</Badge>}
@@ -316,8 +316,8 @@ export default function STEMReportsPage() {
                           </div>
 
                           <div className="text-sm text-gray-500 space-y-0.5">
-                            <p>Milestone date: <span className="text-gray-700">{format(report.reportDate, "MMM d, yyyy")}</span></p>
-                            <p>DSO report by (10 bus. days): <span className={report.daysUntilWindowEnd <= 7 && !isDone ? "text-red-600 font-medium" : "text-gray-700"}>
+                            <p>Milestone date: <span className="text-gray-700 dark:text-gray-300">{format(report.reportDate, "MMM d, yyyy")}</span></p>
+                            <p>DSO report by (10 bus. days): <span className={report.daysUntilWindowEnd <= 7 && !isDone ? "text-red-600 font-medium" : "text-gray-700 dark:text-gray-300"}>
                               {format(report.windowEnd, "MMM d, yyyy")} ({report.daysUntilWindowEnd > 0 ? `${report.daysUntilWindowEnd}d remaining` : "closed"})
                             </span></p>
                             {report.requiresSelfEvaluation && (
@@ -375,7 +375,7 @@ export default function STEMReportsPage() {
                                 onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
                                 className="mt-0.5 flex-shrink-0"
                               />
-                              <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-500 line-through" : "text-gray-600"}`}>
+                              <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-500 line-through" : "text-gray-600 dark:text-gray-400"}`}>
                                 {item.label}
                                 {item.critical && <span className="text-red-600 ml-1 text-xs">*required</span>}
                               </span>

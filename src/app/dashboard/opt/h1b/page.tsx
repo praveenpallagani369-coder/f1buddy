@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { differenceInCalendarDays, parseISO, format } from "date-fns";
@@ -31,7 +31,7 @@ function Countdown({ targetDate, label, color }: { targetDate: Date; label: stri
     <Card className={isPast ? "opacity-60" : ""}>
       <CardContent className="p-4 text-center">
         <p className="text-xs text-gray-500 mb-1">{label}</p>
-        <p className={`text-2xl font-bold ${isPast ? "text-gray-500" : color}`}>
+        <p className={`text-2xl font-bold ${isPast ? "text-gray-500 dark:text-gray-400" : color}`}>
           {isPast ? "Done" : `${days}d`}
         </p>
         <p className="text-xs text-gray-500 mt-1">{format(targetDate, "MMM d, yyyy")}</p>
@@ -71,14 +71,14 @@ export default function H1BPage() {
   const capGapActive = h1bFiled && selectedLottery && eadEnd && eadEnd < h1bStartDate;
   const daysToOct1 = differenceInCalendarDays(h1bStartDate, today);
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading...</div>;
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
         <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">H-1B Lottery Timeline</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">H-1B Lottery Timeline</h1>
       </div>
       <p className="text-gray-500 text-sm -mt-4">
         Track the H-1B registration cycle for FY{year}. Most F-1/STEM OPT students target this path to long-term US work authorization.

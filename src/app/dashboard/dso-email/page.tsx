@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -265,7 +265,7 @@ function DSOEmailContent() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">DSO Email Generator</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">DSO Email Generator</h1>
         <p className="text-gray-600 text-sm mt-0.5">Professional, pre-written emails for common DSO requests — fill in a few fields, copy, and send.</p>
       </div>
 
@@ -273,7 +273,7 @@ function DSOEmailContent() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {TEMPLATES.map((t) => (
           <button key={t.id} onClick={() => { setSelectedTemplate(t.id); setFields({}); }}
-            className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white hover:border-gray-200"}`}>
+            className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white hover:border-gray-200 dark:border-gray-700"}`}>
             <span className="text-xl mb-2 block">{t.icon}</span>
             <p className="text-sm font-medium text-gray-900">{t.title}</p>
             <p className="text-xs text-gray-500 mt-0.5">{t.description}</p>
@@ -362,7 +362,7 @@ function DSOEmailContent() {
 
 export default function DSOEmailPage() {
   return (
-    <Suspense fallback={<div className="text-gray-500 text-center py-20">Loading...</div>}>
+    <Suspense fallback={<div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading...</div>}>
       <DSOEmailContent />
     </Suspense>
   );

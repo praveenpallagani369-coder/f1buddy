@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -167,8 +167,8 @@ export default function GuidesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">New Arrival Guides</h1>
-        <p className="text-gray-600 text-sm">Step-by-step guides for settling into the US as an international student</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">New Arrival Guides</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Step-by-step guides for settling into the US as an international student</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -185,8 +185,8 @@ export default function GuidesPage() {
                   <span className="text-2xl">{guide.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-base font-semibold text-gray-900">{guide.title}</h3>
-                      <span className="text-gray-600 text-sm">{isExpanded ? "▲" : "▼"}</span>
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{guide.title}</h3>
+                      <span className="text-gray-600 dark:text-gray-400 text-sm">{isExpanded ? "▲" : "▼"}</span>
                     </div>
                     <p className="text-sm text-gray-500 mt-0.5">{guide.subtitle}</p>
 

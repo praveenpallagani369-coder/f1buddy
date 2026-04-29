@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -97,8 +97,8 @@ export default function TravelPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Travel Tracker</h1>
-          <p className="text-gray-600 text-sm">Stay within the 5-month limit. Traveling while unemployed still counts toward OPT unemployment days.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Travel Tracker</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Stay within the 5-month limit. Traveling while unemployed still counts toward OPT unemployment days.</p>
         </div>
         <div className="flex gap-2">
           <Link href="/dashboard/travel/checklist">
@@ -132,7 +132,7 @@ export default function TravelPage() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Days Outside ({thisYear})</p>
-            <p className={`text-3xl font-bold ${atLimit ? "text-red-600" : approachingLimit ? "text-amber-600" : "text-gray-900"}`}>
+            <p className={`text-3xl font-bold ${atLimit ? "text-red-600" : approachingLimit ? "text-amber-600" : "text-gray-900 dark:text-gray-100"}`}>
               {totalDaysThisYear}
             </p>
             <p className="text-xs text-gray-500 mt-1">of 150 max</p>
@@ -141,7 +141,7 @@ export default function TravelPage() {
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Personal Travel</p>
-            <p className="text-2xl font-bold text-gray-900">{personalDays}</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{personalDays}</p>
             <p className="text-xs text-gray-500 mt-1">days</p>
           </CardContent>
         </Card>
@@ -234,7 +234,7 @@ export default function TravelPage() {
           ) : (
             <div className="space-y-3">
               {trips.map((t) => (
-                <div key={t.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
+                <div key={t.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-lg">✈️</span>

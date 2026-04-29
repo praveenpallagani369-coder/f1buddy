@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,7 +38,7 @@ export default function TaxPage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading tax records...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading tax records...</div>;
 
   const currentYear = new Date().getFullYear();
   const aprilDeadline = new Date(currentYear, 3, 15);
@@ -48,8 +48,8 @@ export default function TaxPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tax Filing</h1>
-          <p className="text-gray-600 text-sm">Track your annual tax filing status</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Tax Filing</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Track your annual tax filing status</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Tax Year</Button>
       </div>
@@ -153,7 +153,7 @@ export default function TaxPage() {
           ) : (
             <div className="space-y-3">
               {records.map((r) => (
-                <div key={r.id} className="flex items-center justify-between p-4 rounded-lg bg-gray-100 border border-gray-200">
+                <div key={r.id} className="flex items-center justify-between p-4 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
                   <div>
                     <p className="text-gray-900 font-medium">Tax Year {r.tax_year}</p>
                     <p className="text-sm text-gray-500 capitalize mt-0.5">{r.filing_status?.replace(/_/g, " ") ?? "Unknown status"}</p>

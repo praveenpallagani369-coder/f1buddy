@@ -93,7 +93,7 @@ export default function ProfilePage() {
     setSaving(false);
   }
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading profile...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading profile...</div>;
 
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <Card>
@@ -106,11 +106,11 @@ export default function ProfilePage() {
 
   const Field = ({ label, field, type = "text", placeholder }: { label: string; field: string; type?: string; placeholder?: string }) => (
     <div>
-      <label className="block text-xs text-gray-500 mb-1">{label}</label>
+      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">{label}</label>
       {editing ? (
         <Input type={type} placeholder={placeholder} value={form[field] ?? ""} onChange={(e) => setForm((f) => ({ ...f, [field]: e.target.value }))} />
       ) : (
-        <p className="text-sm text-gray-900">{(profile as unknown as Record<string, string | null>)?.[field] || <span className="text-gray-400">—</span>}</p>
+        <p className="text-sm text-gray-900 dark:text-gray-100">{(profile as unknown as Record<string, string | null>)?.[field] || <span className="text-gray-400 dark:text-gray-500">—</span>}</p>
       )}
     </div>
   );
@@ -125,8 +125,8 @@ export default function ProfilePage() {
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-          <p className="text-gray-600 text-sm">Your student and visa information</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Profile</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Your student and visa information</p>
         </div>
         {editing ? (
           <div className="flex gap-2">
@@ -139,13 +139,13 @@ export default function ProfilePage() {
       </div>
 
       {/* Avatar + name */}
-      <div className="flex items-center gap-4 p-5 bg-white rounded-xl border border-gray-200">
+      <div className="flex items-center gap-4 p-5 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-2xl font-bold text-white">
           {(profile?.name ?? "S").charAt(0).toUpperCase()}
         </div>
         <div>
-          <p className="text-gray-900 font-semibold text-lg">{profile?.name ?? "Student"}</p>
-          <p className="text-gray-600 text-sm">{profile?.email}</p>
+          <p className="text-gray-900 dark:text-gray-100 font-semibold text-lg">{profile?.name ?? "Student"}</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">{profile?.email}</p>
           <div className="flex gap-2 mt-1">
             <Badge variant="info">{profile?.visa_type ?? "F-1"}</Badge>
             <Badge variant={profile?.role === "premium" ? "warning" : "outline"}>{profile?.role ?? "student"}</Badge>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
       <Section title="Visa & Identity">
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
-            <label className="block text-xs text-gray-500 mb-1">SEVIS ID</label>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">SEVIS ID</label>
             {editing ? (
               <div className="space-y-1">
                 <Input
@@ -165,14 +165,14 @@ export default function ProfilePage() {
                   value={form.sevisId ?? ""}
                   onChange={(e) => setForm((f) => ({ ...f, sevisId: e.target.value }))}
                 />
-                <p className="text-xs text-gray-400 flex items-center gap-1">
+                <p className="text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" /> Stored encrypted — only enter if changing
                 </p>
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <p className="text-sm text-gray-900 font-mono">{maskSevisId(profile?.sevisId ?? null)}</p>
-                <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                <p className="text-sm text-gray-900 dark:text-gray-100 font-mono">{maskSevisId(profile?.sevisId ?? null)}</p>
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
                   <ShieldCheck className="w-3 h-3" /> Encrypted
                 </span>
               </div>
@@ -214,26 +214,26 @@ export default function ProfilePage() {
 
       {/* Address quick link */}
       <Link href="/dashboard/profile/address"
-        className="flex items-center justify-between p-4 rounded-xl bg-white border border-gray-200 hover:border-indigo-200 transition-colors group">
+        className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors group">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">🏠</div>
+          <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm">🏠</div>
           <div>
-            <p className="text-sm font-medium text-gray-900">US Address & SEVIS Reporting</p>
-            <p className="text-xs text-gray-500">Manage your address and 10-day DSO reporting requirement</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">US Address & SEVIS Reporting</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Manage your address and 10-day DSO reporting requirement</p>
           </div>
         </div>
-        <span className="text-gray-400 group-hover:text-gray-600 transition-colors">→</span>
+        <span className="text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">→</span>
       </Link>
 
       <Section title="Account">
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-500">Subscription</span>
+            <span className="text-gray-500 dark:text-gray-400">Subscription</span>
             <Badge variant="outline">{profile?.role === "premium" ? "Premium" : "Free"}</Badge>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-500">Member since</span>
-            <span className="text-gray-600">{profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"}</span>
+            <span className="text-gray-500 dark:text-gray-400">Member since</span>
+            <span className="text-gray-600 dark:text-gray-300">{profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"}</span>
           </div>
         </div>
       </Section>

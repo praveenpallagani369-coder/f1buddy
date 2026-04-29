@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -60,8 +60,8 @@ export default function EmergencyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Emergency Resources</h1>
-        <p className="text-gray-600 text-sm">Critical contacts, USCIS offices, and know-your-rights information</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Emergency Resources</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Critical contacts, USCIS offices, and know-your-rights information</p>
       </div>
 
       {/* Emergency banner */}
@@ -78,7 +78,7 @@ export default function EmergencyPage() {
         <CardHeader><CardTitle className="text-base">Important Phone Numbers</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {EMERGENCY_CONTACTS.map((c) => (
-            <div key={c.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-100 border border-gray-200">
+            <div key={c.name} className="flex items-center justify-between p-3 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
               <div className="flex-1 min-w-0 mr-3">
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-sm text-gray-900 font-medium">{c.name}</p>

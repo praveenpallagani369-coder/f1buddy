@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -101,7 +101,7 @@ export default function DocumentsPage() {
     <div className="flex items-center justify-center py-20">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-gray-600 text-sm">Loading documents...</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Loading documents...</p>
       </div>
     </div>
   );
@@ -110,8 +110,8 @@ export default function DocumentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Document Vault</h1>
-          <p className="text-gray-600 text-sm">Store and track expiration of your important documents (PDF, JPG, PNG — max 10 MB)</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Document Vault</h1>
+          <p className="text-gray-600 dark:text-gray-400 text-sm">Store and track expiration of your important documents (PDF, JPG, PNG — max 10 MB)</p>
         </div>
         <Button onClick={() => setShowForm(true)}>+ Add Document</Button>
       </div>
@@ -165,7 +165,7 @@ export default function DocumentsPage() {
                 ) : (
                   <div>
                     <p className="text-3xl mb-2">📁</p>
-                    <p className="text-gray-600 text-sm">Click to select or drag & drop</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Click to select or drag & drop</p>
                     <p className="text-gray-500 text-xs mt-1">PDF, JPG, PNG up to 10 MB</p>
                   </div>
                 )}

@@ -20,8 +20,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       default:     "bg-indigo-600 text-white hover:bg-indigo-700 active:bg-indigo-800 shadow-sm shadow-indigo-200/60",
       destructive: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-sm",
-      outline:     "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300 active:bg-gray-100 shadow-sm",
-      ghost:       "text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200",
+      outline:     "border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 active:bg-gray-100 dark:active:bg-gray-600 shadow-sm",
+      ghost:       "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 active:bg-gray-200 dark:active:bg-gray-700",
       link:        "text-indigo-600 underline-offset-4 hover:underline hover:text-indigo-700 p-0 h-auto",
     };
 

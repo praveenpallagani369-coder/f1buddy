@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import {
   GraduationCap,
   CalendarClock,
@@ -56,18 +56,18 @@ const stats = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Nav */}
-      <nav className="border-b border-gray-200 px-6 py-4 bg-white sticky top-0 z-10">
+      <nav className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 bg-white dark:bg-gray-900 sticky top-0 z-10">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-gray-900">F1Buddy</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100">F1Buddy</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/auth/login" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+            <Link href="/auth/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
               Sign in
             </Link>
             <Link
@@ -86,7 +86,7 @@ export default function LandingPage() {
           <GraduationCap className="w-3.5 h-3.5" />
           Built for 1.1M F-1 International Students
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-6">
           Never miss an{" "}
           <span className="text-indigo-600">immigration</span>{" "}
           deadline again
@@ -103,7 +103,7 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/auth/login"
-            className="px-8 py-3 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-colors text-lg"
+            className="px-8 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-lg"
           >
             Sign In
           </Link>
@@ -117,7 +117,7 @@ export default function LandingPage() {
       <div className="max-w-3xl mx-auto px-6 mb-20">
         <div className="grid grid-cols-3 gap-6 text-center">
           {stats.map((s) => (
-            <div key={s.label} className="bg-white border border-gray-200 rounded-2xl p-5">
+            <div key={s.label} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
               <p className="text-3xl font-bold text-indigo-600">{s.value}</p>
               <p className="text-sm text-gray-500 mt-1">{s.label}</p>
             </div>
@@ -127,7 +127,7 @@ export default function LandingPage() {
 
       {/* Features */}
       <div className="max-w-5xl mx-auto px-6 mb-20">
-        <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
           Everything to stay in F-1 status
         </h2>
         <p className="text-gray-500 text-center mb-10">All your compliance tools in one dashboard</p>
@@ -135,12 +135,12 @@ export default function LandingPage() {
           {features.map(({ icon: Icon, title, desc, color }) => (
             <div
               key={title}
-              className="bg-white border border-gray-200 rounded-xl p-5 hover:border-indigo-200 hover:shadow-sm transition-all"
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all"
             >
               <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center mb-3`}>
                 <Icon className="w-5 h-5" />
               </div>
-              <h3 className="text-gray-900 font-semibold mb-1">{title}</h3>
+              <h3 className="text-gray-900 dark:text-gray-100 font-semibold mb-1">{title}</h3>
               <p className="text-gray-500 text-sm">{desc}</p>
             </div>
           ))}
@@ -150,7 +150,7 @@ export default function LandingPage() {
       {/* CTA */}
       <div className="max-w-2xl mx-auto px-6 pb-20 text-center">
         <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
             Ready to stop worrying about deadlines?
           </h2>
           <p className="text-gray-500 mb-6">
@@ -166,7 +166,7 @@ export default function LandingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 px-6 py-8 bg-white">
+      <footer className="border-t border-gray-200 dark:border-gray-700 px-6 py-8 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-400">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center">

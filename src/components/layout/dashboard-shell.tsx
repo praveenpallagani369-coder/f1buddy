@@ -20,11 +20,11 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
   }, [pathname]);
 
   return (
-    <div className="flex h-screen bg-gray-50/80 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden">
       {/* Mobile overlay backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-20 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
           onClick={() => setMobileOpen(false)}
           aria-hidden="true"
         />
@@ -44,10 +44,10 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile header — only visible below lg */}
-        <header className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 flex-shrink-0">
+        <header className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <button
             onClick={() => setMobileOpen(true)}
-            className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Open menu"
           >
             <Menu className="w-5 h-5" />
@@ -56,7 +56,7 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
               <span className="text-white text-[10px] font-bold">F1</span>
             </div>
-            <span className="font-bold text-gray-900 text-sm">F1Buddy</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">F1Buddy</span>
           </div>
         </header>
 

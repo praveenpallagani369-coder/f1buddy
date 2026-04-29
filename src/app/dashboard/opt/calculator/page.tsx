@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { parseISO, subDays, format, differenceInCalendarDays, isAfter, addDays } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -220,7 +220,7 @@ export default function CalculatorPage() {
       <div className="flex items-center gap-3">
         <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-700 text-sm font-medium">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">Employment Authorization Calculator</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Employment Authorization Calculator</h1>
       </div>
       <p className="text-gray-600 text-sm -mt-4">
         Enter your dates to see exactly when you can work, when you must stop, and all critical deadlines.
@@ -314,7 +314,7 @@ export default function CalculatorPage() {
             <CardHeader className="pb-3"><CardTitle className="text-sm text-amber-600">Proposed Rule Change</CardTitle></CardHeader>
             <CardContent>
               <p className="text-xs text-gray-600 leading-relaxed">
-                USCIS has proposed reducing the post-completion OPT grace period from <strong className="text-gray-800">60 days to 30 days</strong> (NPRM published January 2025). This is NOT yet final — the current rule remains 60 days. Monitor the Federal Register for updates. This calculator uses the current 60-day rule.
+                USCIS has proposed reducing the post-completion OPT grace period from <strong className="text-gray-800 dark:text-gray-200">60 days to 30 days</strong> (NPRM published January 2025). This is NOT yet final — the current rule remains 60 days. Monitor the Federal Register for updates. This calculator uses the current 60-day rule.
               </p>
             </CardContent>
           </Card>

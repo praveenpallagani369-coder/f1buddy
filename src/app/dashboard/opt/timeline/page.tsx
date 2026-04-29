@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { addDays, subDays, parseISO, differenceInCalendarDays, format, isBefore } from "date-fns";
@@ -171,14 +171,14 @@ export default function OPTTimelinePage() {
   const completedCount = mergedTimeline?.filter((s) => s.isCompleted).length ?? 0;
   const totalCount = mergedTimeline?.length ?? 0;
 
-  if (loading) return <div className="text-gray-500 text-center py-20">Loading timeline...</div>;
+  if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading timeline...</div>;
 
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
         <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
         <span className="text-slate-700">/</span>
-        <h1 className="text-2xl font-bold text-gray-900">OPT Application Timeline</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">OPT Application Timeline</h1>
       </div>
 
       {/* Intro + processing times */}
@@ -302,7 +302,7 @@ export default function OPTTimelinePage() {
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900"}`}>
+                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900 dark:text-gray-100"}`}>
                               {step.title}
                             </p>
                             {step.isCritical && !step.isCompleted && (
@@ -324,11 +324,11 @@ export default function OPTTimelinePage() {
                           {step.targetDate && (
                             <div className="text-right">
                               <p className="text-xs text-gray-500">Target</p>
-                              <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600"}`}>
+                              <p className={`text-sm font-medium ${isOverdue ? "text-red-600" : "text-gray-600 dark:text-gray-400"}`}>
                                 {format(step.targetDate, "MMM d, yyyy")}
                               </p>
                               {daysAway !== null && !step.isCompleted && (
-                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-500"}`}>
+                                <p className={`text-xs ${daysAway < 0 ? "text-red-600" : daysAway < 14 ? "text-amber-600" : "text-gray-500 dark:text-gray-400"}`}>
                                   {daysAway < 0 ? `${Math.abs(daysAway)}d ago` : `in ${daysAway}d`}
                                 </p>
                               )}
@@ -362,7 +362,7 @@ export default function OPTTimelinePage() {
           <CardContent className="p-8 text-center">
             <p className="text-3xl mb-3">📅</p>
             <p className="text-gray-900 font-medium mb-1">Enter your program end date above</p>
-            <p className="text-gray-600 text-sm">We&apos;ll calculate all your OPT deadlines automatically</p>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">We&apos;ll calculate all your OPT deadlines automatically</p>
           </CardContent>
         </Card>
       )}

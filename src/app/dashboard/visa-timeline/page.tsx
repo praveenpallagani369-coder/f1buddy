@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { buildVisaTimeline, getCurrentStage } from "@/lib/immigration/visa-stages";
@@ -58,7 +58,7 @@ export default function VisaTimelinePage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Visa Status Timeline</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Visa Status Timeline</h1>
         <p className="text-gray-600 text-sm mt-0.5">Your F-1 immigration journey — current stage, applicable rules, and what comes next.</p>
       </div>
 
@@ -102,12 +102,12 @@ export default function VisaTimelinePage() {
                     ${stage.isCurrent ? `${c.ring} ring-4 ring-offset-2 ring-offset-white bg-gray-50 scale-110` : ""}
                     ${stage.isCompleted ? `bg-slate-700 border-slate-600` : ""}
                     ${stage.isFuture && !stage.isCurrent ? "bg-white border-gray-200 opacity-40" : ""}
-                    ${stage.isCurrent ? `bg-gray-50 border-current` : ""}`}
+                    ${stage.isCurrent ? `bg-gray-50 dark:bg-gray-800 border-current` : ""}`}
                   style={stage.isCurrent ? { borderColor: "" } : {}}
                 >
                   {stage.isCompleted ? "✓" : stage.icon}
                 </button>
-                <p className={`text-xs mt-1 text-center leading-tight ${stage.isCurrent ? "text-gray-900 font-semibold" : stage.isCompleted ? "text-gray-500" : "text-gray-400"}`}>
+                <p className={`text-xs mt-1 text-center leading-tight ${stage.isCurrent ? "text-gray-900 font-semibold" : stage.isCompleted ? "text-gray-500 dark:text-gray-400" : "text-gray-400"}`}>
                   {stage.label}
                 </p>
               </div>
@@ -136,7 +136,7 @@ export default function VisaTimelinePage() {
                     <span className="text-xl">{stage.icon}</span>
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className={`font-medium ${stage.isCurrent ? "text-gray-900" : stage.isCompleted ? "text-gray-500" : "text-gray-600"}`}>
+                        <p className={`font-medium ${stage.isCurrent ? "text-gray-900 dark:text-gray-100" : stage.isCompleted ? "text-gray-500 dark:text-gray-400" : "text-gray-600 dark:text-gray-400"}`}>
                           {stage.label}
                         </p>
                         {stage.isCurrent && <span className={`text-xs px-2 py-0.5 rounded-full border ${c.badge}`}>Current</span>}
@@ -181,7 +181,7 @@ export default function VisaTimelinePage() {
 
                     {/* Next step */}
                     {stage.nextStep && (
-                      <div className="p-3 rounded-lg bg-gray-50 border border-gray-200 text-sm">
+                      <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 text-sm">
                         <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider block mb-1">Next Step</span>
                         <span className="text-indigo-700">→ {stage.nextStep}</span>
                       </div>
