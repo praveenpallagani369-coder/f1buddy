@@ -1,5 +1,5 @@
 import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
-import { decryptIfPresent } from "@/lib/crypto";
+import { decryptIfPresent, encryptIfPresent } from "@/lib/crypto";
 import { z } from "zod";
 
 const updateSchema = z.object({
@@ -16,6 +16,7 @@ const updateSchema = z.object({
   passportExpiry: z.string().optional().nullable(),
   visaStampExpiry: z.string().optional().nullable(),
   i20TravelSignatureDate: z.string().optional().nullable(),
+  sevisId: z.string().max(20).optional().nullable(),
 }).strict();
 
 export async function GET() {
@@ -61,6 +62,9 @@ export async function PATCH(request: Request) {
   if (parsed.data.passportExpiry !== undefined) updates.passport_expiry = parsed.data.passportExpiry || null;
   if (parsed.data.visaStampExpiry !== undefined) updates.visa_stamp_expiry = parsed.data.visaStampExpiry || null;
   if (parsed.data.i20TravelSignatureDate !== undefined) updates.i20_travel_signature_date = parsed.data.i20TravelSignatureDate || null;
+  if (parsed.data.sevisId !== undefined) {
+    updates.sevis_id_encrypted = encryptIfPresent(parsed.data.sevisId) as string | null;
+  }
 
   const { data } = await supabase.from("users").update(updates).eq("id", user.id).select().single();
   return ok(data);

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Sidebar } from "@/components/layout/sidebar";
+import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { SeedButton } from "@/components/shared/seed-button";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -18,14 +18,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (!profile?.onboarding_completed) redirect("/onboarding");
 
   return (
-    <div className="flex h-screen bg-gray-50/80 overflow-hidden">
-      <Sidebar user={{ name: profile?.name ?? user.email ?? "Student", email: user.email ?? "", role: profile?.role ?? "student" }} />
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-6 max-w-6xl mx-auto">
-          {children}
-        </div>
-      </main>
-      {process.env.NODE_ENV !== "production" && <SeedButton />}
-    </div>
+    <DashboardShell
+      user={{ name: profile?.name ?? user.email ?? "Student", email: user.email ?? "", role: profile?.role ?? "student" }}
+      showSeedButton={process.env.NODE_ENV !== "production" ? <SeedButton /> : undefined}
+    >
+      {children}
+    </DashboardShell>
   );
 }

@@ -10,7 +10,7 @@ import {
   FlaskConical, ClipboardList, Building2, Calculator, FileText,
   BookOpen, Plane, ClipboardCheck, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, ArrowLeftRight, CalendarDays, Newspaper,
-  BookMarked, ShieldAlert, LogOut, GraduationCap, type LucideIcon,
+  BookMarked, ShieldAlert, LogOut, GraduationCap, X, type LucideIcon,
 } from "lucide-react";
 
 type NavItem = { href: string; label: string; icon: LucideIcon; top?: boolean };
@@ -70,7 +70,7 @@ const SECTIONS: NavSection[] = [
   },
 ];
 
-export function Sidebar({ user }: { user: { name: string; email: string; role: string } }) {
+export function Sidebar({ user, onMobileClose }: { user: { name: string; email: string; role: string }; onMobileClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -100,8 +100,8 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
   }
 
   return (
-    <aside className="w-60 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col shadow-sm">
-      <div className="px-4 py-3 border-b border-gray-200">
+    <aside className="w-60 flex-shrink-0 border-r border-gray-200 bg-white flex flex-col shadow-sm h-full">
+      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200">
             <GraduationCap className="w-5 h-5 text-white" />
@@ -111,6 +111,15 @@ export function Sidebar({ user }: { user: { name: string; email: string; role: s
             <p className="text-[10px] text-gray-500 mt-0.5 leading-none">Student Manager</p>
           </div>
         </Link>
+        {onMobileClose && (
+          <button
+            onClick={onMobileClose}
+            className="lg:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-3">

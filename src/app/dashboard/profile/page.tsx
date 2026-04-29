@@ -1,15 +1,35 @@
 "use client";
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { ShieldCheck, Mail } from "lucide-react";
+
+interface Profile {
+  id: string;
+  email: string;
+  name: string | null;
+  avatar_url: string | null;
+  visa_type: string | null;
+  sevisId: string | null;
+  school_name: string | null;
+  program_name: string | null;
+  degree_level: string | null;
+  program_start_date: string | null;
+  program_end_date: string | null;
+  dso_name: string | null;
+  dso_email: string | null;
+  dso_phone: string | null;
+  home_country: string | null;
+  passport_expiry: string | null;
+  role: string | null;
+  created_at: string | null;
+}
 
 export default function ProfilePage() {
-  const supabase = createClient();
-  const [profile, setProfile] = useState<Record<string, string | null> | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -17,24 +37,58 @@ export default function ProfilePage() {
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
+      const res = await fetch("/api/user");
+      if (!res.ok) return;
+      const { data } = await res.json();
       setProfile(data);
-      setForm({ name: data?.name ?? "", school_name: data?.school_name ?? "", program_name: data?.program_name ?? "", degree_level: data?.degree_level ?? "", program_start_date: data?.program_start_date ?? "", program_end_date: data?.program_end_date ?? "", dso_name: data?.dso_name ?? "", dso_email: data?.dso_email ?? "", dso_phone: data?.dso_phone ?? "", home_country: data?.home_country ?? "", passport_expiry: data?.passport_expiry ?? "" });
+      setForm({
+        name: data?.name ?? "",
+        school_name: data?.school_name ?? "",
+        program_name: data?.program_name ?? "",
+        degree_level: data?.degree_level ?? "",
+        program_start_date: data?.program_start_date ?? "",
+        program_end_date: data?.program_end_date ?? "",
+        dso_name: data?.dso_name ?? "",
+        dso_email: data?.dso_email ?? "",
+        dso_phone: data?.dso_phone ?? "",
+        home_country: data?.home_country ?? "",
+        passport_expiry: data?.passport_expiry ?? "",
+        sevisId: "",
+      });
       setLoading(false);
     }
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function save() {
     setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase.from("users").update({ ...form, updated_at: new Date().toISOString() }).eq("id", user.id);
-    const { data } = await supabase.from("users").select("*").eq("id", user.id).single();
-    setProfile(data);
+    const body: Record<string, string | null> = {
+      name: form.name || null,
+      schoolName: form.school_name || null,
+      programName: form.program_name || null,
+      degreeLevel: form.degree_level || null,
+      programStartDate: form.program_start_date || null,
+      programEndDate: form.program_end_date || null,
+      dsoName: form.dso_name || null,
+      dsoEmail: form.dso_email || null,
+      dsoPhone: form.dso_phone || null,
+      homeCountry: form.home_country || null,
+      passportExpiry: form.passport_expiry || null,
+    };
+    if (form.sevisId) body.sevisId = form.sevisId;
+
+    const res = await fetch("/api/user", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      const reload = await fetch("/api/user");
+      if (reload.ok) {
+        const { data } = await reload.json();
+        setProfile(data);
+      }
+    }
     setEditing(false);
     setSaving(false);
   }
@@ -50,16 +104,22 @@ export default function ProfilePage() {
     </Card>
   );
 
-  const Field = ({ label, value, field, type = "text" }: { label: string; value: string | null | undefined; field: string; type?: string }) => (
+  const Field = ({ label, field, type = "text", placeholder }: { label: string; field: string; type?: string; placeholder?: string }) => (
     <div>
       <label className="block text-xs text-gray-500 mb-1">{label}</label>
       {editing ? (
-        <Input type={type} value={form[field] ?? ""} onChange={(e) => setForm((f) => ({ ...f, [field]: e.target.value }))} />
+        <Input type={type} placeholder={placeholder} value={form[field] ?? ""} onChange={(e) => setForm((f) => ({ ...f, [field]: e.target.value }))} />
       ) : (
-        <p className="text-sm text-gray-900">{value || <span className="text-gray-500">—</span>}</p>
+        <p className="text-sm text-gray-900">{(profile as unknown as Record<string, string | null>)?.[field] || <span className="text-gray-400">—</span>}</p>
       )}
     </div>
   );
+
+  function maskSevisId(id: string | null) {
+    if (!id) return "—";
+    if (id.length <= 4) return "N•••••••••••";
+    return id.slice(0, 4) + "•".repeat(Math.max(0, id.length - 4));
+  }
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -80,7 +140,7 @@ export default function ProfilePage() {
 
       {/* Avatar + name */}
       <div className="flex items-center gap-4 p-5 bg-white rounded-xl border border-gray-200">
-        <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-2xl font-bold text-gray-900">
+        <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-2xl font-bold text-white">
           {(profile?.name ?? "S").charAt(0).toUpperCase()}
         </div>
         <div>
@@ -93,33 +153,61 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      <Section title="Visa & Identity">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <label className="block text-xs text-gray-500 mb-1">SEVIS ID</label>
+            {editing ? (
+              <div className="space-y-1">
+                <Input
+                  type="text"
+                  placeholder="N00xxxxxxxxx (leave blank to keep existing)"
+                  value={form.sevisId ?? ""}
+                  onChange={(e) => setForm((f) => ({ ...f, sevisId: e.target.value }))}
+                />
+                <p className="text-xs text-gray-400 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3" /> Stored encrypted — only enter if changing
+                </p>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-gray-900 font-mono">{maskSevisId(profile?.sevisId ?? null)}</p>
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                  <ShieldCheck className="w-3 h-3" /> Encrypted
+                </span>
+              </div>
+            )}
+          </div>
+          <Field label="Home Country" field="home_country" />
+          <Field label="Passport Expiry" field="passport_expiry" type="date" />
+        </div>
+      </Section>
+
       <Section title="Personal Info">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Full Name" value={profile?.name} field="name" />
-          <Field label="Home Country" value={profile?.home_country} field="home_country" />
-          <Field label="Passport Expiry" value={profile?.passport_expiry} field="passport_expiry" type="date" />
+          <div className="col-span-2"><Field label="Full Name" field="name" /></div>
         </div>
       </Section>
 
       <Section title="Academic Info">
         <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2"><Field label="University / School" value={profile?.school_name} field="school_name" /></div>
-          <Field label="Program / Major" value={profile?.program_name} field="program_name" />
-          <Field label="Degree Level" value={profile?.degree_level} field="degree_level" />
-          <Field label="Program Start" value={profile?.program_start_date} field="program_start_date" type="date" />
-          <Field label="Program End" value={profile?.program_end_date} field="program_end_date" type="date" />
+          <div className="col-span-2"><Field label="University / School" field="school_name" /></div>
+          <Field label="Program / Major" field="program_name" />
+          <Field label="Degree Level" field="degree_level" />
+          <Field label="Program Start" field="program_start_date" type="date" />
+          <Field label="Program End" field="program_end_date" type="date" />
         </div>
       </Section>
 
       <Section title="DSO Contact">
         <div className="grid grid-cols-2 gap-4">
-          <Field label="DSO Name" value={profile?.dso_name} field="dso_name" />
-          <Field label="DSO Email" value={profile?.dso_email} field="dso_email" type="email" />
-          <Field label="DSO Phone" value={profile?.dso_phone} field="dso_phone" />
+          <Field label="DSO Name" field="dso_name" />
+          <Field label="DSO Email" field="dso_email" type="email" />
+          <Field label="DSO Phone" field="dso_phone" />
         </div>
         {profile?.dso_email && !editing && (
-          <a href={`mailto:${profile.dso_email}`} className="inline-block mt-3 text-sm text-indigo-600 hover:underline">
-            📧 Email DSO
+          <a href={`mailto:${profile.dso_email}`} className="inline-flex items-center gap-1.5 mt-3 text-sm text-indigo-600 hover:underline">
+            <Mail className="w-4 h-4" /> Email DSO
           </a>
         )}
       </Section>
@@ -128,13 +216,13 @@ export default function ProfilePage() {
       <Link href="/dashboard/profile/address"
         className="flex items-center justify-between p-4 rounded-xl bg-white border border-gray-200 hover:border-indigo-200 transition-colors group">
         <div className="flex items-center gap-3">
-          <span className="text-xl">🏠</span>
+          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">🏠</div>
           <div>
             <p className="text-sm font-medium text-gray-900">US Address & SEVIS Reporting</p>
             <p className="text-xs text-gray-500">Manage your address and 10-day DSO reporting requirement</p>
           </div>
         </div>
-        <span className="text-gray-500 group-hover:text-gray-500 transition-colors">→</span>
+        <span className="text-gray-400 group-hover:text-gray-600 transition-colors">→</span>
       </Link>
 
       <Section title="Account">
