@@ -15,7 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-type NavItem = { href: string; label: string; icon: LucideIcon; top?: boolean };
+type NavItem = { href: string; label: string; icon: LucideIcon };
 type NavSection = { label: string | null; items: NavItem[] };
 
 const SECTIONS: NavSection[] = [
@@ -30,8 +30,8 @@ const SECTIONS: NavSection[] = [
   {
     label: "Work Auth",
     items: [
-      { href: "/dashboard/opt", label: "OPT Tracker", icon: Briefcase, top: true },
-      { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen, top: true },
+      { href: "/dashboard/opt", label: "OPT Tracker", icon: Briefcase },
+      { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen },
       { href: "/dashboard/opt/timeline", label: "OPT Steps", icon: ListChecks },
       { href: "/dashboard/opt/stem-timeline", label: "STEM Steps", icon: FlaskConical },
       { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: ClipboardList },
@@ -43,18 +43,23 @@ const SECTIONS: NavSection[] = [
   {
     label: "Travel",
     items: [
-      { href: "/dashboard/travel", label: "Travel", icon: Plane, top: true },
+      { href: "/dashboard/travel", label: "Travel", icon: Plane },
       { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: ClipboardCheck },
     ],
   },
   {
     label: "Records",
     items: [
-      { href: "/dashboard/documents", label: "Documents", icon: FolderOpen, top: true },
-      { href: "/dashboard/tax", label: "Tax", icon: Receipt, top: true },
-      { href: "/dashboard/dso-email", label: "DSO Emails", icon: Mail, top: true },
-      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles, top: true },
-      { href: "/dashboard/community", label: "Community", icon: MessageCircle, top: true },
+      { href: "/dashboard/documents", label: "Documents", icon: FolderOpen },
+      { href: "/dashboard/tax", label: "Tax", icon: Receipt },
+      { href: "/dashboard/dso-email", label: "DSO Emails", icon: Mail },
+    ],
+  },
+  {
+    label: "Community",
+    items: [
+      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
+      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
   {
@@ -135,24 +140,22 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
               </button>
             )}
             {isSectionOpen(section) && <div className="space-y-0.5">
-              {section.items.map(({ href, label, icon: Icon, top }) => {
+              {section.items.map(({ href, label, icon: Icon }) => {
                 const active = href === "/dashboard"
                   ? pathname === href
                   : pathname === href || pathname.startsWith(href + "/");
-                const isTop = top ?? (section.label === null);
                 return (
                   <Link
                     key={href}
                     href={href}
                     className={cn(
-                      "flex items-center gap-2.5 rounded-lg transition-all duration-150",
-                      isTop ? "px-3 py-2 text-sm" : "px-3 py-1.5 ml-3 text-xs",
+                      "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-150",
                       active
                         ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold"
                         : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                     )}
                   >
-                    <Icon className={cn("flex-shrink-0", isTop ? "w-[18px] h-[18px]" : "w-4 h-4")} />
+                    <Icon className="w-[18px] h-[18px] flex-shrink-0" />
                     <span className="truncate">{label}</span>
                     {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400 flex-shrink-0" />}
                   </Link>
