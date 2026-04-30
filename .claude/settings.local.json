@@ -18,7 +18,12 @@
       "Bash(git -C /c/Users/palla/projects/f1buddy remote -v)",
       "Bash(git *)",
       "Skill(design-audit)",
-      "Skill(dark-mode-fix)"
+      "Skill(dark-mode-fix)",
+      "Bash(npm run *)",
+      "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+OR+SEVIS&conditions%5Bagencies%5D%5B%5D=citizenship-and-immigration-services-bureau&per_page=3&order=newest&fields%5B%5D=title,publication_date,type\")",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+OR+SEVIS&conditions%5Bagencies%5D%5B%5D=citizenship-and-immigration-services-bureau&per_page=3&order=newest\")",
+      "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+SEVIS&per_page=3&order=newest\")"
     ]
   }
 }
