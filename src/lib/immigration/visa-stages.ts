@@ -49,7 +49,9 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
   const eadEnd = input.eadEndDate ? parseISO(input.eadEndDate) : null;
 
   // ── Stage 1: F-1 Student Active ───────────────────────────
-  const f1End = eadStart ?? progEnd;
+  // When on STEM OPT, F-1 ended at program end (not at STEM EAD start)
+  const isOnStemOpt = input.optType === "stem_extension";
+  const f1End = isOnStemOpt ? progEnd : (eadStart ?? progEnd);
   stages.push({
     id: "f1_active",
     label: "F-1 Student",
@@ -121,9 +123,34 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
       warnings: daysLeft <= 90 && daysLeft > 0
         ? [`EAD expires in ${daysLeft} days — ${daysLeft <= 30 ? "apply for STEM extension IMMEDIATELY" : "apply for STEM extension if eligible"}`]
         : [],
-      nextStep: (input.optType as string) !== "stem_extension"
-        ? "Apply for STEM OPT extension if your degree qualifies (STEM list)"
-        : "Prepare for H-1B lottery or alternative status",
+      nextStep: "Apply for STEM OPT extension if your degree qualifies (STEM list)",
+    });
+  }
+
+  // ── Stage 3b: OPT (Completed) — shown when user advanced to STEM OPT ─
+  // When on STEM extension, show original OPT as a completed stage.
+  // We infer the OPT period as programEndDate → STEM EAD start.
+  if (isOnStemOpt && eadStart && progEnd) {
+    stages.push({
+      id: "opt_active",
+      label: "OPT Active",
+      icon: "💼",
+      color: "emerald",
+      startDate: input.programEndDate,
+      endDate: input.eadStartDate,
+      isCurrent: false,
+      isCompleted: true,
+      isFuture: false,
+      rules: [
+        "Work must be directly related to your degree field",
+        "Full-time (40h/wk) or part-time (20h/wk minimum) — both are valid",
+        "Max 90 days unemployment — days while abroad also count",
+        "Report new employer to DSO within 10 days of starting",
+        "Report job end to DSO within 10 days",
+        "Maintain valid EAD — cannot work after EAD expiry",
+      ],
+      warnings: [],
+      nextStep: "Applied for STEM OPT extension",
     });
   }
 

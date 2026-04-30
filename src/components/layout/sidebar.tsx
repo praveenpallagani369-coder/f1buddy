@@ -28,20 +28,17 @@ const SECTIONS: NavSection[] = [
     ],
   },
   {
-    label: "OPT Suite",
+    label: "Work Auth",
     items: [
       { href: "/dashboard/opt", label: "OPT Tracker", icon: Briefcase, top: true },
-      { href: "/dashboard/opt/timeline", label: "Application Steps", icon: ListChecks },
+      { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen, top: true },
+      { href: "/dashboard/opt/timeline", label: "OPT Steps", icon: ListChecks },
       { href: "/dashboard/opt/stem-timeline", label: "STEM Steps", icon: FlaskConical },
       { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: ClipboardList },
       { href: "/dashboard/opt/h1b", label: "H-1B Timeline", icon: Building2 },
       { href: "/dashboard/opt/calculator", label: "Auth Calculator", icon: Calculator },
       { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: FileText },
     ],
-  },
-  {
-    label: null,
-    items: [{ href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen, top: true }],
   },
   {
     label: "Travel",

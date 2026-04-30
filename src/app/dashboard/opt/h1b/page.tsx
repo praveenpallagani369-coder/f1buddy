@@ -152,7 +152,7 @@ export default function H1BPage() {
             {[
               { label: "Regular Cap", value: "65,000 visas/year", note: "Bachelor's or foreign equivalent" },
               { label: "Master's Cap", value: "20,000 additional", note: "US Master's or higher degree holders" },
-              { label: "Registration Fee", value: "$10 per beneficiary", note: "Paid by employer during registration" },
+              { label: "Registration Fee", value: "$215 per beneficiary", note: "Paid by employer during registration (increased Apr 2024)" },
               { label: "Petition Fee", value: "$730–$6,460+", note: "Varies by employer size and processing" },
               { label: "Duration", value: "3 years (renewable)", note: "Up to 6 years total initially" },
               { label: "Employer Required", value: "Yes — sponsor required", note: "Cannot self-petition for H-1B" },

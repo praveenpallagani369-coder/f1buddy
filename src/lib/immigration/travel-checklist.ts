@@ -133,23 +133,42 @@ export function generateTravelChecklist(input: TravelChecklistInput): CheckItem[
   }
 
   // ── 4. Program validity ───────────────────────────────────
+  // If user has an active EAD (OPT/STEM OPT), the program end date is not
+  // a travel barrier — their F-1 status is maintained via the EAD authorization.
   if (input.programEndDate) {
     const progEnd = parseISO(input.programEndDate);
     const daysToEnd = differenceInCalendarDays(progEnd, departure);
-    const programStatus: CheckStatus =
-      daysToEnd < 0 ? "fail" : daysToEnd < 30 ? "warn" : "pass";
-    items.push({
-      id: "program",
-      title: "Program End Date",
-      status: programStatus,
-      detail: daysToEnd < 0
-        ? `Your program ended ${input.programEndDate}. If you have not filed for OPT or a program extension, your F-1 status may be affected.`
-        : daysToEnd < 30
-        ? `Program ends ${input.programEndDate} — only ${daysToEnd} days away. Confirm your post-program status (OPT/extension) before traveling.`
-        : `Program valid until ${input.programEndDate} ✓`,
-      action: daysToEnd < 60 ? "Confirm OPT application or I-20 extension with DSO before travel" : null,
-      cfr: "8 CFR 214.2(f)(5)",
-    });
+
+    if (input.hasEAD && input.eadEndDate) {
+      const eadExp = parseISO(input.eadEndDate);
+      const eadDaysLeft = differenceInCalendarDays(eadExp, departure);
+      const authType = input.optType === "stem_extension" ? "STEM OPT" : "OPT";
+      items.push({
+        id: "program",
+        title: "Program End Date",
+        status: eadDaysLeft >= 0 ? "pass" : "fail",
+        detail: eadDaysLeft >= 0
+          ? `Program ended ${input.programEndDate} — you are authorized via your ${authType} EAD (valid until ${input.eadEndDate}) ✓`
+          : `Program ended ${input.programEndDate} and your ${authType} EAD also expired ${input.eadEndDate}. Contact your DSO immediately.`,
+        action: eadDaysLeft < 0 ? "Contact your DSO immediately about your immigration status" : null,
+        cfr: "8 CFR 214.2(f)(5)",
+      });
+    } else {
+      const programStatus: CheckStatus =
+        daysToEnd < 0 ? "fail" : daysToEnd < 30 ? "warn" : "pass";
+      items.push({
+        id: "program",
+        title: "Program End Date",
+        status: programStatus,
+        detail: daysToEnd < 0
+          ? `Your program ended ${input.programEndDate}. If you have not filed for OPT or a program extension, your F-1 status may be affected.`
+          : daysToEnd < 30
+          ? `Program ends ${input.programEndDate} — only ${daysToEnd} days away. Confirm your post-program status (OPT/extension) before traveling.`
+          : `Program valid until ${input.programEndDate} ✓`,
+        action: daysToEnd < 60 ? "Confirm OPT application or I-20 extension with DSO before travel" : null,
+        cfr: "8 CFR 214.2(f)(5)",
+      });
+    }
   }
 
   // ── 5. EAD (if on OPT) ────────────────────────────────────

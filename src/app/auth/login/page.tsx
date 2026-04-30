@@ -1,6 +1,6 @@
 ﻿"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,13 +9,22 @@ import { GraduationCap, Mail, Sparkles } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [magicLoading, setMagicLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [magicSent, setMagicSent] = useState(false);
+
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError === "auth_failed") {
+      setError("Google sign-in failed. Please check that Google is enabled in Supabase Auth settings, or use email sign-in below.");
+    }
+  }, [searchParams]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -45,10 +54,17 @@ export default function LoginPage() {
   }
 
   async function handleGoogle() {
-    await supabase.auth.signInWithOAuth({
+    setGoogleLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${location.origin}/auth/callback` },
     });
+    if (error) {
+      setError(error.message);
+      setGoogleLoading(false);
+    }
+    // On success the browser redirects — no need to setLoading(false)
   }
 
   return (
@@ -87,7 +103,8 @@ export default function LoginPage() {
               {/* Google */}
               <button
                 onClick={handleGoogle}
-                className="w-full flex items-center justify-center gap-3 h-10 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 active:bg-gray-100 dark:active:bg-gray-600 transition-all mb-6 shadow-sm"
+                disabled={googleLoading}
+                className="w-full flex items-center justify-center gap-3 h-10 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 active:bg-gray-100 dark:active:bg-gray-600 transition-all mb-6 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -95,7 +112,7 @@ export default function LoginPage() {
                   <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
                   <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                 </svg>
-                Continue with Google
+                {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
               </button>
 
               <div className="relative mb-6">
