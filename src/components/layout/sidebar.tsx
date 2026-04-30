@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 type NavItem = { href: string; label: string; icon: LucideIcon };
-type NavSection = { label: string | null; items: NavItem[] };
+type NavSection = { label: string | null; icon?: LucideIcon; items: NavItem[] };
 
 const SECTIONS: NavSection[] = [
   {
@@ -25,12 +25,11 @@ const SECTIONS: NavSection[] = [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: Route },
       { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock },
-      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
-      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
   {
     label: "Work Auth",
+    icon: Briefcase,
     items: [
       { href: "/dashboard/opt", label: "OPT Tracker", icon: Briefcase },
       { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen },
@@ -44,6 +43,7 @@ const SECTIONS: NavSection[] = [
   },
   {
     label: "Travel",
+    icon: Plane,
     items: [
       { href: "/dashboard/travel", label: "Travel", icon: Plane },
       { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: ClipboardCheck },
@@ -51,6 +51,7 @@ const SECTIONS: NavSection[] = [
   },
   {
     label: "Records",
+    icon: FolderOpen,
     items: [
       { href: "/dashboard/documents", label: "Documents", icon: FolderOpen },
       { href: "/dashboard/tax", label: "Tax", icon: Receipt },
@@ -59,12 +60,20 @@ const SECTIONS: NavSection[] = [
   },
   {
     label: "Resources",
+    icon: BookMarked,
     items: [
       { href: "/dashboard/currency", label: "Currency", icon: ArrowLeftRight },
       { href: "/dashboard/holidays", label: "Holidays", icon: CalendarDays },
       { href: "/dashboard/news", label: "News", icon: Newspaper },
       { href: "/dashboard/guides", label: "Guides", icon: BookMarked },
       { href: "/dashboard/emergency", label: "Emergency", icon: ShieldAlert },
+    ],
+  },
+  {
+    label: null,
+    items: [
+      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
+      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
 ];
@@ -125,11 +134,12 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
       <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-3">
         {SECTIONS.map((section, si) => (
           <div key={si}>
-            {section.label && (
+            {section.label && section.icon && (
               <button
                 onClick={() => toggleSection(section.label!)}
                 className="flex items-center gap-2.5 w-full px-3 py-2 text-sm rounded-lg transition-all duration-150 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               >
+                <section.icon className="w-[18px] h-[18px] flex-shrink-0" />
                 <span className="flex-1 text-left">{section.label}</span>
                 <span className={cn("text-xs transition-transform flex-shrink-0", isSectionOpen(section) && "rotate-90")}>▸</span>
               </button>
