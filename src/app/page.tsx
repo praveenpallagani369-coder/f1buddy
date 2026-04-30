@@ -67,6 +67,9 @@ export default function LandingPage() {
             <span className="font-bold text-gray-900 dark:text-gray-100">F1Buddy</span>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/pricing" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors hidden sm:block">
+              Pricing
+            </Link>
             <Link href="/auth/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
               Sign in
             </Link>
@@ -176,6 +179,7 @@ export default function LandingPage() {
           </div>
           <p className="text-center">Not affiliated with USCIS or DHS · Always consult your DSO</p>
           <div className="flex items-center gap-4">
+            <Link href="/pricing" className="hover:text-gray-600 transition-colors">Pricing</Link>
             <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
           </div>

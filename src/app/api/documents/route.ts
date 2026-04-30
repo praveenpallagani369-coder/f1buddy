@@ -12,6 +12,7 @@ const ALLOWED_MIME_TYPES: Record<string, string> = {
   gif: "image/gif",
   tiff: "image/tiff",
 };
+const ALLOWED_MIME_SET = new Set(Object.values(ALLOWED_MIME_TYPES));
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -23,6 +24,10 @@ const uploadSchema = z.object({
       return ALLOWED_EXTENSIONS.includes(ext);
     },
     { message: "File type not allowed. Accepted: PDF, PNG, JPG, WEBP, GIF, TIFF" }
+  ),
+  mimeType: z.string().refine(
+    (mt) => ALLOWED_MIME_SET.has(mt),
+    { message: "Content type not allowed. Accepted: PDF, PNG, JPG, WEBP, GIF, TIFF" }
   ),
   fileSizeBytes: z.number().int().min(1).max(MAX_FILE_SIZE, `File size must be under ${MAX_FILE_SIZE / 1024 / 1024} MB`).optional(),
   expirationDate: z.string().optional().nullable(),
@@ -57,10 +62,14 @@ export async function POST(request: Request) {
   const parsed = uploadSchema.safeParse(body);
   if (!parsed.success) return err("VALIDATION", parsed.error.issues[0]?.message ?? "Invalid input");
 
-  const { docType, fileName, expirationDate, notes } = parsed.data;
+  const { docType, fileName, mimeType: clientMimeType, expirationDate, notes } = parsed.data;
 
   const ext = (fileName.split(".").pop() ?? "pdf").toLowerCase();
-  const mimeType = ALLOWED_MIME_TYPES[ext] ?? "application/octet-stream";
+  const expectedMime = ALLOWED_MIME_TYPES[ext];
+  if (expectedMime && clientMimeType !== expectedMime) {
+    return err("VALIDATION", "File extension and content type do not match");
+  }
+  const mimeType = clientMimeType;
   const storagePath = `${user.id}/${docType}/${Date.now()}.${ext}`;
 
   let uploadUrl: string | null = null;

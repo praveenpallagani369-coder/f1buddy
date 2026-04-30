@@ -55,6 +55,8 @@ export default function DocumentsPage() {
         body: JSON.stringify({
           docType: form.docType,
           fileName: selectedFile.name,
+          mimeType: selectedFile.type,
+          fileSizeBytes: selectedFile.size,
           expirationDate: form.expirationDate || null,
           notes: form.notes || null,
         }),

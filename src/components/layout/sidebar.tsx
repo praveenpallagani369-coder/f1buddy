@@ -58,7 +58,7 @@ const SECTIONS: NavSection[] = [
     ],
   },
   {
-    label: "Tools",
+    label: "Resources",
     items: [
       { href: "/dashboard/currency", label: "Currency", icon: ArrowLeftRight },
       { href: "/dashboard/holidays", label: "Holidays", icon: CalendarDays },

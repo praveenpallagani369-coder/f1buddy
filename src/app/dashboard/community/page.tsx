@@ -133,6 +133,11 @@ export default function CommunityPage() {
         <Button onClick={() => setShowForm(true)}>+ Ask a Question</Button>
       </div>
 
+      {/* Disclaimer */}
+      <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-300">
+        <strong>Community Disclaimer:</strong> Answers here are user-generated and are <strong>not legal advice</strong>. Immigration rules are complex and fact-specific — always verify anything you read here with your DSO or a licensed immigration attorney before acting.
+      </div>
+
       {/* Category filter */}
       <div className="flex gap-2 flex-wrap">
         {["All", ...CATEGORIES].map(c => (
@@ -244,7 +249,7 @@ export default function CommunityPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       {ans.is_verified && (
-                                        <Badge variant="success" className="text-xs mb-1">✓ Verified</Badge>
+                                        <Badge variant="success" className="text-xs mb-1">✓ Admin-Verified</Badge>
                                       )}
                                       <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{ans.body}</p>
                                       <p className="text-xs text-gray-500 mt-1">

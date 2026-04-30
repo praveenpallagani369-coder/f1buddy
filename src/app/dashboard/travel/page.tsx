@@ -230,7 +230,20 @@ export default function TravelPage() {
         <CardHeader><CardTitle className="text-base">Trip History</CardTitle></CardHeader>
         <CardContent>
           {trips.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">No trips logged yet</div>
+            <div className="text-center py-10">
+              <p className="text-3xl mb-3">✈️</p>
+              <p className="text-gray-900 dark:text-gray-100 font-medium mb-1">No trips logged yet</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                Log each trip abroad to track your days outside the US.<br />
+                The 5-month (150-day) limit applies cumulatively per year.
+              </p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+              >
+                + Log your first trip
+              </button>
+            </div>
           ) : (
             <div className="space-y-3">
               {trips.map((t) => (

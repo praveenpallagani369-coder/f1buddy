@@ -120,7 +120,14 @@ export default function OnboardingPage() {
                   <option value="M1">M-1 (Vocational)</option>
                 </Select>
               </div>
-              <Field label="SEVIS ID (optional)" id="sevisId" placeholder="N00xxxxxxxxx" value={form.sevisId} onChange={(v) => set("sevisId", v)} />
+              <div>
+                <label htmlFor="sevisId" className="block text-sm text-gray-600 mb-1.5">SEVIS ID (optional)</label>
+                <Input id="sevisId" placeholder="N00xxxxxxxxx" value={form.sevisId} onChange={(e) => set("sevisId", e.target.value)} />
+                <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                  <span className="text-emerald-500">🔒</span>
+                  Encrypted with AES-256 before storage. Never logged or readable by F1Buddy staff.
+                </p>
+              </div>
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">Home Country</label>
                 <Select value={form.homeCountry} onChange={(e) => set("homeCountry", e.target.value)}>
