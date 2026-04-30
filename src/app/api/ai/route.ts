@@ -2,9 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getGroqClient, MODELS, IMMIGRATION_SYSTEM_PROMPT } from "@/lib/ai/groq";
 import { rateLimitDB } from "@/lib/rate-limit";
 import { getCached, setCache } from "@/lib/api/cache";
+import { ok, UNAUTHORIZED } from "@/lib/api/helpers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { differenceInCalendarDays, parseISO } from "date-fns";
+import { differenceInCalendarDays, parseISO, format } from "date-fns";
 
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 4000;
@@ -48,13 +49,40 @@ interface DeadlineData {
   severity: string;
 }
 
+interface TravelRecord {
+  days_outside: number;
+  return_date: string | null;
+}
+
+interface DocExpiry {
+  doc_type: string;
+  expiration_date: string;
+}
+
+interface TaxRecord {
+  tax_year: number;
+  filing_status: string | null;
+  federal_filed: boolean;
+  form_8843_filed: boolean;
+}
+
+const DOC_LABELS: Record<string, string> = {
+  i20: "I-20", ead: "EAD Card", passport: "Passport", visa_stamp: "Visa Stamp",
+  i94: "I-94", ssn_card: "SSN Card", offer_letter: "Offer Letter",
+  pay_stub: "Pay Stub", tax_return: "Tax Return", transcript: "Transcript", other: "Other",
+};
+
 function buildProfileContext(
   profile: ProfileData | null,
   opt: OPTData | null,
   employer: EmployerData | null,
-  deadlines: DeadlineData[]
+  deadlines: DeadlineData[],
+  travelRecords: TravelRecord[],
+  docsExpiring: DocExpiry[],
+  tax: TaxRecord | null,
 ): string {
   const today = new Date();
+  const currentYear = today.getFullYear();
   const lines: string[] = ["=== Student Profile Context ==="];
 
   if (profile) {
@@ -68,7 +96,7 @@ function buildProfileContext(
   }
 
   if (opt) {
-    lines.push(`\nOPT Status: ${opt.opt_type?.replace("_", " ") ?? "None"}`);
+    lines.push(`\nOPT Status: ${opt.opt_type?.replace(/_/g, " ") ?? "None"}`);
     if (opt.ead_start_date) lines.push(`EAD: ${opt.ead_start_date} to ${opt.ead_end_date} (Category: ${opt.ead_category ?? "Unknown"})`);
     if (opt.ead_end_date) {
       const daysLeft = differenceInCalendarDays(parseISO(opt.ead_end_date), today);
@@ -87,16 +115,67 @@ function buildProfileContext(
     lines.push(`E-Verify: ${employer.e_verify_employer ? "Yes" : "No"}, Reported to DSO: ${employer.reported_to_school ? "Yes" : "No"}`);
   }
 
+  // Travel context
+  const daysAbroadThisYear = travelRecords.reduce((sum, r) => sum + (r.days_outside ?? 0), 0);
+  const currentlyAbroad = travelRecords.some(r => !r.return_date);
+  if (daysAbroadThisYear > 0 || currentlyAbroad) {
+    lines.push(`\nTravel (${currentYear}): ${daysAbroadThisYear} days outside US${currentlyAbroad ? " (currently abroad)" : ""}`);
+    if (daysAbroadThisYear >= 120) lines.push(`  ⚠️ Approaching 5-month travel limit`);
+  }
+
+  // Expiring documents
+  if (docsExpiring.length > 0) {
+    lines.push(`\nDocuments expiring within 60 days:`);
+    docsExpiring.forEach(d => {
+      const days = differenceInCalendarDays(parseISO(d.expiration_date), today);
+      lines.push(`  - ${DOC_LABELS[d.doc_type] ?? d.doc_type}: ${days} days (${d.expiration_date})`);
+    });
+  }
+
+  // Tax context
+  if (tax) {
+    const filed = tax.federal_filed ? "Federal filed" : "Federal NOT filed";
+    const f8843 = tax.form_8843_filed ? "Form 8843 filed" : "Form 8843 not filed";
+    lines.push(`\nTax ${tax.tax_year}: ${tax.filing_status?.replace(/_/g, " ") ?? "Unknown status"} — ${filed}, ${f8843}`);
+  } else {
+    lines.push(`\nTax ${currentYear}: No tax record on file`);
+  }
+
   if (deadlines.length > 0) {
-    lines.push(`\nUpcoming Deadlines (next 3):`);
-    deadlines.slice(0, 3).forEach((d) => {
+    lines.push(`\nUpcoming Deadlines (next ${Math.min(deadlines.length, 5)}):`);
+    deadlines.slice(0, 5).forEach((d) => {
       const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
       lines.push(`  - ${d.title}: ${days === 0 ? "TODAY" : days < 0 ? `${Math.abs(days)} days overdue` : `${days} days`} [${d.severity}]`);
     });
   }
 
-  lines.push("\n=== Use this context to give personalized, specific answers. Do not reveal raw DB field names. ===");
+  lines.push("\n=== End of student context. Use this to give personalized, specific answers. Do not reveal raw field names. ===");
   return lines.join("\n");
+}
+
+// GET — load stored conversation history
+export async function GET() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return UNAUTHORIZED();
+
+  const { data } = await supabase
+    .from("ai_conversations")
+    .select("messages, updated_at")
+    .eq("user_id", user.id)
+    .single();
+
+  return ok({ messages: data?.messages ?? [], updatedAt: data?.updated_at ?? null });
+}
+
+// DELETE — clear conversation history
+export async function DELETE() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return UNAUTHORIZED();
+
+  await supabase.from("ai_conversations").delete().eq("user_id", user.id);
+  return ok({ cleared: true });
 }
 
 export async function POST(request: Request) {
@@ -118,19 +197,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, error: { code: "VALIDATION", message: "Invalid request body" } }, { status: 400 });
   }
 
-  // Fetch profile context in parallel with request parsing
-  const [profileRes, optRes, employerRes, deadlinesRes] = await Promise.all([
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const sixtyDaysOut = format(new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000), "yyyy-MM-dd");
+  const todayStr = format(today, "yyyy-MM-dd");
+
+  const [profileRes, optRes, employerRes, deadlinesRes, travelRes, docsExpiringRes, taxRes] = await Promise.all([
     supabase.from("users").select("name,school_name,program_name,degree_level,program_end_date,home_country").eq("id", user.id).single(),
     supabase.from("opt_status").select("*").eq("user_id", user.id).single(),
     supabase.from("opt_employment").select("*").eq("user_id", user.id).eq("is_current", true).single(),
     supabase.from("compliance_deadlines").select("title,deadline_date,severity").eq("user_id", user.id).eq("status", "pending").order("deadline_date").limit(5),
+    supabase.from("travel_records").select("days_outside,return_date").eq("user_id", user.id).gte("departure_date", `${currentYear}-01-01`),
+    supabase.from("documents").select("doc_type,expiration_date").eq("user_id", user.id).is("deleted_at", null).not("expiration_date", "is", null).lte("expiration_date", sixtyDaysOut).gte("expiration_date", todayStr).order("expiration_date"),
+    supabase.from("tax_records").select("tax_year,filing_status,federal_filed,form_8843_filed").eq("user_id", user.id).eq("tax_year", currentYear).single(),
   ]);
 
   const profileContext = buildProfileContext(
     profileRes.data,
     optRes.data,
     employerRes.data,
-    deadlinesRes.data ?? []
+    deadlinesRes.data ?? [],
+    travelRes.data ?? [],
+    docsExpiringRes.data ?? [],
+    taxRes.data,
   );
 
   const systemPromptWithContext = `${IMMIGRATION_SYSTEM_PROMPT}\n\n${profileContext}`;
@@ -159,7 +248,7 @@ export async function POST(request: Request) {
         ...sanitizedMessages,
       ],
       temperature: 0.3,
-      max_tokens: 1024,
+      max_tokens: 2048,
     });
 
     const answer = completion.choices[0]?.message?.content ?? "Sorry, I couldn't generate a response. Please try again.";
@@ -167,6 +256,17 @@ export async function POST(request: Request) {
     if (cacheKey) {
       setCache(cacheKey, answer, 30 * 60 * 1000);
     }
+
+    // Persist conversation (best-effort, don't block response)
+    const updatedMessages = [
+      ...sanitizedMessages,
+      { role: "assistant" as const, content: answer, timestamp: new Date().toISOString() },
+    ].slice(-MAX_MESSAGES).map(m => ({ ...m, timestamp: (m as { timestamp?: string }).timestamp ?? new Date().toISOString() }));
+
+    supabase.from("ai_conversations").upsert(
+      { user_id: user.id, messages: updatedMessages, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" }
+    ).then(() => {/* fire and forget */});
 
     return NextResponse.json({ success: true, data: { answer } });
   } catch (error: unknown) {
@@ -178,7 +278,7 @@ export async function POST(request: Request) {
           model: MODELS.fallback,
           messages: [{ role: "system", content: systemPromptWithContext }, ...sanitizedMessages],
           temperature: 0.3,
-          max_tokens: 1024,
+          max_tokens: 2048,
         });
         const answer = fallback.choices[0]?.message?.content ?? "Sorry, I couldn't generate a response.";
         return NextResponse.json({ success: true, data: { answer } });

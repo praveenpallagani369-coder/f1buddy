@@ -327,6 +327,20 @@ export const cptRecords = pgTable("cpt_records", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const aiConversations = pgTable("ai_conversations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  messages: jsonb("messages")
+    .$type<{ role: "user" | "assistant"; content: string; timestamp: string }[]>()
+    .default([])
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const subscriptions = pgTable("subscriptions", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
@@ -357,4 +371,5 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   subscription: one(subscriptions),
   optApplicationSteps: many(optApplicationSteps),
   cptRecords: many(cptRecords),
+  aiConversation: one(aiConversations),
 }));

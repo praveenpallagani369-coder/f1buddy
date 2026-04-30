@@ -79,6 +79,20 @@ export default function DocumentsPage() {
       }
 
       setUploadProgress("Done!");
+
+      // Trigger AI parsing for image uploads (non-blocking)
+      const imageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+      if (json.data.document?.id && imageTypes.includes(selectedFile.type)) {
+        setUploadProgress("AI scanning document...");
+        try {
+          await fetch("/api/ai/parse-document", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ docId: json.data.document.id }),
+          });
+        } catch { /* non-critical */ }
+      }
+
       await load();
       setShowForm(false);
       setSelectedFile(null);
@@ -237,6 +251,9 @@ export default function DocumentsPage() {
                       className="block text-xs text-indigo-600 hover:underline mt-2">
                       View document →
                     </a>
+                  )}
+                  {d.ai_extracted_data && Object.keys(d.ai_extracted_data).length > 0 && (
+                    <p className="text-xs text-indigo-500 mt-2">🤖 AI scanned</p>
                   )}
                   {d.notes && <p className="text-xs text-gray-500 mt-2 italic">{d.notes}</p>}
                 </CardContent>
