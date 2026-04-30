@@ -4,15 +4,7 @@ import { getCached, setCache } from "@/lib/api/cache";
 const FR_BASE = "https://www.federalregister.gov/api/v1";
 const CACHE_TTL = 60 * 60 * 1000;
 
-const IMMIGRATION_TERMS = [
-  "F-1",
-  "optional practical training",
-  "STEM OPT",
-  "international students",
-  "SEVP",
-  "student visa",
-  "employment authorization",
-];
+const SEARCH_TERM = "optional practical training OR F-1 SEVIS OR employment authorization OR student visa";
 
 interface FRDocument {
   title: string;
@@ -33,14 +25,14 @@ export async function GET() {
   }
 
   try {
-    const query = IMMIGRATION_TERMS.map((t) => `"${t}"`).join(" OR ");
-    const params = new URLSearchParams({
-      "conditions[term]": query,
-      "conditions[agencies][]": "homeland-security-department",
-      per_page: "15",
-      order: "newest",
-      "fields[]": "title,abstract,document_number,publication_date,type,html_url,agencies",
-    });
+    const params = new URLSearchParams();
+    params.set("conditions[term]", SEARCH_TERM);
+    params.set("per_page", "15");
+    params.set("order", "newest");
+    // fields[] requires one append per field
+    for (const field of ["title", "abstract", "document_number", "publication_date", "type", "html_url", "agencies"]) {
+      params.append("fields[]", field);
+    }
 
     const res = await fetch(`${FR_BASE}/documents.json?${params}`, {
       next: { revalidate: 3600 },
