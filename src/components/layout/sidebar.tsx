@@ -25,6 +25,8 @@ const SECTIONS: NavSection[] = [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: Route },
       { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock },
+      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
+      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
   {
@@ -53,13 +55,6 @@ const SECTIONS: NavSection[] = [
       { href: "/dashboard/documents", label: "Documents", icon: FolderOpen },
       { href: "/dashboard/tax", label: "Tax", icon: Receipt },
       { href: "/dashboard/dso-email", label: "DSO Emails", icon: Mail },
-    ],
-  },
-  {
-    label: "Community",
-    items: [
-      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
-      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
   {
