@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -68,7 +68,7 @@ export default function LoginPage() {
 
           {magicSent ? (
             <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-7 h-7 text-indigo-600" />
               </div>
               <p className="text-gray-900 dark:text-gray-100 font-semibold">Check your email</p>
@@ -130,7 +130,7 @@ export default function LoginPage() {
                 </div>
 
                 {error && (
-                  <div className="flex items-start gap-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg p-3">
+                  <div className="flex items-start gap-2 text-red-600 dark:text-red-400 text-sm bg-red-50 border border-red-200 rounded-lg p-3 dark:bg-red-950/40 dark:border-red-800">
                     <span className="flex-1">{error}</span>
                   </div>
                 )}
@@ -143,7 +143,7 @@ export default function LoginPage() {
               <button
                 onClick={handleMagicLink}
                 disabled={magicLoading}
-                className="w-full mt-3 flex items-center justify-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 py-2 rounded-lg hover:bg-indigo-50 transition-colors disabled:opacity-50"
+                className="w-full mt-3 flex items-center justify-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/60 transition-colors disabled:opacity-50"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 {magicLoading ? "Sending magic link…" : "Send magic link instead"}

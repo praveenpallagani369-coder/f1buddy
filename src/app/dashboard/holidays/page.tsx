@@ -137,7 +137,7 @@ export default function HolidaysPage() {
                       isPast
                         ? "bg-white/30 border-gray-200 opacity-50"
                         : days <= 7
-                        ? "bg-indigo-50 border-indigo-200"
+                        ? "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-800"
                         : "bg-gray-100 border-gray-200 dark:border-gray-700"
                     }`}
                   >

@@ -133,7 +133,7 @@ export default function CPTPage() {
 
       {/* OPT eligibility warning */}
       {optEligibilityRisk && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 dark:bg-red-950/40 dark:border-red-800">
           <p className="text-sm font-bold text-red-700 mb-1">🚨 OPT Ineligibility Risk — Full-time CPT Used: {fullTimeDays} days</p>
           <p className="text-sm text-red-800">
             You have used <strong>{fullTimeDays} days</strong> of full-time CPT. Students who accumulate <strong>12+ months of full-time CPT become ineligible for OPT</strong>. — 8 CFR 214.2(f)(10)(i)
@@ -142,7 +142,7 @@ export default function CPTPage() {
         </div>
       )}
       {optEligibilityWarning && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800">
           <p className="text-sm font-semibold text-amber-700 mb-1">⚠️ Approaching 12-Month Full-time CPT Limit — {fullTimeDays} days used</p>
           <p className="text-sm text-amber-800">
             You have {FULL_TIME_CPT_OPT_DISQUALIFY_DAYS - fullTimeDays} days of full-time CPT remaining before you lose OPT eligibility.
@@ -242,7 +242,7 @@ export default function CPTPage() {
               ))}
             </div>
             {!form.isAuthorizedOnI20 && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
                 🚨 You CANNOT start CPT without an updated I-20 authorizing this employer. Contact your DSO first.
               </div>
             )}

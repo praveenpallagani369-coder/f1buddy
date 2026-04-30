@@ -112,7 +112,7 @@ export default function H1BPage() {
           </div>
 
           {h1bFiled && selectedLottery && (
-            <div className={`p-4 rounded-xl border ${capGapActive ? "bg-blue-50 border-blue-200" : "bg-emerald-50 border-emerald-200"}`}>
+            <div className={`p-4 rounded-xl border ${capGapActive ? "bg-blue-50 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800" : "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800"}`}>
               {capGapActive ? (
                 <>
                   <p className="font-semibold text-blue-700 mb-1">✅ Cap-Gap Applies to You</p>
@@ -136,7 +136,7 @@ export default function H1BPage() {
           )}
 
           {h1bFiled && !selectedLottery && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300">
               <p className="font-medium mb-1">Not selected in lottery</p>
               <p>If you were not selected, cap-gap does not apply. Consider: reapplying next year, STEM OPT extension (if not already on STEM), EB-2 NIW self-petition, or O-1A extraordinary ability.</p>
             </div>

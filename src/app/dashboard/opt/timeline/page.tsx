@@ -343,7 +343,7 @@ export default function OPTTimelinePage() {
                             className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                               step.isCompleted
                                 ? "border-gray-200 text-gray-500 hover:border-slate-600"
-                                : "border-indigo-700 text-indigo-600 hover:bg-indigo-50"
+                                : "border-indigo-700 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-300 dark:hover:bg-indigo-950/60"
                             }`}
                           >
                             {saving === step.id ? "..." : step.isCompleted ? "Undo" : "Mark Done ✓"}

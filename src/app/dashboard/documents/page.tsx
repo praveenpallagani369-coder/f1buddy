@@ -117,7 +117,7 @@ export default function DocumentsPage() {
       </div>
 
       {expiringSoon.length > 0 && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800">
           <p className="text-sm font-medium text-amber-600 mb-2">⚠️ {expiringSoon.length} document{expiringSoon.length > 1 ? "s" : ""} expiring within 90 days</p>
           <div className="flex flex-wrap gap-2">
             {expiringSoon.map(d => (

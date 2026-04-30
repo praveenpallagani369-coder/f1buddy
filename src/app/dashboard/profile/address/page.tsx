@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { differenceInCalendarDays, parseISO, format } from "date-fns";
@@ -98,14 +98,14 @@ export default function AddressPage() {
       </div>
 
       {/* CFR Info */}
-      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-sm text-blue-700">
+      <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-sm text-blue-700 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300">
         <p className="font-medium mb-1">📋 Federal Requirement — 8 CFR 214.2(f)(18)</p>
         <p>F-1 students must report any change of US address to their DSO within <strong>10 days</strong> of moving. The DSO then updates your SEVIS record. Failure to report can jeopardize your F-1 status.</p>
       </div>
 
       {/* Reporting status alert */}
       {hasAddress && !profile?.address_reported_to_dso && (
-        <div className={`p-4 rounded-xl border text-sm ${reportingDeadlinePassed ? "bg-red-50 border-red-200 text-red-700" : "bg-amber-50 border-amber-200 text-amber-700"}`}>
+        <div className={`p-4 rounded-xl border text-sm ${reportingDeadlinePassed ? "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300" : "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300"}`}>
           <p className="font-medium mb-1">
             {reportingDeadlinePassed ? "🚨 Overdue — Must Report Now" : "⚠️ Action Required — Report to DSO"}
           </p>
@@ -128,7 +128,7 @@ export default function AddressPage() {
 
       {/* Confirmed reported */}
       {hasAddress && profile?.address_reported_to_dso && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-700">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
           ✅ Address reported to DSO — SEVIS update in progress
         </div>
       )}
@@ -155,7 +155,7 @@ export default function AddressPage() {
         <CardContent>
           {editing ? (
             <div className="space-y-4">
-              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700">
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300">
                 ⚠️ Updating your address will automatically create a 10-day SEVIS reporting deadline in your Deadlines page.
               </div>
               <div>

@@ -19,10 +19,10 @@ function stemOptAlert(opt: OPTRow | null) {
   const eadEnd = new Date(opt.ead_end_date);
   const daysLeft = Math.ceil((eadEnd.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
   if (daysLeft > 90) return null;
-  if (daysLeft <= 0) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700", label: "EXPIRED", msg: `Your OPT EAD has expired. If you haven't applied for STEM OPT, contact your DSO immediately.` };
-  if (daysLeft <= 30) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700", label: "CRITICAL", msg: `Only ${daysLeft} days left on your OPT EAD. You must apply for STEM OPT now — file Form I-765 immediately or you'll lose work authorization.` };
-  if (daysLeft <= 60) return { daysLeft, cls: "bg-orange-50 border-orange-200 text-orange-700", label: "URGENT", msg: `${daysLeft} days left on OPT. Apply for STEM OPT now — USCIS processing can take 3–5 months.` };
-  return { daysLeft, cls: "bg-amber-50 border-amber-200 text-amber-700", label: "ACTION NEEDED", msg: `${daysLeft} days left on OPT. You're now in the 90-day STEM OPT application window. File Form I-765 with your employer's I-983 Training Plan.` };
+  if (daysLeft <= 0) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300", label: "EXPIRED", msg: `Your OPT EAD has expired. If you haven't applied for STEM OPT, contact your DSO immediately.` };
+  if (daysLeft <= 30) return { daysLeft, cls: "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300", label: "CRITICAL", msg: `Only ${daysLeft} days left on your OPT EAD. You must apply for STEM OPT now — file Form I-765 immediately or you'll lose work authorization.` };
+  if (daysLeft <= 60) return { daysLeft, cls: "bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-950/40 dark:border-orange-800 dark:text-orange-300", label: "URGENT", msg: `${daysLeft} days left on OPT. Apply for STEM OPT now — USCIS processing can take 3–5 months.` };
+  return { daysLeft, cls: "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300", label: "ACTION NEEDED", msg: `${daysLeft} days left on OPT. You're now in the 90-day STEM OPT application window. File Form I-765 with your employer's I-983 Training Plan.` };
 }
 
 export default function OPTPage() {
@@ -167,11 +167,11 @@ export default function OPTPage() {
   const at60 = unemployed >= 60 && unemployed < 75;
   const unemployColor = at85 ? "bg-red-500" : at75 ? "bg-orange-500" : at60 ? "bg-amber-500" : "bg-emerald-500";
   const unemployAlert = at85
-    ? { msg: `🚨 CRITICAL: ${unemployed}/${limit} days used — only ${limit - unemployed} days left. Contact your DSO immediately.`, cls: "bg-red-50 border-red-200 text-red-700" }
+    ? { msg: `🚨 CRITICAL: ${unemployed}/${limit} days used — only ${limit - unemployed} days left. Contact your DSO immediately.`, cls: "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300" }
     : at75
-    ? { msg: `⚠️ WARNING: ${unemployed}/${limit} days used. Find employment within ${limit - unemployed} days to avoid OPT termination.`, cls: "bg-orange-50 border-orange-200 text-orange-700" }
+    ? { msg: `⚠️ WARNING: ${unemployed}/${limit} days used. Find employment within ${limit - unemployed} days to avoid OPT termination.`, cls: "bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-950/40 dark:border-orange-800 dark:text-orange-300" }
     : at60
-    ? { msg: `⚠️ NOTICE: ${unemployed}/${limit} days used. Start your job search now — 30 days left before the 75-day warning.`, cls: "bg-amber-50 border-amber-200 text-amber-700" }
+    ? { msg: `⚠️ NOTICE: ${unemployed}/${limit} days used. Start your job search now — 30 days left before the 75-day warning.`, cls: "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300" }
     : null;
 
   return (
@@ -191,7 +191,7 @@ export default function OPTPage() {
 
       {/* STEM deadlines created success banner */}
       {stemDeadlinesCreated && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between gap-4">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800 flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-emerald-700">✅ STEM report deadlines created in your Deadlines list</p>
             <p className="text-xs text-emerald-600 mt-0.5">4 deadlines added for 6, 12, 18, and 24-month validation reports (months 12 & 24 include self-evaluation)</p>
@@ -309,7 +309,7 @@ export default function OPTPage() {
               </div>
             </div>
             {optForm.optType === "stem_extension" && (
-              <div className="p-3 rounded-lg bg-violet-50 border border-violet-200 text-sm text-violet-700 md:col-span-2">
+              <div className="p-3 rounded-lg bg-violet-50 border border-violet-200 text-sm text-violet-700 dark:bg-violet-950/40 dark:border-violet-800 dark:text-violet-300 md:col-span-2">
                 <p className="font-medium mb-1">🔬 STEM OPT Requirements — verify before saving</p>
                 <ul className="text-xs space-y-1 opacity-90">
                   <li>• Degree must be on DHS STEM Designated Degree Program List (stemlist.uscis.gov)</li>
@@ -374,17 +374,17 @@ export default function OPTPage() {
               ))}
             </div>
             {opt?.opt_type === "stem_extension" && !empForm.eVerifyEmployer && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
                 🚨 STEM OPT requires an E-Verify enrolled employer. You cannot work under STEM OPT at a non-E-Verify employer. Verify at e-verify.uscis.gov before accepting the job. — 8 CFR 214.2(f)(10)(ii)(C)
               </div>
             )}
             {opt?.opt_type === "stem_extension" && (empForm.employmentType === "volunteer" || empForm.employmentType === "unpaid_intern") && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
                 🚨 STEM OPT does NOT authorize volunteer work or unpaid internships. Employment must be paid. Unpaid work violates your STEM OPT terms and may result in SEVIS termination. — 8 CFR 214.2(f)(10)(ii)(C)
               </div>
             )}
             {!empForm.reportedToSchool && (
-              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700">
+              <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300">
                 ⚠️ Remember: You must report new employers to your DSO within 10 days of starting.
               </div>
             )}

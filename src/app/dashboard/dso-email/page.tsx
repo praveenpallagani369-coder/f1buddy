@@ -273,7 +273,7 @@ function DSOEmailContent() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {TEMPLATES.map((t) => (
           <button key={t.id} onClick={() => { setSelectedTemplate(t.id); setFields({}); }}
-            className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-50" : "border-gray-200 bg-white hover:border-gray-200 dark:border-gray-700"}`}>
+            className={`p-4 rounded-xl border text-left transition-colors ${selectedTemplate === t.id ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-950/60" : "border-gray-200 bg-white hover:border-gray-200 dark:border-gray-700"}`}>
             <span className="text-xl mb-2 block">{t.icon}</span>
             <p className="text-sm font-medium text-gray-900">{t.title}</p>
             <p className="text-xs text-gray-500 mt-0.5">{t.description}</p>

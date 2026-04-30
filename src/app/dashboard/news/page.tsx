@@ -15,9 +15,9 @@ interface Article {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  Rule: "bg-red-500/10 text-red-600 border-red-200",
-  "Proposed Rule": "bg-amber-500/10 text-amber-600 border-amber-200",
-  Notice: "bg-blue-500/10 text-blue-600 border-blue-200",
+  Rule: "bg-red-500/10 text-red-600 border-red-200 dark:bg-red-500/20 dark:text-red-400 dark:border-red-800",
+  "Proposed Rule": "bg-amber-500/10 text-amber-600 border-amber-200 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-800",
+  Notice: "bg-blue-500/10 text-blue-600 border-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-800",
   "Presidential Document": "bg-purple-100 text-purple-700 border-purple-200",
 };
 
@@ -47,7 +47,7 @@ export default function NewsPage() {
       </div>
 
       {/* Alert banner */}
-      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+      <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800">
         <p className="text-sm text-amber-700 font-medium">Stay Informed</p>
         <p className="text-xs text-amber-600/80 mt-0.5">
           Immigration rules can change. These are official Federal Register documents from DHS/USCIS.

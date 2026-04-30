@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 
 export const metadata = { title: "Privacy Policy — F1Buddy" };
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
         <p className="text-gray-500 text-sm mb-10">Last updated: April 28, 2026</p>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm text-amber-800">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm text-amber-800 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300">
           <strong>Important:</strong> F1Buddy handles sensitive immigration data. We take your privacy seriously and have designed the app to store the minimum data necessary to provide the service.
         </div>
 

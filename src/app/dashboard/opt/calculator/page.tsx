@@ -196,10 +196,10 @@ function calculate(input: {
 }
 
 const STATUS_STYLES = {
-  info: { bg: "bg-blue-50 border-blue-200", dot: "bg-blue-400", text: "text-blue-700" },
-  warning: { bg: "bg-amber-50 border-amber-200", dot: "bg-amber-400", text: "text-amber-700" },
-  critical: { bg: "bg-red-50 border-red-200", dot: "bg-red-400", text: "text-red-700" },
-  success: { bg: "bg-emerald-50 border-emerald-200", dot: "bg-emerald-400", text: "text-emerald-700" },
+  info: { bg: "bg-blue-50 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800", dot: "bg-blue-400", text: "text-blue-700" },
+  warning: { bg: "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800", dot: "bg-amber-400", text: "text-amber-700" },
+  critical: { bg: "bg-red-50 border-red-200 dark:bg-red-950/40 dark:border-red-800", dot: "bg-red-400", text: "text-red-700" },
+  success: { bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800", dot: "bg-emerald-400", text: "text-emerald-700" },
 };
 
 export default function CalculatorPage() {
@@ -240,7 +240,7 @@ export default function CalculatorPage() {
                     { value: "stem_eligible", label: "STEM OPT", sub: "12 + 24 months" },
                   ].map((opt) => (
                     <button key={opt.value} onClick={() => set("optType", opt.value)}
-                      className={`p-3 rounded-lg border text-left transition-colors ${form.optType === opt.value ? "border-indigo-600 bg-indigo-50" : "border-gray-200 hover:border-gray-400"}`}>
+                      className={`p-3 rounded-lg border text-left transition-colors ${form.optType === opt.value ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-950/60" : "border-gray-200 hover:border-gray-400"}`}>
                       <p className="text-sm font-medium text-gray-900">{opt.label}</p>
                       <p className="text-xs text-gray-500">{opt.sub}</p>
                     </button>
@@ -273,7 +273,7 @@ export default function CalculatorPage() {
                         { value: "approved", label: "Approved", sub: "Have new EAD" },
                       ].map((opt) => (
                         <button key={opt.value} onClick={() => set("stemStatus", opt.value)}
-                          className={`p-2.5 rounded-lg border text-left transition-colors ${form.stemStatus === opt.value ? "border-indigo-600 bg-indigo-50" : "border-gray-200 hover:border-gray-400"}`}>
+                          className={`p-2.5 rounded-lg border text-left transition-colors ${form.stemStatus === opt.value ? "border-indigo-600 bg-indigo-50 dark:bg-indigo-950/60" : "border-gray-200 hover:border-gray-400"}`}>
                           <p className="text-xs font-medium text-gray-900">{opt.label}</p>
                           <p className="text-[10px] text-gray-500">{opt.sub}</p>
                         </button>

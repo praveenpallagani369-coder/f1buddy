@@ -25,16 +25,16 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
 const STATUS_CONFIG = {
-  pass: { icon: "✅", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200", label: "Good" },
-  warn: { icon: "⚠️", color: "text-amber-600", bg: "bg-amber-50 border-amber-200", label: "Attention" },
-  fail: { icon: "🚫", color: "text-red-600", bg: "bg-red-50 border-red-200", label: "Action Required" },
+  pass: { icon: "✅", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800", label: "Good" },
+  warn: { icon: "⚠️", color: "text-amber-600", bg: "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800", label: "Attention" },
+  fail: { icon: "🚫", color: "text-red-600", bg: "bg-red-50 border-red-200 dark:bg-red-950/40 dark:border-red-800", label: "Action Required" },
   unknown: { icon: "❓", color: "text-gray-500 dark:text-gray-400", bg: "bg-gray-100 border-gray-200 dark:border-gray-700", label: "Unknown" },
 };
 
 const OVERALL_CONFIG = {
-  pass: { label: "All Clear — Safe to Travel", color: "text-emerald-600", border: "border-emerald-200", bg: "bg-emerald-50", icon: "✈️" },
-  warn: { label: "Review Before Traveling", color: "text-amber-600", border: "border-amber-200", bg: "bg-amber-50", icon: "⚠️" },
-  fail: { label: "Do NOT Travel — Issues Found", color: "text-red-600", border: "border-red-200", bg: "bg-red-50", icon: "🚫" },
+  pass: { label: "All Clear — Safe to Travel", color: "text-emerald-600 dark:text-emerald-300", border: "border-emerald-200 dark:border-emerald-800", bg: "bg-emerald-50 dark:bg-emerald-950/40", icon: "✈️" },
+  warn: { label: "Review Before Traveling", color: "text-amber-600 dark:text-amber-300", border: "border-amber-200 dark:border-amber-800", bg: "bg-amber-50 dark:bg-amber-950/40", icon: "⚠️" },
+  fail: { label: "Do NOT Travel — Issues Found", color: "text-red-600 dark:text-red-300", border: "border-red-200 dark:border-red-800", bg: "bg-red-50 dark:bg-red-950/40", icon: "🚫" },
 };
 
 export default function TravelChecklistPage() {
@@ -168,7 +168,7 @@ export default function TravelChecklistPage() {
 
       {/* Scenario 1: OPT initial pending — HIGH RISK */}
       {isInitialOPTPending && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 dark:bg-red-950/40 dark:border-red-800">
           <p className="text-sm font-bold text-red-700 mb-1">🚨 OPT Application Pending — High Travel Risk</p>
           <p className="text-sm text-red-800 leading-relaxed">
             Your OPT application is pending and you have <strong>no active EAD</strong>. USCIS and ICE have historically treated departure as potential abandonment of a pending OPT application. You have no work authorization to return to.
@@ -185,7 +185,7 @@ export default function TravelChecklistPage() {
 
       {/* Scenario 2: STEM extension pending — travel PERMITTED */}
       {isStemExtensionPending && (
-        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
+        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 dark:bg-blue-950/40 dark:border-blue-800">
           <p className="text-sm font-bold text-blue-700 mb-1">ℹ️ STEM Extension Pending — Travel Permitted</p>
           <p className="text-sm text-blue-800 leading-relaxed">
             Travel is permitted while your STEM OPT extension is pending. Per DHS 81 FR 13103, you may continue to work and travel under your current authorization. If your OPT EAD expires while pending, an automatic 180-day extension applies under 8 CFR 274a.12(b)(6)(iv).
@@ -202,7 +202,7 @@ export default function TravelChecklistPage() {
 
       {/* Scenario 3: H-1B COS static warning — shown whenever any OPT application is pending */}
       {(isInitialOPTPending || isStemExtensionPending) && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800">
           <p className="text-sm font-bold text-amber-700 mb-1">⚠️ H-1B Change of Status Pending? — Do NOT Travel</p>
           <p className="text-sm text-amber-800 leading-relaxed">
             If your employer has also filed an H-1B petition with <strong>Change of Status (COS)</strong>, departure from the US <strong>immediately and permanently abandons</strong> the COS. You would need to get an H-1B visa stamp at a US consulate abroad and re-enter.

@@ -151,9 +151,9 @@ export default function I983Page() {
       {/* 10-day countdown alert */}
       {latestDeadline && daysLeft !== null && (
         <div className={`p-4 rounded-xl border text-sm ${
-          daysLeft <= 3 ? "bg-red-50 border-red-200 text-red-700"
-          : daysLeft <= 7 ? "bg-amber-50 border-amber-200 text-amber-700"
-          : "bg-blue-50 border-blue-200 text-blue-700"
+          daysLeft <= 3 ? "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300"
+          : daysLeft <= 7 ? "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300"
+          : "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300"
         }`}>
           <p className="font-bold mb-1">
             {daysLeft <= 0 ? "🚨 OVERDUE" : `⏱️ ${daysLeft} day${daysLeft !== 1 ? "s" : ""} remaining`} — Report New Employer to DSO

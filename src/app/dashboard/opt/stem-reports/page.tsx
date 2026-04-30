@@ -214,7 +214,7 @@ export default function STEMReportsPage() {
       </div>
 
       {/* Critical warning banner */}
-      <div className="p-4 rounded-xl bg-red-50 border border-red-200">
+      <div className="p-4 rounded-xl bg-red-50 border border-red-200 dark:bg-red-950/40 dark:border-red-800">
         <p className="text-sm font-bold text-red-700 mb-2">🚨 Non-Recoverable Deadline — Read This First</p>
         <p className="text-sm text-red-800 leading-relaxed">
           STEM OPT requires 4 validation reports (I-983) submitted to your DSO at 6, 12, 18, and 24 months from your STEM EAD start date.
@@ -238,7 +238,7 @@ export default function STEMReportsPage() {
         <>
           {/* Active window alert */}
           {activeWindow && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800">
               <p className="font-semibold text-amber-700 mb-1">
                 ⚠️ ACTIVE: {activeWindow.label} — {activeWindow.daysUntilWindowEnd} days left in 10-business-day window
               </p>
@@ -258,7 +258,7 @@ export default function STEMReportsPage() {
 
           {/* No deadlines banner for existing STEM users */}
           {!hasStemDeadlines && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800">
               <p className="text-sm font-semibold text-amber-700 mb-1">📅 Your STEM report deadlines are not in your Deadlines list</p>
               <p className="text-sm text-amber-800 mb-3">
                 Your 4 validation report deadlines (6, 12, 18, 24 months) have not been added to your tracking list yet. Add them now so you get reminders.
@@ -284,8 +284,8 @@ export default function STEMReportsPage() {
               const isDone = completedReports.has(report.month);
               const isExpanded = expandedReport === report.index;
               const urgencyStyles = {
-                critical: "border-red-200 bg-red-50",
-                warning:  "border-amber-200 bg-amber-50",
+                critical: "border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-800",
+                warning:  "border-amber-200 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-800",
                 ok:       "border-gray-200 dark:border-gray-700",
                 missed:   "border-gray-200 opacity-60",
               }[report.urgency];
@@ -333,7 +333,7 @@ export default function STEMReportsPage() {
                             </p>
                           )}
                           {report.status === "missed" && !isDone && (
-                            <div className="mt-2 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
+                            <div className="mt-2 p-3 rounded-lg bg-red-50 border border-red-200 dark:bg-red-950/40 dark:border-red-800 text-xs text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
                               <p className="font-medium mb-1">Window Closed — Contact Your DSO Immediately</p>
                               <p className="leading-relaxed">The 10 business-day reporting window has passed. Contact your DSO as soon as possible. Explain the missed deadline — your DSO may be able to work with SEVP, but this is not guaranteed. Document all attempts to contact your DSO in writing.</p>
                             </div>
@@ -383,7 +383,7 @@ export default function STEMReportsPage() {
                           ))}
                         </div>
                         {report.requiresSelfEvaluation && (
-                          <div className="mt-4 p-3 rounded-lg bg-violet-50 border border-violet-200">
+                          <div className="mt-4 p-3 rounded-lg bg-violet-50 border border-violet-200 dark:bg-violet-950/40 dark:border-violet-800">
                             <p className="text-sm font-medium text-violet-700 mb-2">Also required at {report.month} months: Self-Evaluation (I-983 page 5)</p>
                             <div className="space-y-2">
                               {[

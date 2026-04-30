@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
           {/* Step 2: DSO */}
           {step === 2 && (
             <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300">
                 💡 Your DSO (Designated School Official) manages your I-20 and SEVIS record. Save their contact info for quick access.
               </div>
               <Field label="DSO Name" id="dsoName" placeholder="Dr. Jane Smith" value={form.dsoName} onChange={(v) => set("dsoName", v)} />
@@ -164,7 +164,7 @@ export default function OnboardingPage() {
           {/* Step 3: Final */}
           {step === 3 && (
             <div className="space-y-4">
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-sm text-emerald-700">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-sm text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
                 <p className="font-medium mb-1">🎉 You&apos;re almost done!</p>
                 <p>Review your info below, then click Finish to set up your dashboard.</p>
               </div>

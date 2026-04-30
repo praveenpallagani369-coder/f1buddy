@@ -5,12 +5,12 @@ import { buildVisaTimeline, getCurrentStage } from "@/lib/immigration/visa-stage
 import { Card, CardContent } from "@/components/ui/card";
 
 const COLOR_MAP: Record<string, { ring: string; bg: string; text: string; badge: string; dot: string }> = {
-  indigo: { ring: "ring-indigo-400", bg: "bg-indigo-50 border-indigo-200", text: "text-indigo-700", badge: "bg-indigo-100 text-indigo-700 border-indigo-200", dot: "bg-indigo-500" },
-  amber:  { ring: "ring-amber-400",  bg: "bg-amber-50 border-amber-200",  text: "text-amber-700",  badge: "bg-amber-100 text-amber-700 border-amber-200",   dot: "bg-amber-500"  },
-  emerald:{ ring: "ring-emerald-400",bg: "bg-emerald-50 border-emerald-200",text:"text-emerald-700", badge: "bg-emerald-100 text-emerald-700 border-emerald-200",dot:"bg-emerald-500"},
-  violet: { ring: "ring-violet-400", bg: "bg-violet-50 border-violet-200", text: "text-violet-700", badge: "bg-violet-100 text-violet-700 border-violet-200", dot: "bg-violet-500" },
-  orange: { ring: "ring-orange-400", bg: "bg-orange-50 border-orange-200", text: "text-orange-700", badge: "bg-orange-100 text-orange-700 border-orange-200", dot: "bg-orange-500" },
-  blue:   { ring: "ring-blue-400",   bg: "bg-blue-50 border-blue-200",    text: "text-blue-700",   badge: "bg-blue-100 text-blue-700 border-blue-200",       dot: "bg-blue-500"   },
+  indigo: { ring: "ring-indigo-400", bg: "bg-indigo-50 border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-800", text: "text-indigo-700", badge: "bg-indigo-100 text-indigo-700 border-indigo-200", dot: "bg-indigo-500" },
+  amber:  { ring: "ring-amber-400",  bg: "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800",  text: "text-amber-700",  badge: "bg-amber-100 text-amber-700 border-amber-200",   dot: "bg-amber-500"  },
+  emerald:{ ring: "ring-emerald-400",bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800",text:"text-emerald-700", badge: "bg-emerald-100 text-emerald-700 border-emerald-200",dot:"bg-emerald-500"},
+  violet: { ring: "ring-violet-400", bg: "bg-violet-50 border-violet-200 dark:bg-violet-950/40 dark:border-violet-800", text: "text-violet-700", badge: "bg-violet-100 text-violet-700 border-violet-200", dot: "bg-violet-500" },
+  orange: { ring: "ring-orange-400", bg: "bg-orange-50 border-orange-200 dark:bg-orange-950/40 dark:border-orange-800", text: "text-orange-700 dark:text-orange-300", badge: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/60 dark:text-orange-300 dark:border-orange-800", dot: "bg-orange-500" },
+  blue:   { ring: "ring-blue-400",   bg: "bg-blue-50 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800",    text: "text-blue-700",   badge: "bg-blue-100 text-blue-700 border-blue-200",       dot: "bg-blue-500"   },
 };
 
 export default function VisaTimelinePage() {
@@ -159,7 +159,7 @@ export default function VisaTimelinePage() {
                     {stage.warnings.length > 0 && (
                       <div className="space-y-2">
                         {stage.warnings.map((w, i) => (
-                          <div key={i} className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 font-medium">
+                          <div key={i} className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-700 font-medium dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300">
                             ⚠️ {w}
                           </div>
                         ))}

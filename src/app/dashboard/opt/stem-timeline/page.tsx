@@ -212,7 +212,7 @@ export default function STEMTimelinePage() {
 
       {/* Already on STEM OPT */}
       {opt?.opt_type === "stem_extension" && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800">
           <p className="text-sm font-semibold text-emerald-700">✅ You&apos;re already on STEM OPT</p>
           <p className="text-sm text-emerald-800 mt-0.5">Mark the steps below as done to keep this tracker clean. Your active STEM OPT compliance is tracked in STEM Reports.</p>
           <Link href="/dashboard/opt/stem-reports" className="text-xs text-emerald-600 underline mt-2 block">Go to STEM Reports →</Link>

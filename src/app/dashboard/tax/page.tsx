@@ -56,7 +56,7 @@ export default function TaxPage() {
 
       {/* Tax Deadline Alert */}
       {daysToDeadline > 0 && daysToDeadline <= 60 && (
-        <div className={`p-4 rounded-xl border text-sm ${daysToDeadline <= 14 ? "bg-red-50 border-red-200 text-red-700" : "bg-amber-50 border-amber-200 text-amber-700"}`}>
+        <div className={`p-4 rounded-xl border text-sm ${daysToDeadline <= 14 ? "bg-red-50 border-red-200 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300" : "bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300"}`}>
           <p className="font-medium">📅 Tax Deadline: April 15, {currentYear} — {daysToDeadline} days remaining</p>
           <p className="mt-1 text-xs opacity-80">F-1 students must file Form 1040-NR by April 15. Even with no US income, file Form 8843.</p>
         </div>

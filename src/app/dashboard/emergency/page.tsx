@@ -65,7 +65,7 @@ export default function EmergencyPage() {
       </div>
 
       {/* Emergency banner */}
-      <div className="p-5 rounded-xl bg-red-50 border-2 border-red-200">
+      <div className="p-5 rounded-xl bg-red-50 border-2 border-red-200 dark:bg-red-950/40 dark:border-red-800">
         <p className="text-lg font-bold text-red-700">If you are in immediate danger, call 911</p>
         <p className="text-sm text-red-600/80 mt-1">
           Emergency services in the US are free to call regardless of immigration status.

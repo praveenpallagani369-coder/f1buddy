@@ -110,20 +110,20 @@ export default function TravelPage() {
 
       {/* Critical alert at 4 months (spec requirement) */}
       {atLimit && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
           <p className="font-semibold mb-1">🚨 SEVIS Termination Risk — 5-Month Limit Reached</p>
           <p>You have been outside the US for {totalDaysThisYear} days this year. Being absent for 5+ consecutive months (≈150 days) may result in automatic SEVIS termination and loss of F-1 status. Contact your DSO immediately. — <span className="font-mono text-xs">8 CFR 214.2(f)(5)(iv)</span></p>
         </div>
       )}
       {approachingLimit && !atLimit && (
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-700 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-300">
           <p className="font-semibold mb-1">⚠️ Approaching 5-Month Limit — {totalDaysThisYear} of 150 days used</p>
           <p>You are within 30 days of the 5-month limit. Extended absence risks SEVIS termination. Consult your DSO before any additional travel. — <span className="font-mono text-xs">8 CFR 214.2(f)(5)(iv)</span></p>
         </div>
       )}
 
       {/* Important note about unemployment */}
-      <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700">
+      <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 text-xs text-blue-700 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300">
         💡 <strong>Reminder:</strong> Days spent abroad while unemployed on OPT still count toward your 90-day (or 150-day STEM) unemployment limit. Employer-required travel is tracked separately below.
       </div>
 

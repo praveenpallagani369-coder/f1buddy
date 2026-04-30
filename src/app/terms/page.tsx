@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 
 export const metadata = { title: "Terms of Service — F1Buddy" };
@@ -20,7 +20,7 @@ export default function TermsPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Service</h1>
         <p className="text-gray-500 text-sm mb-10">Last updated: April 28, 2026</p>
 
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-sm text-red-800">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-sm text-red-800 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
           <strong>Not Legal Advice:</strong> F1Buddy provides informational tools to help you track immigration deadlines. Nothing in this app or these terms constitutes legal advice. Always consult your DSO or a licensed immigration attorney for decisions affecting your visa status.
         </div>
 

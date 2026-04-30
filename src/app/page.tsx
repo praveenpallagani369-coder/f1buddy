@@ -14,37 +14,37 @@ const features = [
     icon: CalendarClock,
     title: "Deadline Tracker",
     desc: "Never miss OPT, SEVIS, or tax deadlines. Smart alerts at 30, 14, 7, and 1 day.",
-    color: "bg-amber-50 text-amber-600",
+    color: "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300",
   },
   {
     icon: Briefcase,
     title: "OPT Employment",
     desc: "Track unemployment days in real-time. Get alerted before you hit the 90-day limit.",
-    color: "bg-emerald-50 text-emerald-600",
+    color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300",
   },
   {
     icon: Plane,
     title: "Travel Tracker",
     desc: "Log trips, track days outside the US, and get warned before the 5-month limit.",
-    color: "bg-sky-50 text-sky-600",
+    color: "bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-300",
   },
   {
     icon: FolderOpen,
     title: "Document Vault",
     desc: "Store I-20, EAD, passport scans with expiration tracking and alerts.",
-    color: "bg-violet-50 text-violet-600",
+    color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300",
   },
   {
     icon: Receipt,
     title: "Tax Guide",
     desc: "1040-NR vs 1040, Form 8843 reminders, and treaty benefit lookup.",
-    color: "bg-orange-50 text-orange-600",
+    color: "bg-orange-50 text-orange-600 dark:bg-orange-950/60 dark:text-orange-300",
   },
   {
     icon: Sparkles,
     title: "AI Assistant",
     desc: "Ask any F-1 question. Powered by Groq + Llama 3.3 with CFR citations.",
-    color: "bg-indigo-50 text-indigo-600",
+    color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300",
   },
 ];
 
@@ -82,7 +82,7 @@ export default function LandingPage() {
 
       {/* Hero */}
       <div className="max-w-4xl mx-auto text-center px-6 pt-20 pb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 text-xs font-medium mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300 text-xs font-medium mb-6">
           <GraduationCap className="w-3.5 h-3.5" />
           Built for 1.1M F-1 International Students
         </div>
@@ -149,7 +149,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <div className="max-w-2xl mx-auto px-6 pb-20 text-center">
-        <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-10">
+        <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-10 dark:bg-indigo-950/40 dark:border-indigo-800">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
             Ready to stop worrying about deadlines?
           </h2>
