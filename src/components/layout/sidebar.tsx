@@ -128,10 +128,10 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
             {section.label && (
               <button
                 onClick={() => toggleSection(section.label!)}
-                className="flex items-center justify-between w-full text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest px-3 mb-1 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-sm rounded-lg transition-all duration-150 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               >
-                <span>{section.label}</span>
-                <span className={cn("text-[9px] transition-transform", isSectionOpen(section) && "rotate-90")}>▸</span>
+                <span className="flex-1 text-left">{section.label}</span>
+                <span className={cn("text-xs transition-transform flex-shrink-0", isSectionOpen(section) && "rotate-90")}>▸</span>
               </button>
             )}
             {isSectionOpen(section) && <div className="space-y-0.5">
