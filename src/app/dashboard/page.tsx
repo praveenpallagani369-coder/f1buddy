@@ -95,7 +95,7 @@ function StatCard({
     <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] p-4 relative overflow-hidden hover:shadow-md transition-shadow">
       <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-2xl`} />
       <div className="flex items-start justify-between mb-2">
-        <p className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
+        <p className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2 break-words">{label}</p>
         <div className={`w-7 h-7 rounded-lg ${iconBg} ${iconColor} flex items-center justify-center flex-shrink-0`}>
           {icon}
         </div>
@@ -272,7 +272,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Stat Cards ───────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Unemployment */}
         <StatCard
           label={phase === "stem_opt_active" ? "STEM Unemployment" : "OPT Unemployment"}
@@ -459,7 +459,7 @@ export default async function DashboardPage() {
               ].map(([label, value]) => (
                 <div key={label} className="flex justify-between items-center">
                   <span className="text-gray-500 dark:text-gray-400">{label}</span>
-                  <span className="text-gray-700 dark:text-gray-300 font-medium truncate max-w-[160px] text-right">{value ?? "—"}</span>
+                  <span className="text-gray-700 dark:text-gray-300 font-medium truncate max-w-[130px] text-right">{value ?? "—"}</span>
                 </div>
               ))}
             </div>

@@ -50,8 +50,8 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
         </header>
 
         {/* Content — pad bottom so nothing hides behind the bottom nav */}
-        <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
-          <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 lg:pb-0">
+          <div className="p-4 sm:p-6 max-w-6xl mx-auto w-full min-w-0">
             {children}
           </div>
         </main>
