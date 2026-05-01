@@ -231,8 +231,8 @@ export default async function DashboardPage() {
               {phaseConfig.icon}
             </div>
             <div className="min-w-0">
-              <p className={`text-sm font-bold ${phaseConfig.text} mb-0.5`}>Current Phase: {phaseConfig.label}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{phaseConfig.tagline}</p>
+              <p className={`text-sm font-bold ${phaseConfig.text} mb-0.5 break-words`}>Current Phase: {phaseConfig.label}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed break-words">{phaseConfig.tagline}</p>
               {phase === "opt_pending" && opt?.application_date && (
                 <p className="text-xs text-amber-600 mt-1.5 font-medium">
                   Filed: {opt.application_date} · Typical wait: 3–5 months · Track at egov.uscis.gov
@@ -377,10 +377,10 @@ export default async function DashboardPage() {
       )}
 
       {/* ── Two-column ───────────────────────────────────────────── */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-4 w-full min-w-0">
 
         {/* Deadlines card */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden min-w-0">
           <div className="flex items-center justify-between px-5 pt-5 pb-3">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center"><CalendarClock className="w-4 h-4" /></div>
@@ -418,10 +418,10 @@ export default async function DashboardPage() {
         </div>
 
         {/* Right column */}
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0 w-full">
 
           {/* Current Employment */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5 overflow-hidden">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><Building2 className="w-4 h-4" /></div>
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Current Employment</p>
@@ -445,7 +445,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Program Info */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5 overflow-hidden">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program Info</p>
@@ -466,7 +466,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Quick Links */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
             {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
                 className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all text-center">
