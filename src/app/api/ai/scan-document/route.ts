@@ -4,9 +4,7 @@ import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 
-const VISION_MODELS = [
-  "meta-llama/llama-4-scout-17b-16e-instruct",
-];
+const VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
 
 const schema = z.object({
   imageBase64: z.string().min(1),
@@ -14,32 +12,60 @@ const schema = z.object({
   docType: z.string().default("other"),
 });
 
+// Tell the AI to return dates in any format it sees — we'll normalize on our side
 const EXTRACT_PROMPTS: Record<string, string> = {
-  i20: `You are reading an I-20 document. Extract: program end date, SEVIS ID (starts with N followed by digits), student name. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD","sevisId":"N...","studentName":"..."}. Use null for any field you cannot read.`,
-  ead: `You are reading an EAD (Employment Authorization Document) card. Extract: card expiration date, card category (e.g. C3B or C3C), card number. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD","category":"...","documentNumber":"..."}. Use null for any field you cannot read.`,
-  passport: `You are reading a passport. Extract: expiration date (from the "Date of Expiry" or "Expiry Date" field), passport number, nationality, full name. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD","documentNumber":"...","nationality":"...","fullName":"..."}. Use null for any field you cannot read.`,
-  visa_stamp: `You are reading a US visa stamp. Extract: expiration date (annotated expiry), visa category (F-1, B-2, etc), entries. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD","visaCategory":"...","entries":"..."}. Use null for any field you cannot read.`,
-  i94: `You are reading an I-94 arrival/departure record. Extract: admit-until date, class of admission. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD or D/S","classOfAdmission":"...","documentNumber":"..."}. Use null for any field you cannot read.`,
+  i20: `You are reading an I-20 document. Extract: program end date (look for "Program End Date" field), SEVIS ID (starts with N followed by 9 digits), student name. Return ONLY valid JSON: {"expirationDate":"date as shown on document","sevisId":"N...","studentName":"..."}. Use null for any field you cannot read clearly.`,
+  ead: `You are reading an EAD (Employment Authorization Document) card. Extract: card expiration date (look for "Card Expires" field), card category (e.g. C3B or C3C), card number. Return ONLY valid JSON: {"expirationDate":"date as shown on card","category":"...","documentNumber":"..."}. Use null for any field you cannot read clearly.`,
+  passport: `You are reading a passport. Extract: expiration date (look for "Date of Expiry" or "Expiry Date" or "Expires" field), passport number, nationality, full name. Return ONLY valid JSON: {"expirationDate":"date as shown","documentNumber":"...","nationality":"...","fullName":"..."}. Use null for any field you cannot read clearly.`,
+  visa_stamp: `You are reading a US visa stamp. Extract: expiration date, visa category (F-1, B-2, H-1B etc), entries allowed. Return ONLY valid JSON: {"expirationDate":"date as shown","visaCategory":"...","entries":"..."}. Use null for any field you cannot read clearly.`,
+  i94: `You are reading an I-94 arrival/departure record. Extract: admit-until date (could be D/S or a specific date), class of admission. Return ONLY valid JSON: {"expirationDate":"date or D/S as shown","classOfAdmission":"...","documentNumber":"..."}. Use null for any field you cannot read clearly.`,
+  ssn_card: `You are reading a Social Security card. Extract the name and SSN if visible. Return ONLY valid JSON: {"holderName":"...","documentNumber":"XXX-XX-XXXX"}. Use null for any field you cannot read clearly.`,
+  offer_letter: `You are reading an employment offer letter. Extract: start date, company name, job title. Return ONLY valid JSON: {"expirationDate":"start date as shown","holderName":"...","documentNumber":"..."}. Use null for any field you cannot read clearly.`,
 };
 
-const DEFAULT_PROMPT = `You are reading an official document. Extract any expiration date, document number or ID, and holder name if visible. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD","documentNumber":"...","holderName":"..."}. Use null for any field you cannot read.`;
+const DEFAULT_PROMPT = `You are reading an official document or ID card. Look carefully for any expiration date, valid-through date, or document number/ID number, and the holder's name. Return ONLY valid JSON: {"expirationDate":"date exactly as printed on document","documentNumber":"...","holderName":"..."}. Use null for any field you cannot read clearly.`;
 
-async function tryVisionModel(client: ReturnType<typeof getGroqClient>, model: string, prompt: string, dataUrl: string) {
-  const completion = await client.chat.completions.create({
-    model,
-    messages: [
-      {
-        role: "user" as const,
-        content: [
-          { type: "text" as const, text: `${prompt}\n\nReturn ONLY the JSON object. No explanations, no markdown.` },
-          { type: "image_url" as const, image_url: { url: dataUrl } },
-        ],
-      },
-    ],
-    temperature: 0.1,
-    max_tokens: 300,
-  });
-  return completion.choices[0]?.message?.content ?? "{}";
+// Convert any common date format to YYYY-MM-DD
+function normalizeDate(raw: string | null | undefined): string | null {
+  if (!raw || raw === "null") return null;
+
+  const s = raw.trim();
+
+  // Already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+  // MM/DD/YYYY  (US driver's license, EAD, etc.)
+  const mdy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (mdy) return `${mdy[3]}-${mdy[1].padStart(2, "0")}-${mdy[2].padStart(2, "0")}`;
+
+  // DD/MM/YYYY  (international passports)
+  const dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2, "0")}-${dmy[1].padStart(2, "0")}`;
+
+  // DD MMM YYYY  (e.g. "15 JAN 2029" or "15 Jan 2029") — common on passports
+  const months: Record<string, string> = { jan:"01",feb:"02",mar:"03",apr:"04",may:"05",jun:"06",jul:"07",aug:"08",sep:"09",oct:"10",nov:"11",dec:"12" };
+  const dMonthY = s.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
+  if (dMonthY) {
+    const m = months[dMonthY[2].toLowerCase()];
+    if (m) return `${dMonthY[3]}-${m}-${dMonthY[1].padStart(2, "0")}`;
+  }
+
+  // MMM DD, YYYY  (e.g. "Jan 15, 2029")
+  const monthDY = s.match(/^([A-Za-z]{3})\s+(\d{1,2}),?\s+(\d{4})$/);
+  if (monthDY) {
+    const m = months[monthDY[1].toLowerCase()];
+    if (m) return `${monthDY[3]}-${m}-${monthDY[2].padStart(2, "0")}`;
+  }
+
+  // YYYY/MM/DD
+  const ymd = s.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+  if (ymd) return `${ymd[1]}-${ymd[2]}-${ymd[3]}`;
+
+  // MM-DD-YYYY
+  const mdyDash = s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (mdyDash) return `${mdyDash[3]}-${mdyDash[1].padStart(2, "0")}-${mdyDash[2].padStart(2, "0")}`;
+
+  return null; // unrecognized format
 }
 
 export async function POST(request: Request) {
@@ -73,45 +99,51 @@ export async function POST(request: Request) {
   const prompt = EXTRACT_PROMPTS[docType] ?? DEFAULT_PROMPT;
   const client = getGroqClient();
 
-  let lastError: unknown;
-  for (const model of VISION_MODELS) {
+  try {
+    const completion = await client.chat.completions.create({
+      model: VISION_MODEL,
+      messages: [
+        {
+          role: "user" as const,
+          content: [
+            { type: "text" as const, text: `${prompt}\n\nReturn ONLY the JSON object. No explanations, no markdown code blocks.` },
+            { type: "image_url" as const, image_url: { url: dataUrl } },
+          ],
+        },
+      ],
+      temperature: 0.1,
+      max_tokens: 300,
+    });
+
+    const text = completion.choices[0]?.message?.content ?? "{}";
+
+    let extracted: Record<string, string | null> = {};
     try {
-      const text = await tryVisionModel(client, model, prompt, dataUrl);
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) extracted = JSON.parse(jsonMatch[0]);
+    } catch { /* malformed AI response */ }
 
-      let extracted: Record<string, string | null> = {};
-      try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) extracted = JSON.parse(jsonMatch[0]);
-      } catch { /* malformed AI response */ }
-
-      const cleaned: Record<string, string | null> = {};
-      for (const [k, v] of Object.entries(extracted)) {
-        cleaned[k] = v === "null" || v === "" || v == null ? null : String(v);
+    // Clean null strings + normalize all date fields
+    const cleaned: Record<string, string | null> = {};
+    for (const [k, v] of Object.entries(extracted)) {
+      const raw = v === "null" || v === "" || v == null ? null : String(v);
+      if (k === "expirationDate" || k === "programEndDate") {
+        cleaned[k] = normalizeDate(raw);
+      } else {
+        cleaned[k] = raw;
       }
-
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (cleaned.expirationDate && !dateRegex.test(cleaned.expirationDate)) cleaned.expirationDate = null;
-      if (cleaned.programEndDate && !dateRegex.test(cleaned.programEndDate)) cleaned.programEndDate = null;
-
-      return ok({ extracted: cleaned, docType, model });
-    } catch (e: unknown) {
-      lastError = e;
-      const status = (e as { status?: number })?.status;
-      // 429 = rate limited on this model, try next
-      // 404 = model not found, try next
-      // 400 = bad request, try next model
-      if (status === 503 || status === 500) break; // server error, no point retrying
     }
+
+    return ok({ extracted: cleaned, docType });
+  } catch (e: unknown) {
+    const status = (e as { status?: number })?.status;
+    const errMsg = (e as { message?: string })?.message ?? "unknown";
+    console.error(`[scan-document] Vision model error: ${status} — ${errMsg}`);
+
+    if (status === 429) return err("RATE_LIMIT", "AI service busy. Please enter dates manually.", 429);
+    return NextResponse.json({
+      success: false,
+      error: { code: "AI_ERROR", message: "AI scan failed", detail: `${status ?? "?"}: ${errMsg}` }
+    }, { status: 503 });
   }
-
-  // All models failed — log for debugging
-  const errStatus = (lastError as { status?: number })?.status;
-  const errMsg = (lastError as { message?: string })?.message ?? "unknown";
-  console.error(`[scan-document] All vision models failed. Last error: ${errStatus} — ${errMsg}`);
-
-  if (errStatus === 429) return err("RATE_LIMIT", "AI service busy. Please enter dates manually.", 429);
-  return NextResponse.json({
-    success: false,
-    error: { code: "AI_ERROR", message: "AI scan failed", detail: `${errStatus ?? "?"}: ${errMsg}` }
-  }, { status: 503 });
 }
