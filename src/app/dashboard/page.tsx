@@ -210,27 +210,27 @@ export default async function DashboardPage() {
     <div className="space-y-5">
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 truncate">
             {greeting}, {profile?.name?.split(" ")[0] ?? "Student"} 👋
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-sm mt-0.5">Here&apos;s your compliance overview for today</p>
         </div>
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm ${statusConfig.bg}`}>
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-sm flex-shrink-0 ${statusConfig.bg}`}>
           <div className={`w-2 h-2 rounded-full ${statusConfig.dot} animate-pulse`} />
-          <span className={`text-sm font-semibold ${statusConfig.textColor}`}>{statusConfig.text}</span>
+          <span className={`text-xs sm:text-sm font-semibold ${statusConfig.textColor}`}>{statusConfig.text}</span>
         </div>
       </div>
 
       {/* ── Phase Banner ─────────────────────────────────────────── */}
       <div className={`rounded-2xl border ${phaseConfig.border} bg-gradient-to-r ${phaseConfig.gradient} p-5`}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3 min-w-0">
             <div className={`w-8 h-8 rounded-xl ${phaseConfig.badge} flex items-center justify-center text-lg flex-shrink-0`}>
               {phaseConfig.icon}
             </div>
-            <div>
+            <div className="min-w-0">
               <p className={`text-sm font-bold ${phaseConfig.text} mb-0.5`}>Current Phase: {phaseConfig.label}</p>
               <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{phaseConfig.tagline}</p>
               {phase === "opt_pending" && opt?.application_date && (
@@ -361,7 +361,7 @@ export default async function DashboardPage() {
         <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
           <p className="text-base font-bold text-red-700 dark:text-red-400 mb-1">🚨 You CANNOT work during the 60-day grace period</p>
           <p className="text-sm text-red-600 dark:text-red-400 mb-4">Your OPT/STEM authorization has ended. Immediately choose one of these options:</p>
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
               { title: "Change Status", desc: "File for H-1B, B-2, or other status before grace period ends", link: "/dashboard/deadlines" },
               { title: "Depart the US",  desc: "Leave before grace period ends to maintain F-1 good standing",  link: "/dashboard/travel" },
@@ -466,7 +466,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Quick Links */}
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
                 className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all text-center">
