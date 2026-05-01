@@ -74,9 +74,8 @@ function prepareImageForScan(file: File): Promise<{ base64: string; mimeType: st
 // Render first page of a PDF to an image for AI scanning
 async function pdfToImage(file: File): Promise<{ base64: string; mimeType: string }> {
   const pdfjsLib = await import("pdfjs-dist");
-  // Worker must match the installed package version
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+  // Serve the worker from our own domain — avoids CDN reliability issues and CSP problems
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;

@@ -2,6 +2,12 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack: (config) => {
+    // pdfjs-dist uses the `canvas` npm package in Node environments;
+    // disable it so webpack doesn't try to bundle the native module
+    config.resolve.alias.canvas = false;
+    return config;
+  },
   async headers() {
     return [
       {
@@ -22,6 +28,7 @@ const nextConfig = {
               "font-src 'self' data:",
               "connect-src 'self' https://*.supabase.co https://api.groq.com https://api.stripe.com https://*.sentry.io https://app.posthog.com https://vitals.vercel-insights.com",
               "frame-src 'self' https://js.stripe.com",
+              "worker-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
