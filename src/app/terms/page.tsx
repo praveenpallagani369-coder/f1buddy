@@ -1,5 +1,5 @@
 ﻿import Link from "next/link";
-import { GraduationCap } from "lucide-react";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 export const metadata = { title: "Terms of Service — VisaBuddy" };
 
@@ -8,9 +8,7 @@ export default function TermsPage() {
     <div className="min-h-screen bg-gray-50">
       <nav className="border-b border-gray-200 px-6 py-4 flex items-center justify-between max-w-4xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-white" />
-          </div>
+          <AppIcon size={32} />
           <span className="font-bold text-gray-900">VisaBuddy</span>
         </Link>
         <Link href="/auth/login" className="text-sm text-gray-500 hover:text-gray-900">Sign in</Link>

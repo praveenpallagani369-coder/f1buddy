@@ -13,6 +13,12 @@ export const metadata: Metadata = {
   title: "VisaBuddy — Immigration & Visa Manager",
   description:
     "Track visa deadlines, OPT/H-1B status, travel records, and immigration compliance. Built for F-1 students, H-1B workers, and NRIs navigating US immigration.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

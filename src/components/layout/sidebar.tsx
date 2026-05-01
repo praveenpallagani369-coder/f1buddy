@@ -11,9 +11,10 @@ import {
   FlaskConical, ClipboardList, Building2, Calculator, FileText,
   BookOpen, Plane, ClipboardCheck, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, ArrowLeftRight, CalendarDays, Newspaper,
-  BookMarked, ShieldAlert, LogOut, GraduationCap, X, Sun, Moon,
+  BookMarked, ShieldAlert, LogOut, X, Sun, Moon,
   type LucideIcon,
 } from "lucide-react";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 type NavItem = { href: string; label: string; icon: LucideIcon };
 type NavSection = { label: string | null; icon?: LucideIcon; items: NavItem[] };
@@ -112,9 +113,7 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
     <aside className="w-60 flex-shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex flex-col shadow-sm h-full">
       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md shadow-indigo-200 dark:shadow-indigo-900/40">
-            <GraduationCap className="w-5 h-5 text-white" />
-          </div>
+          <AppIcon size={32} />
           <div>
             <p className="font-bold text-gray-900 dark:text-gray-100 text-sm leading-none">VisaBuddy</p>
             <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 leading-none">Immigration Manager</p>

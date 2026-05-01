@@ -5,7 +5,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GraduationCap, Mail, Sparkles } from "lucide-react";
+import { Mail, Sparkles } from "lucide-react";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 function LoginForm() {
   const router = useRouter();
@@ -72,11 +73,11 @@ function LoginForm() {
       <div className="w-full max-w-md animate-fade-in">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 mb-4 shadow-lg shadow-indigo-200">
-            <GraduationCap className="w-7 h-7 text-white" />
+          <div className="mb-4 flex justify-center">
+            <AppIcon size={56} />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">VisaBuddy</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">International Student Life Manager</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Immigration & Visa Manager</p>
         </div>
 
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-card">

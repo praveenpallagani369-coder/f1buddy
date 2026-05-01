@@ -1,5 +1,5 @@
 ﻿import Link from "next/link";
-import { GraduationCap, Check } from "lucide-react";
+import { Check, LayoutDashboard } from "lucide-react";
 
 export const metadata = { title: "Subscription Confirmed — VisaBuddy" };
 
@@ -34,7 +34,7 @@ export default function PaymentSuccessPage() {
           href="/dashboard"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors font-medium"
         >
-          <GraduationCap className="w-4 h-4" />
+          <LayoutDashboard className="w-4 h-4" />
           Go to Dashboard
         </Link>
 
