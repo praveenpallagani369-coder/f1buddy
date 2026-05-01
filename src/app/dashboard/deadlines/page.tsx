@@ -9,9 +9,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { differenceInCalendarDays, parseISO } from "date-fns";
 
+type DeadlineRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  deadline_date: string;
+  category: string;
+  severity: string;
+  status: string;
+};
+
 export default function DeadlinesPage() {
   const supabase = createClient();
-  const [deadlines, setDeadlines] = useState<any[]>([]);
+  const [deadlines, setDeadlines] = useState<DeadlineRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

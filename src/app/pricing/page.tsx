@@ -162,7 +162,7 @@ export default function PricingPage() {
               },
               {
                 q: "When will Premium launch?",
-                a: "We're finishing the AI assistant and email reminder infrastructure now. Join the waitlist to get notified first and receive a founding-member discount.",
+                a: "Premium is live now. Subscribe monthly ($6.99/mo) or yearly ($59.99/yr) to unlock the AI assistant, email reminders, unlimited document uploads, and tax filing tools.",
               },
               {
                 q: "Is my immigration data secure?",

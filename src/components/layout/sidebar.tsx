@@ -11,7 +11,7 @@ import {
   FlaskConical, ClipboardList, Building2, Calculator, FileText,
   BookOpen, Plane, ClipboardCheck, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, ArrowLeftRight, CalendarDays, Newspaper,
-  BookMarked, ShieldAlert, LogOut, X, Sun, Moon,
+  BookMarked, ShieldAlert, LogOut, X, Sun, Moon, Settings,
   type LucideIcon,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -75,6 +75,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
+      { href: "/dashboard/settings", label: "Settings", icon: Settings },
     ],
   },
 ];

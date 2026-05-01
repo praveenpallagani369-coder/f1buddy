@@ -43,13 +43,13 @@ const features = [
   {
     icon: Sparkles,
     title: "AI Assistant",
-    desc: "Ask any F-1 question. Powered by Groq + Llama 3.3 with CFR citations.",
+    desc: "Ask any immigration question. Powered by Groq + Llama 3.3 with CFR citations.",
     color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300",
   },
 ];
 
 const stats = [
-  { value: "1.1M", label: "F-1 students in the US" },
+  { value: "1.1M", label: "international students in the US" },
   { value: "90", label: "Day OPT unemployment limit" },
   { value: "5+", label: "Compliance areas tracked" },
 ];
@@ -129,7 +129,7 @@ export default function LandingPage() {
       {/* Features */}
       <div className="max-w-5xl mx-auto px-6 mb-20">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
-          Everything to stay in F-1 status
+          Everything to stay in immigration compliance
         </h2>
         <p className="text-gray-500 text-center mb-10">All your compliance tools in one dashboard</p>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -155,7 +155,7 @@ export default function LandingPage() {
             Ready to stop worrying about deadlines?
           </h2>
           <p className="text-gray-500 mb-6">
-            Join F-1 students staying in compliance with VisaBuddy
+            Join international students staying in compliance with VisaBuddy
           </p>
           <Link
             href="/auth/register"

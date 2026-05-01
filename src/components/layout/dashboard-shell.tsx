@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
 import { Sidebar } from "./sidebar";
+import { MobileBottomNav } from "./mobile-bottom-nav";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 interface DashboardShellProps {
   user: { name: string; email: string; role: string };
@@ -14,7 +15,6 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
 
-  // Close mobile nav on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
@@ -43,29 +43,22 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
 
       {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Mobile header — only visible below lg */}
-        <header className="lg:hidden flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Open menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-              <span className="text-white text-[10px] font-bold">F1</span>
-            </div>
-            <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">VisaBuddy</span>
-          </div>
+        {/* Mobile header — logo only, no hamburger (nav is at bottom now) */}
+        <header className="lg:hidden flex items-center gap-2.5 px-4 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <AppIcon size={28} />
+          <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">VisaBuddy</span>
         </header>
 
-        <main className="flex-1 overflow-y-auto">
+        {/* Content — pad bottom so nothing hides behind the bottom nav */}
+        <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
           <div className="p-4 sm:p-6 max-w-6xl mx-auto">
             {children}
           </div>
         </main>
       </div>
+
+      {/* Mobile bottom nav + floating AI button */}
+      <MobileBottomNav onMoreClick={() => setMobileOpen(true)} />
 
       {showSeedButton}
     </div>

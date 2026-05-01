@@ -13,10 +13,13 @@ const COLOR_MAP: Record<string, { ring: string; bg: string; text: string; badge:
   blue:   { ring: "ring-blue-400",   bg: "bg-blue-50 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800",    text: "text-blue-700",   badge: "bg-blue-100 text-blue-700 border-blue-200",       dot: "bg-blue-500"   },
 };
 
+type ProfileRow = { program_start_date: string | null; program_end_date: string | null };
+type OptRow = { opt_type: "pre_completion" | "post_completion" | "stem_extension" | null; ead_start_date: string | null; ead_end_date: string | null; application_date: string | null };
+
 export default function VisaTimelinePage() {
   const supabase = createClient();
-  const [profile, setProfile] = useState<any>(null);
-  const [opt, setOpt] = useState<any>(null);
+  const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [opt, setOpt] = useState<OptRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
 

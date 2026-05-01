@@ -9,9 +9,20 @@ import { Badge } from "@/components/ui/badge";
 
 const TAX_TREATIES = ["India","China","South Korea","Germany","France","Japan","Canada","Philippines","Thailand","Israel","Romania","Other / No Treaty"];
 
+type TaxRecord = {
+  id: string;
+  tax_year: number;
+  filing_status: string | null;
+  treaty_country: string | null;
+  form_8843_filed: boolean;
+  federal_filed: boolean;
+  state_filed: boolean;
+  state_name: string | null;
+};
+
 export default function TaxPage() {
   const supabase = createClient();
-  const [records, setRecords] = useState<any[]>([]);
+  const [records, setRecords] = useState<TaxRecord[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 const STEPS = ["Visa Info", "School", "DSO Contact", "Personal"];
 const COUNTRIES = ["India","China","South Korea","Canada","Taiwan","Mexico","Vietnam","Brazil","Japan","Saudi Arabia","Iran","Nigeria","Turkey","Other"];
@@ -16,7 +17,7 @@ function Field({ label, id, type = "text", placeholder, value, onChange }: {
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm text-gray-600 mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">{label}</label>
       <Input id={id} type={type} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
@@ -79,13 +80,15 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-8">
-          <span className="text-3xl">🎓</span>
-          <h1 className="text-2xl font-bold text-gray-900 mt-2">Welcome to VisaBuddy!</h1>
-          <p className="text-gray-500 text-sm mt-1">Let&apos;s set up your profile to track your compliance</p>
+          <div className="flex justify-center mb-3">
+            <AppIcon size={48} />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">Welcome to VisaBuddy!</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Let&apos;s set up your profile to track your compliance</p>
         </div>
 
         {/* Step indicator */}
@@ -93,27 +96,27 @@ export default function OnboardingPage() {
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                i < step ? "bg-indigo-600 text-gray-900" :
-                i === step ? "bg-indigo-600 text-gray-900 ring-4 ring-indigo-600/30" :
-                "bg-gray-100 text-gray-400"
+                i < step ? "bg-indigo-600 text-white" :
+                i === step ? "bg-indigo-600 text-white ring-4 ring-indigo-600/30" :
+                "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
               }`}>
                 {i < step ? "✓" : i + 1}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`h-0.5 w-8 ${i < step ? "bg-indigo-600" : "bg-gray-100"}`} />
+                <div className={`h-0.5 w-8 ${i < step ? "bg-indigo-600" : "bg-gray-200 dark:bg-gray-700"}`} />
               )}
             </div>
           ))}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-2xl p-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">{STEPS[step]}</h2>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-8">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">{STEPS[step]}</h2>
 
           {/* Step 0: Visa Info */}
           {step === 0 && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Visa Type</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Visa Type</label>
                 <Select value={form.visaType} onChange={(e) => set("visaType", e.target.value)}>
                   <option value="F1">F-1 (Student)</option>
                   <option value="J1">J-1 (Exchange Visitor)</option>
@@ -121,7 +124,7 @@ export default function OnboardingPage() {
                 </Select>
               </div>
               <div>
-                <label htmlFor="sevisId" className="block text-sm text-gray-600 mb-1.5">SEVIS ID (optional)</label>
+                <label htmlFor="sevisId" className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">SEVIS ID (optional)</label>
                 <Input id="sevisId" placeholder="N00xxxxxxxxx" value={form.sevisId} onChange={(e) => set("sevisId", e.target.value)} />
                 <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
                   <span className="text-emerald-500">🔒</span>
@@ -129,7 +132,7 @@ export default function OnboardingPage() {
                 </p>
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Home Country</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Home Country</label>
                 <Select value={form.homeCountry} onChange={(e) => set("homeCountry", e.target.value)}>
                   {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </Select>
@@ -144,7 +147,7 @@ export default function OnboardingPage() {
               <Field label="University / School Name *" id="school" placeholder="Massachusetts Institute of Technology" value={form.schoolName} onChange={(v) => set("schoolName", v)} />
               <Field label="Program / Major *" id="program" placeholder="Computer Science" value={form.programName} onChange={(v) => set("programName", v)} />
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Degree Level</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Degree Level</label>
                 <Select value={form.degreeLevel} onChange={(e) => set("degreeLevel", e.target.value)}>
                   {DEGREES.map((d) => <option key={d} value={d}>{d}</option>)}
                 </Select>
@@ -185,8 +188,8 @@ export default function OnboardingPage() {
                   ["Home Country", form.homeCountry],
                 ].map(([k, v]) => (
                   <div key={k} className="flex justify-between">
-                    <span className="text-gray-400">{k}</span>
-                    <span className="text-gray-700">{v}</span>
+                    <span className="text-gray-400 dark:text-gray-500">{k}</span>
+                    <span className="text-gray-700 dark:text-gray-300">{v}</span>
                   </div>
                 ))}
               </div>
