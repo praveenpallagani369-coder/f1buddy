@@ -46,15 +46,31 @@ interface AiScanResult {
   [key: string]: string | null | undefined;
 }
 
-function fileToBase64(file: File): Promise<string> {
+// Resize image to max 1200px and JPEG-compress before sending to AI
+// Keeps payload under 300KB regardless of original file size
+function prepareImageForScan(file: File): Promise<{ base64: string; mimeType: string }> {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      resolve(result.split(",")[1]);
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const MAX = 1200;
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+        else { width = Math.round(width * MAX / height); height = MAX; }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { reject(new Error("canvas")); return; }
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
+      resolve({ base64: dataUrl.split(",")[1], mimeType: "image/jpeg" });
     };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    img.onerror = reject;
+    img.src = url;
   });
 }
 
@@ -71,7 +87,6 @@ export default function DocumentsPage() {
 
   const [aiScanState, setAiScanState] = useState<AiScanState>("idle");
   const [aiResult, setAiResult] = useState<AiScanResult | null>(null);
-  const [aiFieldsConfirmed, setAiFieldsConfirmed] = useState(false);
 
   useEffect(() => { load(); }, []);
 
@@ -89,20 +104,25 @@ export default function DocumentsPage() {
     }
     setAiScanState("scanning");
     setAiResult(null);
-    setAiFieldsConfirmed(false);
+
+    // Abort + timeout after 20 seconds so scan never blocks the user
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20_000);
+
     try {
-      const imageBase64 = await fileToBase64(file);
+      const { base64: imageBase64, mimeType: scanMime } = await prepareImageForScan(file);
       const res = await fetch("/api/ai/scan-document", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64, mimeType: file.type, docType }),
+        body: JSON.stringify({ imageBase64, mimeType: scanMime, docType }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const json = await res.json();
       if (json.success && json.data?.extracted) {
         const extracted = json.data.extracted as AiScanResult;
         setAiResult(extracted);
         setAiScanState("done");
-        // Pre-fill expiry date if AI found one and user hasn't entered one
         const expiry = extracted.expirationDate ?? extracted.programEndDate ?? null;
         if (expiry) {
           setForm(f => ({ ...f, expirationDate: f.expirationDate || expiry }));
@@ -111,6 +131,7 @@ export default function DocumentsPage() {
         setAiScanState("error");
       }
     } catch {
+      clearTimeout(timeout);
       setAiScanState("error");
     }
   }
@@ -120,7 +141,6 @@ export default function DocumentsPage() {
     setFileError(null);
     setAiScanState("idle");
     setAiResult(null);
-    setAiFieldsConfirmed(false);
     if (!file) { setSelectedFile(null); return; }
     if (file.size > MAX_FILE_SIZE) { setFileError("File too large. Maximum size is 10 MB."); return; }
     const allowed = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
@@ -203,7 +223,6 @@ export default function DocumentsPage() {
     setForm({ docType: "i20", expirationDate: "", notes: "" });
     setAiScanState("idle");
     setAiResult(null);
-    setAiFieldsConfirmed(false);
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -324,8 +343,8 @@ export default function DocumentsPage() {
               <div className="flex items-center gap-3 p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800">
                 <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">🤖 AI scanning your document...</p>
-                  <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">Detecting expiry dates and key details automatically</p>
+                  <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">🤖 AI scanning for expiry dates...</p>
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">You can upload now or wait for results to auto-fill the date</p>
                 </div>
               </div>
             )}
@@ -395,8 +414,8 @@ export default function DocumentsPage() {
 
             <div className="flex gap-3">
               <Button variant="outline" onClick={resetForm}>Cancel</Button>
-              <Button onClick={saveDocument} loading={saving} disabled={!selectedFile || aiScanState === "scanning"}>
-                {aiScanState === "scanning" ? "Scanning..." : "Upload Document"}
+              <Button onClick={saveDocument} loading={saving} disabled={!selectedFile}>
+                Upload Document
               </Button>
             </div>
           </CardContent>
