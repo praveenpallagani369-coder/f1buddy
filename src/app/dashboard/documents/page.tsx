@@ -87,6 +87,7 @@ export default function DocumentsPage() {
 
   const [aiScanState, setAiScanState] = useState<AiScanState>("idle");
   const [aiResult, setAiResult] = useState<AiScanResult | null>(null);
+  const [aiErrorCode, setAiErrorCode] = useState<string | null>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -104,10 +105,11 @@ export default function DocumentsPage() {
     }
     setAiScanState("scanning");
     setAiResult(null);
+    setAiErrorCode(null);
 
     // Abort + timeout after 20 seconds so scan never blocks the user
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20_000);
+    const timeout = setTimeout(() => { controller.abort(); setAiErrorCode("TIMEOUT"); }, 20_000);
 
     try {
       const { base64: imageBase64, mimeType: scanMime } = await prepareImageForScan(file);
@@ -128,6 +130,7 @@ export default function DocumentsPage() {
           setForm(f => ({ ...f, expirationDate: f.expirationDate || expiry }));
         }
       } else {
+        setAiErrorCode(json.error?.code ?? "AI_ERROR");
         setAiScanState("error");
       }
     } catch {
@@ -223,6 +226,7 @@ export default function DocumentsPage() {
     setForm({ docType: "i20", expirationDate: "", notes: "" });
     setAiScanState("idle");
     setAiResult(null);
+    setAiErrorCode(null);
     if (fileRef.current) fileRef.current.value = "";
   }
 
@@ -389,8 +393,16 @@ export default function DocumentsPage() {
             )}
 
             {aiScanState === "error" && (
-              <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                <p className="text-sm text-gray-600 dark:text-gray-400">🤖 AI scan unavailable. Please enter the expiry date manually.</p>
+              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800">
+                <p className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                  {aiErrorCode === "NO_AI_KEY"
+                    ? "⚙️ AI scanning not configured — GROQ_API_KEY missing in Vercel environment variables."
+                    : aiErrorCode === "RATE_LIMIT"
+                    ? "⏳ AI service is busy. Please enter the expiry date manually."
+                    : aiErrorCode === "TIMEOUT"
+                    ? "⏱️ AI scan timed out. Please enter the expiry date manually."
+                    : "🤖 AI scan unavailable. Please enter the expiry date manually."}
+                </p>
               </div>
             )}
 
