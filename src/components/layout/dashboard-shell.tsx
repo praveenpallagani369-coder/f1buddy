@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
@@ -56,7 +56,7 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
               <span className="text-white text-[10px] font-bold">F1</span>
             </div>
-            <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">F1Buddy</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100 text-sm">VisaBuddy</span>
           </div>
         </header>
 

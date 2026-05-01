@@ -1,5 +1,5 @@
-// ============================================================
-// F1Buddy Immigration Rules Engine (DDD Domain Layer)
+﻿// ============================================================
+// VisaBuddy Immigration Rules Engine (DDD Domain Layer)
 // All F-1 immigration rules codified here.
 // CFR references included per rule.
 // ============================================================

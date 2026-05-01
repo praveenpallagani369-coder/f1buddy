@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+﻿import { Resend } from "resend";
 
 let resendClient: Resend | null = null;
 
@@ -48,12 +48,12 @@ export async function sendDeadlineReminder(data: DeadlineReminderData): Promise<
 
   const subject = criticalCount > 0
     ? `${criticalCount} Critical F-1 Deadline${criticalCount > 1 ? "s" : ""} - Action Required`
-    : `F1Buddy: ${data.deadlines.length} Upcoming Deadline Reminder`;
+    : `VisaBuddy: ${data.deadlines.length} Upcoming Deadline Reminder`;
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://f1buddy.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://visabuddy.app";
 
   await resend.emails.send({
-    from: "F1Buddy <reminders@f1buddy.app>",
+    from: "VisaBuddy <reminders@visabuddy.app>",
     to: data.to,
     subject,
     html: `
@@ -64,7 +64,7 @@ export async function sendDeadlineReminder(data: DeadlineReminderData): Promise<
           <div style="background:#0f172a;border:1px solid #1e293b;border-radius:16px;padding:32px">
             <div style="text-align:center;margin-bottom:28px">
               <div style="display:inline-block;background:#4f46e5;border-radius:12px;padding:10px 16px;font-size:20px">&#127891;</div>
-              <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:12px 0 4px">F1Buddy</h1>
+              <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:12px 0 4px">VisaBuddy</h1>
               <p style="color:#94a3b8;font-size:13px;margin:0">F-1 Compliance Reminder</p>
             </div>
 
@@ -92,7 +92,7 @@ export async function sendDeadlineReminder(data: DeadlineReminderData): Promise<
             </div>
 
             <p style="color:#475569;font-size:12px;margin:24px 0 0;line-height:1.6;border-top:1px solid #1e293b;padding-top:20px">
-              This is a compliance reminder from F1Buddy. Always verify deadlines with your DSO.
+              This is a compliance reminder from VisaBuddy. Always verify deadlines with your DSO.
               This is not legal advice. <a href="${siteUrl}/dashboard" style="color:#6366f1">Manage your account</a>
             </p>
           </div>

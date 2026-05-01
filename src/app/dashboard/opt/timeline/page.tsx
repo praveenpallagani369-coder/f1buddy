@@ -41,7 +41,7 @@ function buildTimeline(programEndDate: Date, _optType: string): TimelineStep[] {
       completedDate: null,
       isCompleted: false,
       isCritical: true,
-      tip: "Give your DSO 5–10 business days to process. Be specific about your requested OPT start date. Use the DSO Email Generator in F1Buddy.",
+      tip: "Give your DSO 5–10 business days to process. Be specific about your requested OPT start date. Use the DSO Email Generator in VisaBuddy.",
     },
     {
       id: "dso_i20",

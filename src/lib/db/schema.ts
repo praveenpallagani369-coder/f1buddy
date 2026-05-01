@@ -1,5 +1,5 @@
-// ============================================================
-// F1Buddy Database Schema (Drizzle ORM)
+﻿// ============================================================
+// VisaBuddy Database Schema (Drizzle ORM)
 // Used to generate SQL migrations for Supabase
 // ============================================================
 

@@ -1,4 +1,4 @@
-# F1Buddy — International Student Life Manager
+﻿# VisaBuddy — International Student Life Manager
 
 Full-stack Next.js 14 app for F-1 visa compliance. Built to be completely free to run.
 

@@ -144,7 +144,9 @@ function buildProfileContext(
   if (deadlines.length > 0) {
     lines.push(`\nUpcoming Deadlines (next ${Math.min(deadlines.length, 5)}):`);
     deadlines.slice(0, 5).forEach((d) => {
+      if (!d.deadline_date || !d.title) return;
       const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
+      if (isNaN(days)) return;
       lines.push(`  - ${d.title}: ${days === 0 ? "TODAY" : days < 0 ? `${Math.abs(days)} days overdue` : `${days} days`} [${d.severity}]`);
     });
   }

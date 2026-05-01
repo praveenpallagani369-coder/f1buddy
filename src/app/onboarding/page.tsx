@@ -84,7 +84,7 @@ export default function OnboardingPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <span className="text-3xl">🎓</span>
-          <h1 className="text-2xl font-bold text-gray-900 mt-2">Welcome to F1Buddy!</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mt-2">Welcome to VisaBuddy!</h1>
           <p className="text-gray-500 text-sm mt-1">Let&apos;s set up your profile to track your compliance</p>
         </div>
 
@@ -125,7 +125,7 @@ export default function OnboardingPage() {
                 <Input id="sevisId" placeholder="N00xxxxxxxxx" value={form.sevisId} onChange={(e) => set("sevisId", e.target.value)} />
                 <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
                   <span className="text-emerald-500">🔒</span>
-                  Encrypted with AES-256 before storage. Never logged or readable by F1Buddy staff.
+                  Encrypted with AES-256 before storage. Never logged or readable by VisaBuddy staff.
                 </p>
               </div>
               <div>

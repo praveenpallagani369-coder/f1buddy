@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -116,8 +116,8 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="font-bold text-gray-900 dark:text-gray-100 text-sm leading-none">F1Buddy</p>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 leading-none">Student Manager</p>
+            <p className="font-bold text-gray-900 dark:text-gray-100 text-sm leading-none">VisaBuddy</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5 leading-none">Immigration Manager</p>
           </div>
         </Link>
         {onMobileClose && (

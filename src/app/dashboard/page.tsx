@@ -340,6 +340,22 @@ export default async function DashboardPage() {
         </StatCard>
       </div>
 
+      {/* ── OPT Setup Prompt ─────────────────────────────────────── */}
+      {!opt && phase === "f1_active" && (
+        <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300 mb-0.5">Set up your OPT tracker</p>
+            <p className="text-xs text-indigo-600 dark:text-indigo-400">Add your EAD dates to track unemployment days, get compliance alerts, and let the AI assistant answer questions specific to your status.</p>
+          </div>
+          <Link
+            href="/dashboard/opt"
+            className="flex-shrink-0 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors whitespace-nowrap"
+          >
+            Set up OPT →
+          </Link>
+        </div>
+      )}
+
       {/* ── Grace Period Emergency Banner ────────────────────────── */}
       {phase === "grace_period" && (
         <div className="p-5 rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">

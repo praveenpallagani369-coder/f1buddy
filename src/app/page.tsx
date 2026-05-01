@@ -64,7 +64,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-gray-900 dark:text-gray-100">F1Buddy</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100">VisaBuddy</span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/pricing" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors hidden sm:block">
@@ -95,7 +95,7 @@ export default function LandingPage() {
           deadline again
         </h1>
         <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
-          F1Buddy tracks your OPT unemployment days, visa deadlines, travel limits, and tax obligations so you can focus on studying — not spreadsheets.
+          VisaBuddy tracks your OPT unemployment days, visa deadlines, travel limits, and tax obligations so you can focus on studying — not spreadsheets.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
@@ -157,7 +157,7 @@ export default function LandingPage() {
             Ready to stop worrying about deadlines?
           </h2>
           <p className="text-gray-500 mb-6">
-            Join F-1 students staying in compliance with F1Buddy
+            Join F-1 students staying in compliance with VisaBuddy
           </p>
           <Link
             href="/auth/register"
@@ -175,7 +175,7 @@ export default function LandingPage() {
             <div className="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center">
               <GraduationCap className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-gray-600 font-medium">F1Buddy</span>
+            <span className="text-gray-600 font-medium">VisaBuddy</span>
           </div>
           <p className="text-center">Not affiliated with USCIS or DHS · Always consult your DSO</p>
           <div className="flex items-center gap-4">

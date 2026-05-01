@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "crypto";
+﻿import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "crypto";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16;
@@ -10,7 +10,7 @@ function getKey(): Buffer {
   // Use ENCRYPTION_SALT env var so the KDF salt is not hardcoded.
   // If unset, falls back to the original hardcoded value for backwards compatibility
   // with existing encrypted rows. Set ENCRYPTION_SALT in production after re-encrypting.
-  const salt = process.env.ENCRYPTION_SALT ?? "f1buddy-salt";
+  const salt = process.env.ENCRYPTION_SALT ?? "visabuddy-salt";
   return scryptSync(secret, salt, 32);
 }
 

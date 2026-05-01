@@ -1,7 +1,7 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { GraduationCap, Check, X } from "lucide-react";
 
-export const metadata = { title: "Pricing — F1Buddy" };
+export const metadata = { title: "Pricing — VisaBuddy" };
 
 const FREE_FEATURES = [
   { label: "OPT unemployment day counter", included: true },
@@ -39,7 +39,7 @@ export default function PricingPage() {
             <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-gray-900 dark:text-gray-100">F1Buddy</span>
+            <span className="font-bold text-gray-900 dark:text-gray-100">VisaBuddy</span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/auth/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
@@ -97,12 +97,20 @@ export default function PricingPage() {
             </div>
             <p className="text-sm text-indigo-200 mb-1">or $59.99/year <span className="text-amber-300 font-medium">(save 28%)</span></p>
             <p className="text-xs text-indigo-300 mb-6">Cancel anytime.</p>
-            <a
-              href="mailto:hello@f1buddy.app?subject=Premium%20Plan%20Interest&body=Hi%2C%20I'm%20interested%20in%20the%20F1Buddy%20Premium%20plan.%20Please%20add%20me%20to%20the%20waitlist."
-              className="block text-center px-6 py-2.5 rounded-xl bg-white text-indigo-600 hover:bg-indigo-50 transition-colors text-sm font-semibold mb-6"
-            >
-              Join Waitlist →
-            </a>
+            <div className="flex flex-col gap-2 mb-6">
+              <a
+                href="/api/payments/create-checkout?plan=monthly"
+                className="block text-center px-6 py-2.5 rounded-xl bg-white text-indigo-600 hover:bg-indigo-50 transition-colors text-sm font-semibold"
+              >
+                Subscribe Monthly →
+              </a>
+              <a
+                href="/api/payments/create-checkout?plan=yearly"
+                className="block text-center px-6 py-2 rounded-xl border border-indigo-300 text-indigo-100 hover:bg-indigo-500 transition-colors text-xs font-medium"
+              >
+                Subscribe Yearly (save 28%) →
+              </a>
+            </div>
             <ul className="space-y-2.5">
               {PREMIUM_FEATURES.map(({ label }) => (
                 <li key={label} className="flex items-start gap-2.5 text-sm">
@@ -121,7 +129,7 @@ export default function PricingPage() {
             </div>
             <p className="text-sm text-gray-500 mb-6">$15–25/student/year. For ISSS offices.</p>
             <a
-              href="mailto:hello@f1buddy.app?subject=University%20License%20Inquiry"
+              href="mailto:hello@visabuddy.app?subject=University%20License%20Inquiry"
               className="block text-center px-6 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors text-sm font-medium mb-6"
             >
               Contact Us
@@ -185,7 +193,7 @@ export default function PricingPage() {
             <div className="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center">
               <GraduationCap className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-gray-600 font-medium">F1Buddy</span>
+            <span className="text-gray-600 font-medium">VisaBuddy</span>
           </div>
           <p className="text-center">Not affiliated with USCIS or DHS · Always consult your DSO</p>
           <div className="flex items-center gap-4">

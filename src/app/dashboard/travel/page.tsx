@@ -15,9 +15,23 @@ const DOC_OPTIONS = ["Valid Passport","Valid F-1 Visa Stamp","I-20 with Travel S
 const ALERT_THRESHOLD_DAYS = 120;
 const SEVIS_LIMIT_DAYS = 150;
 
+interface TripRecord {
+  id: string;
+  user_id: string;
+  departure_date: string;
+  return_date: string | null;
+  destination_country: string;
+  purpose: string;
+  travel_type: string;
+  days_outside: number;
+  documents_carried: string[] | null;
+  notes: string | null;
+  created_at: string;
+}
+
 export default function TravelPage() {
   const supabase = createClient();
-  const [trips, setTrips] = useState<any[]>([]);
+  const [trips, setTrips] = useState<TripRecord[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

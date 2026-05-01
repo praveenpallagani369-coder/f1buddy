@@ -1,7 +1,7 @@
 ﻿import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 
-export const metadata = { title: "Terms of Service — F1Buddy" };
+export const metadata = { title: "Terms of Service — VisaBuddy" };
 
 export default function TermsPage() {
   return (
@@ -11,7 +11,7 @@ export default function TermsPage() {
           <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-gray-900">F1Buddy</span>
+          <span className="font-bold text-gray-900">VisaBuddy</span>
         </Link>
         <Link href="/auth/login" className="text-sm text-gray-500 hover:text-gray-900">Sign in</Link>
       </nav>
@@ -21,19 +21,19 @@ export default function TermsPage() {
         <p className="text-gray-500 text-sm mb-10">Last updated: April 28, 2026</p>
 
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-8 text-sm text-red-800 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
-          <strong>Not Legal Advice:</strong> F1Buddy provides informational tools to help you track immigration deadlines. Nothing in this app or these terms constitutes legal advice. Always consult your DSO or a licensed immigration attorney for decisions affecting your visa status.
+          <strong>Not Legal Advice:</strong> VisaBuddy provides informational tools to help you track immigration deadlines. Nothing in this app or these terms constitutes legal advice. Always consult your DSO or a licensed immigration attorney for decisions affecting your visa status.
         </div>
 
         <div className="prose prose-gray max-w-none space-y-8 text-gray-700">
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Acceptance of Terms</h2>
-            <p>By creating an account or using F1Buddy, you agree to these Terms of Service. If you do not agree, do not use the service.</p>
+            <p>By creating an account or using VisaBuddy, you agree to these Terms of Service. If you do not agree, do not use the service.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">2. Description of Service</h2>
-            <p>F1Buddy is a personal compliance tracking tool for F-1 visa international students. It helps you track OPT deadlines, travel days, document expiration, and other immigration-related dates. F1Buddy is <strong>not</strong>:</p>
+            <p>VisaBuddy is a personal compliance tracking tool for F-1 visa international students. It helps you track OPT deadlines, travel days, document expiration, and other immigration-related dates. VisaBuddy is <strong>not</strong>:</p>
             <ul className="list-disc pl-5 space-y-1.5 mt-2">
               <li>An immigration legal service</li>
               <li>Affiliated with or authorized by USCIS, DHS, or any US government agency</li>
@@ -44,13 +44,13 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Informational Use Only</h2>
-            <p>All calculations, deadline alerts, AI assistant responses, and other outputs from F1Buddy are provided for informational purposes only. Immigration regulations change frequently. You are responsible for verifying all information with your DSO or a licensed immigration attorney before making any immigration-related decisions.</p>
-            <p className="mt-3 font-medium">F1Buddy is not liable for visa violations, SEVIS terminations, deportation, or any other immigration consequences resulting from reliance on information provided by this app.</p>
+            <p>All calculations, deadline alerts, AI assistant responses, and other outputs from VisaBuddy are provided for informational purposes only. Immigration regulations change frequently. You are responsible for verifying all information with your DSO or a licensed immigration attorney before making any immigration-related decisions.</p>
+            <p className="mt-3 font-medium">VisaBuddy is not liable for visa violations, SEVIS terminations, deportation, or any other immigration consequences resulting from reliance on information provided by this app.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Eligibility</h2>
-            <p>You must be at least 13 years old to use F1Buddy. By using the service, you represent that you meet this requirement.</p>
+            <p>You must be at least 13 years old to use VisaBuddy. By using the service, you represent that you meet this requirement.</p>
           </section>
 
           <section>
@@ -78,22 +78,22 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">7. Subscription and Payments</h2>
-            <p>F1Buddy offers a free tier and optional paid subscriptions. Paid subscriptions are billed in advance on a monthly or annual basis. You may cancel at any time. Refunds are provided at our discretion within 7 days of charge. We use Stripe for payment processing — your payment details are never stored on our servers.</p>
+            <p>VisaBuddy offers a free tier and optional paid subscriptions. Paid subscriptions are billed in advance on a monthly or annual basis. You may cancel at any time. Refunds are provided at our discretion within 7 days of charge. We use Stripe for payment processing — your payment details are never stored on our servers.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">8. Intellectual Property</h2>
-            <p>F1Buddy and its original content, features, and functionality are owned by F1Buddy and are protected by intellectual property laws. You retain ownership of any personal data you submit.</p>
+            <p>VisaBuddy and its original content, features, and functionality are owned by VisaBuddy and are protected by intellectual property laws. You retain ownership of any personal data you submit.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">9. Disclaimer of Warranties</h2>
-            <p>F1Buddy is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind. We do not warrant that the service will be uninterrupted, error-free, or that deadline calculations will be accurate in all circumstances. Immigration rules change — always verify with official USCIS sources.</p>
+            <p>VisaBuddy is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind. We do not warrant that the service will be uninterrupted, error-free, or that deadline calculations will be accurate in all circumstances. Immigration rules change — always verify with official USCIS sources.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">10. Limitation of Liability</h2>
-            <p>To the maximum extent permitted by law, F1Buddy shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to immigration violations, visa status issues, or loss of employment authorization, arising from your use of the service.</p>
+            <p>To the maximum extent permitted by law, VisaBuddy shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to immigration violations, visa status issues, or loss of employment authorization, arising from your use of the service.</p>
           </section>
 
           <section>
@@ -113,7 +113,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">14. Contact</h2>
-            <p>Questions about these terms? Email us at <a href="mailto:legal@f1buddy.app" className="text-indigo-600 hover:underline">legal@f1buddy.app</a>.</p>
+            <p>Questions about these terms? Email us at <a href="mailto:legal@visabuddy.app" className="text-indigo-600 hover:underline">legal@visabuddy.app</a>.</p>
           </section>
 
         </div>
@@ -125,7 +125,7 @@ export default function TermsPage() {
           <span>·</span>
           <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy Policy</Link>
           <span>·</span>
-          <span>F1Buddy · Not affiliated with USCIS or DHS</span>
+          <span>VisaBuddy · Not affiliated with USCIS or DHS</span>
         </div>
       </footer>
     </div>

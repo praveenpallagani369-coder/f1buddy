@@ -1,4 +1,4 @@
-# F1Buddy - International Student Life Manager
+﻿# VisaBuddy - International Student Life Manager
 
 > This file is the single source of truth for architecture, conventions, security,
 > and development guidelines. Claude Code MUST follow these rules exactly.
@@ -7,7 +7,7 @@
 
 ## Project Overview
 
-**F1Buddy** is a compliance and life management app for F-1 visa international
+**VisaBuddy** is a compliance and life management app for F-1 visa international
 students in the US. It tracks visa deadlines, OPT employment reporting, tax
 filing status (1040-NR), days-outside-US counting, document storage, and SEVIS
 compliance — replacing scattered emails, spreadsheets, and anxiety with a
@@ -35,7 +35,7 @@ missed deadlines.
 | PostHog              | 1M events/month                       | Pay-as-you-go          |
 | Resend (email)       | 100 emails/day, 3K/month              | $20/mo (Pro)           |
 | Stripe               | $0 until first transaction            | 2.9% + $0.30/txn      |
-| Domain               | f1buddy.vercel.app (free subdomain)   | Custom domain ~$10/yr  |
+| Domain               | visabuddy.vercel.app (free subdomain)   | Custom domain ~$10/yr  |
 
 ---
 
@@ -68,7 +68,7 @@ missed deadlines.
 ## Project Structure
 
 ```
-f1buddy/
+visabuddy/
 ├── CLAUDE.md                    # THIS FILE - project rules
 ├── src/
 │   ├── app/
@@ -836,7 +836,7 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ### Setup
 ```bash
 git clone <repo>
-cd f1buddy
+cd visabuddy
 cp .env.example .env.local    # Fill in your keys
 npm install
 npm run db:push               # Push schema to dev DB
@@ -882,13 +882,13 @@ npm run db:studio    # Drizzle Studio GUI
 | Storage | Supabase Storage | FREE |
 | SSL | Vercel (automatic) | FREE |
 | CDN | Vercel Edge Network (automatic) | FREE |
-| Domain | f1buddy.vercel.app | FREE |
+| Domain | visabuddy.vercel.app | FREE |
 | **TOTAL** | | **$0/mo** |
 
 ### When to upgrade (future)
 - Vercel Pro ($20/mo): when you need commercial use license or >100GB bandwidth
 - Supabase Pro ($25/mo): when you hit 500MB DB or need daily backups
-- Custom domain ($10-15/yr): when you want f1buddy.com
+- Custom domain ($10-15/yr): when you want visabuddy.com
 
 ### Deployment Checklist
 - [ ] Vercel account connected to GitHub repo

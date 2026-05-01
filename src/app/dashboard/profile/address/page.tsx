@@ -217,10 +217,10 @@ export default function AddressPage() {
         <CardContent>
           <ol className="space-y-3">
             {[
-              { step: "1", text: "Update your address here in F1Buddy", note: "We auto-create a 10-day reporting deadline" },
+              { step: "1", text: "Update your address here in VisaBuddy", note: "We auto-create a 10-day reporting deadline" },
               { step: "2", text: "Email your DSO with your new address", note: "Use our DSO Email Generator for a pre-written email" },
               { step: "3", text: "DSO updates your SEVIS record", note: "Usually done within 1–3 business days" },
-              { step: "4", text: "Mark as reported in F1Buddy", note: "Clears the deadline from your compliance dashboard" },
+              { step: "4", text: "Mark as reported in VisaBuddy", note: "Clears the deadline from your compliance dashboard" },
             ].map((item) => (
               <li key={item.step} className="flex gap-3">
                 <div className="w-6 h-6 rounded-full bg-indigo-100 border border-indigo-300 text-indigo-600 text-xs flex items-center justify-center flex-shrink-0 font-bold">

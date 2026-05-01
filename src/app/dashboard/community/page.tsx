@@ -11,11 +11,37 @@ import { formatDistanceToNow, parseISO } from "date-fns";
 
 const CATEGORIES = ["OPT", "CPT", "Travel", "Tax", "Housing", "Employment", "Visa Renewal", "General"];
 
+interface CommunityPost {
+  id: string;
+  user_id: string;
+  title: string;
+  body: string;
+  category: string;
+  is_anonymous: boolean;
+  upvotes: number;
+  answer_count: number;
+  is_pinned: boolean;
+  created_at: string;
+  users: { name: string } | null;
+}
+
+interface CommunityAnswer {
+  id: string;
+  post_id: string;
+  user_id: string;
+  body: string;
+  is_verified: boolean;
+  is_accepted: boolean;
+  upvotes: number;
+  created_at: string;
+  users: { name: string } | null;
+}
+
 export default function CommunityPage() {
   const supabase = createClient();
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<Record<string, any[]>>({});
+  const [answers, setAnswers] = useState<Record<string, CommunityAnswer[]>>({});
   const [showForm, setShowForm] = useState(false);
   const [answerForms, setAnswerForms] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -142,7 +168,7 @@ export default function CommunityPage() {
       <div className="flex gap-2 flex-wrap">
         {["All", ...CATEGORIES].map(c => (
           <button key={c} onClick={() => setFilter(c)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filter === c ? "bg-indigo-600 text-gray-900" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${filter === c ? "bg-indigo-600 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"}`}>
             {c}
           </button>
         ))}

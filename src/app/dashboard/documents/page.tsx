@@ -11,9 +11,26 @@ const DOC_LABELS: Record<string, string> = { i20:"I-20", ead:"EAD Card", passpor
 const DOC_ICONS: Record<string, string> = { i20:"📋", ead:"💳", passport:"🛂", visa_stamp:"🔖", i94:"📄", ssn_card:"🪪", offer_letter:"📝", pay_stub:"💵", tax_return:"🧾", transcript:"📜", other:"📎" };
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
+interface DocumentRecord {
+  id: string;
+  user_id: string;
+  doc_type: string;
+  file_url: string | null;
+  file_name: string | null;
+  file_size_bytes: number | null;
+  mime_type: string | null;
+  expiration_date: string | null;
+  is_current_version: boolean;
+  notes: string | null;
+  ai_extracted_data: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
 export default function DocumentsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [docs, setDocs] = useState<any[]>([]);
+  const [docs, setDocs] = useState<DocumentRecord[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -253,7 +270,17 @@ export default function DocumentsPage() {
                     </a>
                   )}
                   {d.ai_extracted_data && Object.keys(d.ai_extracted_data).length > 0 && (
-                    <p className="text-xs text-indigo-500 mt-2">🤖 AI scanned</p>
+                    <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                      <p className="text-xs text-indigo-500 font-medium mb-1">🤖 AI Extracted</p>
+                      {Object.entries(d.ai_extracted_data).map(([k, v]) => {
+                        const display = typeof v === "string" ? v : typeof v === "object" ? JSON.stringify(v) : String(v ?? "");
+                        return display && display !== "null" ? (
+                          <p key={k} className="text-xs text-gray-500 truncate">
+                            <span className="capitalize">{k.replace(/([A-Z])/g, " $1").trim()}</span>: {display}
+                          </p>
+                        ) : null;
+                      })}
+                    </div>
                   )}
                   {d.notes && <p className="text-xs text-gray-500 mt-2 italic">{d.notes}</p>}
                 </CardContent>

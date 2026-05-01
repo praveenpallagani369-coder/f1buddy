@@ -1,36 +1,117 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
 type Message = { role: "user" | "assistant"; content: string; timestamp?: string };
+type OPTPhase = "f1_active" | "opt_pending" | "opt_active" | "stem_opt_active" | "stem_180_extension" | "grace_period" | "program_ended";
 
-const SUGGESTED = [
-  "Can I work off-campus on F-1 visa?",
-  "How does the 90-day OPT unemployment limit work?",
-  "What happens if my STEM OPT extension is pending when my OPT expires?",
-  "Do I need to file taxes if I had no US income?",
-  "What documents do I need to re-enter the US after travel?",
-  "How do I get an SSN as an international student?",
-  "What's the cheapest way to send money home?",
-  "How do I build credit history in the US?",
-];
+const PHASE_QUESTIONS: Record<OPTPhase, string[]> = {
+  f1_active: [
+    "Can I work off-campus on F-1 visa?",
+    "When should I apply for OPT?",
+    "Do I need to file taxes if I had no US income?",
+    "What documents do I need to re-enter the US after travel?",
+    "How do I get an SSN as an international student?",
+    "What's the 5-month travel rule for F-1 students?",
+  ],
+  opt_pending: [
+    "Can I start working before my EAD card arrives?",
+    "How long does USCIS take to process OPT applications?",
+    "What do I do if my OPT is still pending and my program ends?",
+    "Can I travel internationally while my OPT is pending?",
+    "What happens if my OPT application is denied?",
+    "Do I need to report my employer before my EAD arrives?",
+  ],
+  opt_active: [
+    "How does the 90-day OPT unemployment limit work?",
+    "Do days traveling abroad count toward OPT unemployment?",
+    "When and how do I report a new employer to my DSO?",
+    "Can I change jobs during OPT?",
+    "Am I eligible to apply for STEM OPT extension?",
+    "What documents do I need for re-entry as an OPT worker?",
+  ],
+  stem_opt_active: [
+    "What are the STEM OPT validation report deadlines?",
+    "What happens if my employer loses E-Verify enrollment?",
+    "Can I change employers during STEM OPT?",
+    "How does the 150-day STEM unemployment limit work?",
+    "What is an I-983 Training Plan and how do I fill it out?",
+    "Can I apply for H-1B while on STEM OPT?",
+  ],
+  stem_180_extension: [
+    "Am I allowed to work during the 180-day auto-extension?",
+    "What document proves my work authorization during the 180-day cap-gap?",
+    "What do I do if my STEM extension is denied?",
+    "Can I travel internationally during the 180-day extension?",
+    "How long does STEM OPT extension take to process?",
+    "When should I start looking for H-1B sponsorship?",
+  ],
+  grace_period: [
+    "Can I work at all during the 60-day grace period?",
+    "What are my options during the 60-day grace period?",
+    "How do I file for a change of status from F-1?",
+    "What happens if I overstay the 60-day grace period?",
+    "Does H-1B cap-gap extend my work authorization?",
+    "Should I depart the US or change status?",
+  ],
+  program_ended: [
+    "What are my options now that my program has ended?",
+    "Can I stay in the US and change my visa status?",
+    "What are the consequences of overstaying my visa?",
+    "How do I apply for reinstatement if I fell out of status?",
+    "Can I reapply for a student visa from outside the US?",
+    "What does 'voluntary departure' mean for immigration?",
+  ],
+};
 
 export default function AIPage() {
+  const supabase = createClient();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [phase, setPhase] = useState<OPTPhase>("f1_active");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     loadHistory();
+    loadPhase();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  async function loadPhase() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: opt } = await supabase
+        .from("opt_status")
+        .select("opt_type,ead_start_date,ead_end_date,application_date")
+        .eq("user_id", user.id)
+        .single();
+
+      if (!opt) { setPhase("f1_active"); return; }
+      const today = new Date();
+      if (opt.application_date && !opt.ead_start_date) { setPhase("opt_pending"); return; }
+      if (!opt.ead_start_date || !opt.ead_end_date) { setPhase("f1_active"); return; }
+      const eadStart = new Date(opt.ead_start_date);
+      const eadEnd   = new Date(opt.ead_end_date);
+      const graceEnd = new Date(eadEnd.getTime() + 60 * 24 * 60 * 60 * 1000);
+      const stem180End = new Date(eadEnd.getTime() + 180 * 24 * 60 * 60 * 1000);
+      if (today < eadStart) { setPhase(opt.application_date ? "opt_pending" : "f1_active"); return; }
+      if (today <= eadEnd)  { setPhase(opt.opt_type === "stem_extension" ? "stem_opt_active" : "opt_active"); return; }
+      if (opt.opt_type === "stem_extension" && opt.application_date && new Date(opt.application_date) <= eadEnd && today <= stem180End) {
+        setPhase("stem_180_extension"); return;
+      }
+      setPhase(today <= graceEnd ? "grace_period" : "program_ended");
+    } catch { /* use default */ }
+  }
 
   async function loadHistory() {
     try {
@@ -118,7 +199,7 @@ export default function AIPage() {
               I know your program, OPT status, travel history, and upcoming deadlines — so my answers are specific to your situation.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full max-w-2xl">
-              {SUGGESTED.map((q) => (
+              {PHASE_QUESTIONS[phase].map((q) => (
                 <button key={q} onClick={() => send(q)}
                   className="text-left p-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 transition-colors hover:border-indigo-200">
                   {q}

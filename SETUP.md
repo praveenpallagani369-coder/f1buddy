@@ -1,10 +1,10 @@
-# F1Buddy — Local Setup Guide (15 minutes)
+﻿# VisaBuddy — Local Setup Guide (15 minutes)
 
 ## Step 1: Create Supabase Project (free, ~5 min)
 
 1. Go to https://supabase.com → Sign up (GitHub or email)
 2. Click **New Project**
-   - Name: `f1buddy-dev`
+   - Name: `visabuddy-dev`
    - Database password: pick a strong one (save it)
    - Region: pick closest to you
 3. Wait ~2 min for project to provision
@@ -35,7 +35,7 @@
 
 ## Step 3: Fill .env.local (~2 min)
 
-Open `/Users/ppallagani/Desktop/projects/f1buddy/.env.local` and replace the placeholder values:
+Open `/Users/ppallagani/Desktop/projects/visabuddy/.env.local` and replace the placeholder values:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
@@ -50,7 +50,7 @@ STRIPE_SECRET_KEY=sk_test_placeholder
 STRIPE_WEBHOOK_SECRET=whsec_placeholder
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_placeholder
 RESEND_API_KEY=re_placeholder
-RESEND_FROM_EMAIL=noreply@f1buddy.app
+RESEND_FROM_EMAIL=noreply@visabuddy.app
 ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000
 ENCRYPTION_IV=00000000000000000000000000000000
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -61,7 +61,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## Step 4: Run the App
 
 ```bash
-cd ~/Desktop/projects/f1buddy
+cd ~/Desktop/projects/visabuddy
 npm install       # only if not done yet
 npm run dev
 ```

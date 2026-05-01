@@ -1,4 +1,4 @@
-# F1Buddy — Future Features
+﻿# VisaBuddy — Future Features
 
 ## Immigration Attorney Community (High Priority)
 
@@ -12,7 +12,7 @@ Connect verified immigration attorneys with F-1 students through the community Q
 
 **Business model:**
 - Attorneys pay a monthly listing fee for verified profile + lead access
-- F1Buddy takes a small cut on consultations booked through the platform
+- VisaBuddy takes a small cut on consultations booked through the platform
 - Students get reliable, attorney-reviewed answers (not just peer advice)
 - Attorneys get warm leads from students who already trust them
 

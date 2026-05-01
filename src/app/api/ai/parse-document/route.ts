@@ -1,5 +1,6 @@
 import { getAuthUser, ok, err } from "@/lib/api/helpers";
 import { getGroqClient } from "@/lib/ai/groq";
+import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 
 const schema = z.object({ docId: z.string().uuid() });
@@ -19,6 +20,9 @@ const DEFAULT_PROMPT = `Extract any expiration date and document number from thi
 export async function POST(request: Request) {
   const { user, supabase, error } = await getAuthUser();
   if (error || !user) return err("UNAUTHORIZED", "Sign in required", 401);
+
+  const { allowed } = await rateLimitDB(supabase, `ai-parse:${user.id}`, 5, 60);
+  if (!allowed) return err("RATE_LIMIT", "AI parsing limit reached. Please wait a moment.", 429);
 
   const body = await request.json().catch(() => null);
   const parsed = schema.safeParse(body);

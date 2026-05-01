@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
@@ -10,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "F1Buddy — International Student Life Manager",
+  title: "VisaBuddy — Immigration & Visa Manager",
   description:
-    "Track your F-1 visa deadlines, OPT employment, travel records, and immigration compliance. Built for 1.1M international students.",
+    "Track visa deadlines, OPT/H-1B status, travel records, and immigration compliance. Built for F-1 students, H-1B workers, and NRIs navigating US immigration.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
