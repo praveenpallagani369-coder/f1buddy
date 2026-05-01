@@ -130,7 +130,8 @@ export default function DocumentsPage() {
           setForm(f => ({ ...f, expirationDate: f.expirationDate || expiry }));
         }
       } else {
-        setAiErrorCode(json.error?.code ?? "AI_ERROR");
+        const detail = json.error?.detail ? ` (${json.error.detail})` : "";
+        setAiErrorCode((json.error?.code ?? "AI_ERROR") + detail);
         setAiScanState("error");
       }
     } catch {

@@ -4,6 +4,12 @@ import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 
+const VISION_MODELS = [
+  "meta-llama/llama-4-scout-17b-16e-instruct",
+  "llama-3.2-11b-vision-preview",
+  "llama-3.2-90b-vision-preview",
+];
+
 const schema = z.object({
   imageBase64: z.string().min(1),
   mimeType: z.enum(["image/jpeg", "image/jpg", "image/png", "image/webp"]),
@@ -20,8 +26,25 @@ const EXTRACT_PROMPTS: Record<string, string> = {
 
 const DEFAULT_PROMPT = `You are reading an official document. Extract any expiration date, document number or ID, and holder name if visible. Return ONLY valid JSON: {"expirationDate":"YYYY-MM-DD","documentNumber":"...","holderName":"..."}. Use null for any field you cannot read.`;
 
+async function tryVisionModel(client: ReturnType<typeof getGroqClient>, model: string, prompt: string, dataUrl: string) {
+  const completion = await client.chat.completions.create({
+    model,
+    messages: [
+      {
+        role: "user" as const,
+        content: [
+          { type: "text" as const, text: `${prompt}\n\nReturn ONLY the JSON object. No explanations, no markdown.` },
+          { type: "image_url" as const, image_url: { url: dataUrl } },
+        ],
+      },
+    ],
+    temperature: 0.1,
+    max_tokens: 300,
+  });
+  return completion.choices[0]?.message?.content ?? "{}";
+}
+
 export async function POST(request: Request) {
-  // Check GROQ key exists before doing anything
   if (!process.env.GROQ_API_KEY) {
     return NextResponse.json({ success: false, error: { code: "NO_AI_KEY", message: "AI scanning not configured" } }, { status: 503 });
   }
@@ -44,63 +67,53 @@ export async function POST(request: Request) {
 
   const { imageBase64, mimeType, docType } = parsed.data;
 
-  // Client resizes to max 1200px before sending, so this should be well under 2MB
   if (imageBase64.length > 5_000_000) {
-    return err("TOO_LARGE", "Image is too large for AI scanning (max ~3.5MB)", 413);
+    return err("TOO_LARGE", "Image is too large for AI scanning", 413);
   }
 
   const dataUrl = `data:${mimeType};base64,${imageBase64}`;
   const prompt = EXTRACT_PROMPTS[docType] ?? DEFAULT_PROMPT;
+  const client = getGroqClient();
 
-  try {
-    const client = getGroqClient();
-    const completion = await client.chat.completions.create({
-      model: "llama-3.2-11b-vision-preview",
-      messages: [
-        {
-          role: "user" as const,
-          content: [
-            { type: "text" as const, text: `${prompt}\n\nIMPORTANT: Return ONLY the JSON object. No explanations, no markdown, no extra text.` },
-            { type: "image_url" as const, image_url: { url: dataUrl } },
-          ],
-        },
-      ],
-      temperature: 0.1,
-      max_tokens: 300,
-    });
-
-    const text = completion.choices[0]?.message?.content ?? "{}";
-    let extracted: Record<string, string | null> = {};
+  let lastError: unknown;
+  for (const model of VISION_MODELS) {
     try {
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) extracted = JSON.parse(jsonMatch[0]);
-    } catch { /* malformed AI response — return empty */ }
+      const text = await tryVisionModel(client, model, prompt, dataUrl);
 
-    // Clean up "null" strings and empty values
-    const cleaned: Record<string, string | null> = {};
-    for (const [k, v] of Object.entries(extracted)) {
-      cleaned[k] = v === "null" || v === "" || v == null ? null : String(v);
-    }
+      let extracted: Record<string, string | null> = {};
+      try {
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) extracted = JSON.parse(jsonMatch[0]);
+      } catch { /* malformed AI response */ }
 
-    // Validate date format — reject anything that isn't YYYY-MM-DD
-    if (cleaned.expirationDate) {
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(cleaned.expirationDate)) {
-        cleaned.expirationDate = null;
+      const cleaned: Record<string, string | null> = {};
+      for (const [k, v] of Object.entries(extracted)) {
+        cleaned[k] = v === "null" || v === "" || v == null ? null : String(v);
       }
-    }
-    if (cleaned.programEndDate) {
-      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-      if (!dateRegex.test(cleaned.programEndDate)) {
-        cleaned.programEndDate = null;
-      }
-    }
 
-    return ok({ extracted: cleaned, docType });
-  } catch (e: unknown) {
-    const status = (e as { status?: number })?.status;
-    if (status === 429) return err("RATE_LIMIT", "AI service busy. Please enter dates manually.", 429);
-    if (status === 400) return err("AI_ERROR", "AI could not read this image. Please enter dates manually.", 422);
-    return err("AI_ERROR", "AI scan failed. Please enter dates manually.", 503);
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (cleaned.expirationDate && !dateRegex.test(cleaned.expirationDate)) cleaned.expirationDate = null;
+      if (cleaned.programEndDate && !dateRegex.test(cleaned.programEndDate)) cleaned.programEndDate = null;
+
+      return ok({ extracted: cleaned, docType, model });
+    } catch (e: unknown) {
+      lastError = e;
+      const status = (e as { status?: number })?.status;
+      // 429 = rate limited on this model, try next
+      // 404 = model not found, try next
+      // 400 = bad request, try next model
+      if (status === 503 || status === 500) break; // server error, no point retrying
+    }
   }
+
+  // All models failed — log for debugging
+  const errStatus = (lastError as { status?: number })?.status;
+  const errMsg = (lastError as { message?: string })?.message ?? "unknown";
+  console.error(`[scan-document] All vision models failed. Last error: ${errStatus} — ${errMsg}`);
+
+  if (errStatus === 429) return err("RATE_LIMIT", "AI service busy. Please enter dates manually.", 429);
+  return NextResponse.json({
+    success: false,
+    error: { code: "AI_ERROR", message: "AI scan failed", detail: `${errStatus ?? "?"}: ${errMsg}` }
+  }, { status: 503 });
 }
