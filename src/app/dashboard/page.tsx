@@ -92,17 +92,17 @@ function StatCard({
   const iconBg = ICON_BG[accent] ?? "bg-gray-100";
   const iconColor = ICON_COLOR[accent] ?? "text-gray-500";
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] p-4 relative overflow-hidden hover:shadow-md transition-shadow">
-      <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-2xl`} />
-      <div className="flex items-start justify-between mb-2">
-        <p className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
-        <div className={`w-7 h-7 rounded-lg ${iconBg} ${iconColor} flex items-center justify-center flex-shrink-0`}>
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] p-3 sm:p-4 relative overflow-hidden hover:shadow-md transition-shadow">
+      <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-xl`} />
+      <div className="flex items-start justify-between mb-1.5">
+        <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2">{label}</p>
+        <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg ${iconBg} ${iconColor} flex items-center justify-center flex-shrink-0`}>
           {icon}
         </div>
       </div>
-      <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none mb-1">{value}</div>
-      {sub && <div className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">{sub}</div>}
-      {children}
+      <div className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none mb-1">{value}</div>
+      {sub && <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 hidden sm:block">{sub}</div>}
+      <div className="hidden sm:block">{children}</div>
     </div>
   );
 }
@@ -207,7 +207,7 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3 sm:space-y-5">
 
       {/* ── Header ──────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-3">
@@ -224,15 +224,15 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Phase Banner ─────────────────────────────────────────── */}
-      <div className={`rounded-2xl border ${phaseConfig.border} bg-gradient-to-r ${phaseConfig.gradient} p-5`}>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-start gap-3 min-w-0">
-            <div className={`w-8 h-8 rounded-xl ${phaseConfig.badge} flex items-center justify-center text-lg flex-shrink-0`}>
+      <div className={`rounded-xl border ${phaseConfig.border} bg-gradient-to-r ${phaseConfig.gradient} p-3 sm:p-5`}>
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl ${phaseConfig.badge} flex items-center justify-center flex-shrink-0`}>
               {phaseConfig.icon}
             </div>
             <div className="min-w-0">
-              <p className={`text-sm font-bold ${phaseConfig.text} mb-0.5`}>Current Phase: {phaseConfig.label}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{phaseConfig.tagline}</p>
+              <p className={`text-sm font-bold ${phaseConfig.text}`}>Current Phase: {phaseConfig.label}</p>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed hidden sm:block">{phaseConfig.tagline}</p>
               {phase === "opt_pending" && opt?.application_date && (
                 <p className="text-xs text-amber-600 mt-1.5 font-medium">
                   Filed: {opt.application_date} · Typical wait: 3–5 months · Track at egov.uscis.gov
@@ -272,7 +272,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Stat Cards ───────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         {/* Unemployment */}
         <StatCard
           label={phase === "stem_opt_active" ? "STEM Unemployment" : "OPT Unemployment"}
@@ -417,8 +417,8 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Right column */}
-        <div className="space-y-4">
+        {/* Right column — hidden on mobile, visible sm+ */}
+        <div className="hidden sm:block space-y-4">
 
           {/* Current Employment */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5">
@@ -481,7 +481,24 @@ export default async function DashboardPage() {
       {/* ── Tools & Resources ────────────────────────────────────── */}
       <div>
         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        {/* Mobile: horizontal scroll strip */}
+        <div className="flex gap-3 overflow-x-auto pb-1 sm:hidden scrollbar-hide">
+          {[
+            { href: "/dashboard/currency", icon: <ArrowLeftRight className="w-5 h-5" />, label: "Currency",  color: "bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400"  },
+            { href: "/dashboard/holidays", icon: <CalendarDays className="w-5 h-5" />, label: "Holidays",  color: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"   },
+            { href: "/dashboard/news",     icon: <Newspaper className="w-5 h-5" />, label: "News",       color: "bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400" },
+            { href: "/dashboard/guides",   icon: <BookMarked className="w-5 h-5" />, label: "Guides",     color: "bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400" },
+            { href: "/dashboard/emergency",icon: <ShieldAlert className="w-5 h-5" />, label: "Emergency",  color: "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400"  },
+          ].map(({ href, icon, label, color }) => (
+            <Link key={href} href={href}
+              className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-center flex-shrink-0 w-20 active:opacity-70 transition-opacity">
+              <div className={`w-9 h-9 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
+              <span className="text-[10px] text-gray-700 dark:text-gray-300 font-medium leading-tight">{label}</span>
+            </Link>
+          ))}
+        </div>
+        {/* Desktop: grid */}
+        <div className="hidden sm:grid sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
             { href: "/dashboard/currency", icon: <ArrowLeftRight className="w-5 h-5" />, label: "Currency",  desc: "Exchange rates", color: "bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400"  },
             { href: "/dashboard/holidays", icon: <CalendarDays className="w-5 h-5" />, label: "Holidays",  desc: "Bank closures",  color: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"   },
