@@ -285,6 +285,7 @@ export default function OnboardingPage() {
   }, []);
 
   const handleEADScan = useCallback((extracted: Record<string, string | null>) => {
+    if (extracted.startDate) set("eadStartDate", extracted.startDate, true);
     if (extracted.expirationDate) set("eadEndDate", extracted.expirationDate, true);
     if (extracted.category) set("eadCategory", extracted.category, true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -495,7 +496,7 @@ export default function OnboardingPage() {
                   )}
 
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="EAD Start Date" id="eadStart" type="date" value={form.eadStartDate} onChange={(v) => set("eadStartDate", v)} />
+                    <Field label="EAD Start Date" id="eadStart" type="date" value={form.eadStartDate} onChange={(v) => set("eadStartDate", v)} highlighted={aiFilledFields.has("eadStartDate")} />
                     <Field label="EAD End Date" id="eadEnd" type="date" value={form.eadEndDate} onChange={(v) => set("eadEndDate", v)} highlighted={aiFilledFields.has("eadEndDate")} />
                   </div>
                 </div>

@@ -15,7 +15,7 @@ const schema = z.object({
 // Tell the AI to return dates in any format it sees — we'll normalize on our side
 const EXTRACT_PROMPTS: Record<string, string> = {
   i20: `You are reading an I-20 document. Extract: program end date (look for "Program End Date" field), SEVIS ID (starts with N followed by 9 digits), student name. Return ONLY valid JSON: {"expirationDate":"date as shown on document","sevisId":"N...","studentName":"..."}. Use null for any field you cannot read clearly.`,
-  ead: `You are reading an EAD (Employment Authorization Document) card. Extract: card expiration date (look for "Card Expires" field), card category (e.g. C3B or C3C), card number. Return ONLY valid JSON: {"expirationDate":"date as shown on card","category":"...","documentNumber":"..."}. Use null for any field you cannot read clearly.`,
+  ead: `You are reading an EAD (Employment Authorization Document) card. Extract: the "Valid From" or start date (the first date in the validity range or "Valid From" field), the card expiration date (look for "Card Expires" or "Valid To" field), the card category code (e.g. C3B, C3C — usually under the photo or near "Category"), and the card number. Return ONLY valid JSON: {"startDate":"valid-from date as shown","expirationDate":"card-expires date as shown","category":"...","documentNumber":"..."}. Use null for any field you cannot read clearly.`,
   passport: `You are reading a passport. Extract: expiration date (look for "Date of Expiry" or "Expiry Date" or "Expires" field), passport number, nationality, full name. Return ONLY valid JSON: {"expirationDate":"date as shown","documentNumber":"...","nationality":"...","fullName":"..."}. Use null for any field you cannot read clearly.`,
   visa_stamp: `You are reading a US visa stamp. Extract: expiration date, visa category (F-1, B-2, H-1B etc), entries allowed. Return ONLY valid JSON: {"expirationDate":"date as shown","visaCategory":"...","entries":"..."}. Use null for any field you cannot read clearly.`,
   i94: `You are reading an I-94 arrival/departure record. Extract: admit-until date (could be D/S or a specific date), class of admission. Return ONLY valid JSON: {"expirationDate":"date or D/S as shown","classOfAdmission":"...","documentNumber":"..."}. Use null for any field you cannot read clearly.`,
@@ -152,7 +152,7 @@ export async function POST(request: Request) {
     const cleaned: Record<string, string | null> = {};
     for (const [k, v] of Object.entries(extracted)) {
       const raw = v === "null" || v === "" || v == null ? null : String(v);
-      if (k === "expirationDate" || k === "programEndDate") {
+      if (k === "expirationDate" || k === "programEndDate" || k === "startDate") {
         cleaned[k] = normalizeDate(raw);
       } else {
         cleaned[k] = raw;
