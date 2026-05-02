@@ -34,20 +34,38 @@ function normalizeDate(raw: string | null | undefined): string | null {
   // Already YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
 
-  // MM/DD/YYYY  (US driver's license, EAD, etc.)
-  const mdy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (mdy) return `${mdy[3]}-${mdy[1].padStart(2, "0")}-${mdy[2].padStart(2, "0")}`;
+  const months: Record<string, string> = { jan:"01",feb:"02",mar:"03",apr:"04",may:"05",jun:"06",jul:"07",aug:"08",sep:"09",oct:"10",nov:"11",dec:"12" };
+  const monthsFull: Record<string, string> = { january:"01",february:"02",march:"03",april:"04",may:"05",june:"06",july:"07",august:"08",september:"09",october:"10",november:"11",december:"12" };
 
-  // DD/MM/YYYY  (international passports)
-  const dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2, "0")}-${dmy[1].padStart(2, "0")}`;
+  // X/Y/YYYY — disambiguate MM/DD vs DD/MM by value: if first > 12 it's DD, if second > 12 it's MM first
+  const slashDate = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashDate) {
+    const a = parseInt(slashDate[1], 10);
+    const b = parseInt(slashDate[2], 10);
+    if (a > 12) {
+      // First number can't be a month — must be DD/MM/YYYY
+      return `${slashDate[3]}-${slashDate[2].padStart(2, "0")}-${slashDate[1].padStart(2, "0")}`;
+    } else if (b > 12) {
+      // Second number can't be a month — must be MM/DD/YYYY
+      return `${slashDate[3]}-${slashDate[1].padStart(2, "0")}-${slashDate[2].padStart(2, "0")}`;
+    } else {
+      // Ambiguous: assume MM/DD/YYYY (US docs like EAD use this)
+      return `${slashDate[3]}-${slashDate[1].padStart(2, "0")}-${slashDate[2].padStart(2, "0")}`;
+    }
+  }
 
   // DD MMM YYYY  (e.g. "15 JAN 2029" or "15 Jan 2029") — common on passports
-  const months: Record<string, string> = { jan:"01",feb:"02",mar:"03",apr:"04",may:"05",jun:"06",jul:"07",aug:"08",sep:"09",oct:"10",nov:"11",dec:"12" };
   const dMonthY = s.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
   if (dMonthY) {
     const m = months[dMonthY[2].toLowerCase()];
     if (m) return `${dMonthY[3]}-${m}-${dMonthY[1].padStart(2, "0")}`;
+  }
+
+  // DD MMMMMM YYYY  (e.g. "15 January 2029") — full month name
+  const dFullMonthY = s.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+  if (dFullMonthY) {
+    const m = monthsFull[dFullMonthY[2].toLowerCase()] ?? months[dFullMonthY[2].toLowerCase().slice(0, 3)];
+    if (m) return `${dFullMonthY[3]}-${m}-${dFullMonthY[1].padStart(2, "0")}`;
   }
 
   // MMM DD, YYYY  (e.g. "Jan 15, 2029")
@@ -55,6 +73,13 @@ function normalizeDate(raw: string | null | undefined): string | null {
   if (monthDY) {
     const m = months[monthDY[1].toLowerCase()];
     if (m) return `${monthDY[3]}-${m}-${monthDY[2].padStart(2, "0")}`;
+  }
+
+  // MMMMMM DD, YYYY  (e.g. "January 15, 2029")
+  const fullMonthDY = s.match(/^([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})$/);
+  if (fullMonthDY) {
+    const m = monthsFull[fullMonthDY[1].toLowerCase()];
+    if (m) return `${fullMonthDY[3]}-${m}-${fullMonthDY[2].padStart(2, "0")}`;
   }
 
   // YYYY/MM/DD

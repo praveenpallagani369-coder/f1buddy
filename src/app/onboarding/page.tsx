@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -57,14 +57,18 @@ interface ScannerProps {
 
 function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  // Use a ref so the async handleFile always has the latest callback (no stale closure)
+  const onExtractedRef = useRef(onExtracted);
+  onExtractedRef.current = onExtracted;
+
   const [scanState, setScanState] = useState<ScanState>("idle");
   const [scanMsg, setScanMsg] = useState("");
   const [fileName, setFileName] = useState("");
+  const [extractedSummary, setExtractedSummary] = useState<Record<string, string | null>>({});
 
   async function handleFile(file: File) {
     if (!file) return;
 
-    // Only images — the vision model doesn't accept PDFs
     if (!file.type.startsWith("image/")) {
       setScanState("error");
       setScanMsg("Please use a photo (JPG, PNG, WEBP). PDFs can't be scanned.");
@@ -81,7 +85,6 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
     setScanMsg("Scanning document with AI…");
 
     try {
-      // Convert to base64
       const base64 = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve((reader.result as string).split(",")[1]);
@@ -104,11 +107,13 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
       }
 
       const extracted: Record<string, string | null> = data.data?.extracted ?? {};
-      onExtracted(extracted);
+      // Always call via ref — avoids stale closure from async context
+      onExtractedRef.current(extracted);
+      setExtractedSummary(extracted);
 
       const filled = Object.values(extracted).filter(Boolean).length;
       setScanState("done");
-      setScanMsg(filled > 0 ? `Extracted ${filled} field${filled > 1 ? "s" : ""} — review below.` : "Couldn't read fields clearly — please enter manually.");
+      setScanMsg(filled > 0 ? `Filled ${filled} field${filled > 1 ? "s" : ""} below ↓` : "Couldn't read fields clearly — please enter manually.");
     } catch {
       setScanState("error");
       setScanMsg("Scan failed — please enter dates manually.");
@@ -134,25 +139,31 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
           <Loader2 className="w-5 h-5 text-orange-500 animate-spin flex-shrink-0" />
           <div>
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{fileName}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{scanMsg}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Scanning document with AI…</p>
           </div>
         </div>
       ) : scanState === "done" ? (
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{fileName}</p>
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">{scanMsg}</p>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{scanMsg}</p>
             </div>
+            <button
+              type="button"
+              onClick={() => { setScanState("idle"); setScanMsg(""); setFileName(""); setExtractedSummary({}); if (inputRef.current) inputRef.current.value = ""; }}
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline flex-shrink-0"
+            >
+              Re-scan
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => { setScanState("idle"); setScanMsg(""); setFileName(""); if (inputRef.current) inputRef.current.value = ""; }}
-            className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline flex-shrink-0"
-          >
-            Re-scan
-          </button>
+          {/* Show what was extracted so users can verify */}
+          {Object.entries(extractedSummary).filter(([, v]) => v).map(([k, v]) => (
+            <div key={k} className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
+              <span className="font-medium capitalize">{k.replace(/([A-Z])/g, " $1").trim()}:</span>
+              <span className="font-mono bg-emerald-100 dark:bg-emerald-900/40 px-1.5 py-0.5 rounded">{v}</span>
+            </div>
+          ))}
         </div>
       ) : (
         <button
@@ -247,18 +258,37 @@ export default function OnboardingPage() {
     return null;
   }
 
-  function handlePassportScan(extracted: Record<string, string | null>) {
+  // ISO 3166-1 alpha-3 codes → display name mapping for common student countries
+  const COUNTRY_CODES: Record<string, string> = {
+    ind:"India", chn:"China", kor:"South Korea", can:"Canada", twn:"Taiwan",
+    mex:"Mexico", vnm:"Vietnam", bra:"Brazil", jpn:"Japan", sau:"Saudi Arabia",
+    irn:"Iran", nga:"Nigeria", tur:"Turkey", bgd:"Bangladesh", pak:"Pakistan",
+    npl:"Nepal", lka:"Sri Lanka", idn:"Indonesia", tha:"Thailand", phl:"Philippines",
+  };
+
+  const handlePassportScan = useCallback((extracted: Record<string, string | null>) => {
     if (extracted.expirationDate) set("passportExpiry", extracted.expirationDate, true);
     if (extracted.nationality) {
-      const country = COUNTRIES.find(c => c.toLowerCase() === extracted.nationality?.toLowerCase());
-      if (country) set("homeCountry", country, true);
+      const raw = extracted.nationality.toLowerCase().trim();
+      // Try 3-letter ISO code first
+      const byCode = COUNTRY_CODES[raw];
+      if (byCode) { set("homeCountry", byCode, true); return; }
+      // Try exact match (case-insensitive)
+      const exact = COUNTRIES.find(c => c.toLowerCase() === raw);
+      if (exact) { set("homeCountry", exact, true); return; }
+      // Try "Indian" → "India" by stripping common nationality suffixes
+      const stripped = raw.replace(/(ian|ese|ish|an|i)$/, "");
+      const fuzzy = COUNTRIES.find(c => c.toLowerCase().startsWith(stripped));
+      if (fuzzy) set("homeCountry", fuzzy, true);
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  function handleEADScan(extracted: Record<string, string | null>) {
+  const handleEADScan = useCallback((extracted: Record<string, string | null>) => {
     if (extracted.expirationDate) set("eadEndDate", extracted.expirationDate, true);
     if (extracted.category) set("eadCategory", extracted.category, true);
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const canContinueStep0 = form.visaStatus !== "" && form.homeCountry !== "";
   const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "";
