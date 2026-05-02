@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "./sidebar";
 import { MobileBottomNav } from "./mobile-bottom-nav";
 import { MobileHeader } from "./mobile-header";
+import { MobileMoreSheet } from "./mobile-more-sheet";
 
 interface DashboardShellProps {
   user: { name: string; email: string; role: string };
@@ -13,15 +14,17 @@ interface DashboardShellProps {
 
 export function DashboardShell({ user, children, showSeedButton }: DashboardShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
     setMobileOpen(false);
+    setMoreOpen(false);
   }, [pathname]);
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden">
-      {/* Mobile overlay backdrop */}
+      {/* Mobile overlay backdrop (desktop sidebar drawer) */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm lg:hidden"
@@ -53,7 +56,10 @@ export function DashboardShell({ user, children, showSeedButton }: DashboardShel
       </div>
 
       {/* Mobile bottom nav + floating AI button */}
-      <MobileBottomNav onMoreClick={() => setMobileOpen(true)} />
+      <MobileBottomNav onMoreClick={() => setMoreOpen(true)} />
+
+      {/* More bottom sheet — slides up from bottom on mobile */}
+      <MobileMoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
 
       {showSeedButton}
     </div>

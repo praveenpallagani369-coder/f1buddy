@@ -1,4 +1,6 @@
-const CACHE_NAME = "visabuddy-v1";
+// Bump this string on every production deploy to force clients to re-fetch
+// all cached assets. Old caches are deleted in the activate event below.
+const CACHE_NAME = "visabuddy-v2";
 const OFFLINE_URL = "/offline.html";
 
 const PRECACHE = [

@@ -91,10 +91,10 @@ export default function PricingPage() {
             </div>
             <p className="text-xs font-bold text-orange-200 uppercase tracking-widest mb-2">Premium</p>
             <div className="flex items-baseline gap-1 mb-1">
-              <span className="text-4xl font-bold text-white">$6.99</span>
+              <span className="text-4xl font-bold text-white">$4.99</span>
               <span className="text-orange-200">/mo</span>
             </div>
-            <p className="text-sm text-orange-200 mb-1">or $59.99/year <span className="text-amber-300 font-medium">(save 28%)</span></p>
+            <p className="text-sm text-orange-200 mb-1">or $39.99/year <span className="text-amber-300 font-medium">(save 33%)</span></p>
             <p className="text-xs text-orange-300 mb-6">Cancel anytime.</p>
             <div className="flex flex-col gap-2 mb-6">
               <a
@@ -162,7 +162,7 @@ export default function PricingPage() {
               },
               {
                 q: "When will Premium launch?",
-                a: "Premium is live now. Subscribe monthly ($6.99/mo) or yearly ($59.99/yr) to unlock the AI assistant, email reminders, unlimited document uploads, and tax filing tools.",
+                a: "Premium is live now. Subscribe monthly ($4.99/mo) or yearly ($39.99/yr) to unlock the AI assistant, email reminders, unlimited document uploads, and tax filing tools.",
               },
               {
                 q: "Is my immigration data secure?",

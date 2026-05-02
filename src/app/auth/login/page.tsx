@@ -168,15 +168,19 @@ function LoginForm() {
                 {magicLoading ? "Sending magic link…" : "Send magic link instead"}
               </button>
 
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-100 dark:border-gray-800" />
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span className="bg-white dark:bg-gray-900 px-3 text-gray-400 dark:text-gray-500">or</span>
-                </div>
-              </div>
-              <BiometricLoginButton email={email} />
+              {process.env.NEXT_PUBLIC_ENABLE_BIOMETRIC !== "false" && (
+                <>
+                  <div className="relative my-4">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-100 dark:border-gray-800" />
+                    </div>
+                    <div className="relative flex justify-center text-xs">
+                      <span className="bg-white dark:bg-gray-900 px-3 text-gray-400 dark:text-gray-500">or</span>
+                    </div>
+                  </div>
+                  <BiometricLoginButton email={email} />
+                </>
+              )}
             </>
           )}
         </div>

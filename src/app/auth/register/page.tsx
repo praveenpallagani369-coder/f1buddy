@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -114,23 +115,33 @@ export default function RegisterPage() {
               <Input type="password" placeholder="8+ characters" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
             </div>
 
+            <label className="flex items-start gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 flex-shrink-0"
+                required
+              />
+              <span className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                I agree to the{" "}
+                <Link href="/terms" className="text-gray-700 dark:text-gray-300 underline hover:text-orange-600">Terms of Service</Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="text-gray-700 dark:text-gray-300 underline hover:text-orange-600">Privacy Policy</Link>.
+                I understand that VisaBuddy stores my visa information (including SEVIS ID and passport number) encrypted at rest, and will not share it with third parties.
+              </span>
+            </label>
+
             {error && (
               <div className="text-red-600 dark:text-red-400 text-sm bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-lg p-3">
                 {error}
               </div>
             )}
 
-            <Button type="submit" className="w-full" loading={loading}>
+            <Button type="submit" className="w-full" loading={loading} disabled={!agreed}>
               Create Account — It&apos;s Free
             </Button>
           </form>
-
-          <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-4">
-            By signing up you agree to our{" "}
-            <Link href="/terms" className="hover:underline text-gray-500 dark:text-gray-400">Terms of Service</Link>
-            {" "}and{" "}
-            <Link href="/privacy" className="hover:underline text-gray-500 dark:text-gray-400">Privacy Policy</Link>.
-          </p>
         </div>
 
         <p className="text-center text-gray-500 dark:text-gray-400 text-sm mt-6">

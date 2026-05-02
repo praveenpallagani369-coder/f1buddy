@@ -169,7 +169,7 @@ export default function AIPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-7rem)]">
       {/* Header */}
-      <div className="mb-4 flex items-start justify-between">
+      <div className="mb-3 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">AI Immigration Assistant</h1>
           <p className="text-gray-600 dark:text-gray-400 text-sm">Powered by Groq + Llama 3.3 · Knows your profile &amp; deadlines</p>
@@ -183,6 +183,16 @@ export default function AIPage() {
             {clearing ? "Clearing..." : "Clear history"}
           </button>
         )}
+      </div>
+
+      {/* Legal disclaimer banner */}
+      <div className="flex items-start gap-2.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-xl px-4 py-3 mb-3">
+        <span className="text-amber-500 flex-shrink-0 mt-0.5 text-base leading-none">⚠️</span>
+        <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+          <strong>Not legal advice.</strong> This AI provides general information about F-1 regulations only.
+          Immigration rules change frequently. Always verify with your DSO or a licensed immigration attorney
+          before making any visa-related decisions.
+        </p>
       </div>
 
       {/* Chat area */}
@@ -236,11 +246,6 @@ export default function AIPage() {
             <div ref={bottomRef} />
           </>
         )}
-      </div>
-
-      {/* Disclaimer */}
-      <div className="text-xs text-gray-500 text-center mb-3">
-        AI responses are informational only and not legal advice. Verify with your DSO or immigration attorney.
       </div>
 
       {/* Input */}
