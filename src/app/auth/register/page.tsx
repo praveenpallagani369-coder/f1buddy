@@ -1,27 +1,28 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
 
 export default function RegisterPage() {
   const supabase = createClient();
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signUp({
+
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -29,12 +30,23 @@ export default function RegisterPage() {
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
     });
-    if (error) {
-      setError(error.message);
+
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
-    } else {
-      setSuccess(true);
+      return;
     }
+
+    // Auto sign-in immediately (works when Supabase email confirmation is disabled)
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (!signInError) {
+      router.push("/onboarding");
+      router.refresh();
+      return;
+    }
+
+    // Fallback: Supabase still requires email confirmation — send them to login
+    router.push("/auth/login?msg=check-email");
   }
 
   async function handleGoogle() {
@@ -42,27 +54,6 @@ export default function RegisterPage() {
       provider: "google",
       options: { redirectTo: `${location.origin}/auth/callback` },
     });
-  }
-
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <div className="text-center max-w-sm animate-fade-in">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Verify your email</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-            We sent a confirmation link to{" "}
-            <strong className="text-gray-900 dark:text-gray-100">{email}</strong>.
-            Click it to activate your account and start onboarding.
-          </p>
-          <Link href="/auth/login" className="inline-block mt-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium text-sm">
-            Back to sign in
-          </Link>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -128,7 +119,7 @@ export default function RegisterPage() {
                 <Link href="/terms" className="text-gray-700 dark:text-gray-300 underline hover:text-orange-600">Terms of Service</Link>{" "}
                 and{" "}
                 <Link href="/privacy" className="text-gray-700 dark:text-gray-300 underline hover:text-orange-600">Privacy Policy</Link>.
-                I understand that VisaBuddy stores my visa information (including SEVIS ID and passport number) encrypted at rest, and will not share it with third parties.
+                I understand VisaBuddy stores visa data encrypted at rest and never shares it with third parties.
               </span>
             </label>
 
@@ -146,7 +137,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-gray-500 dark:text-gray-400 text-sm mt-6">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">Sign in</Link>
+          <Link href="/auth/login" className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium">Sign in</Link>
         </p>
       </div>
     </div>

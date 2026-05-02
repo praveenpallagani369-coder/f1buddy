@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Sparkles } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
-import { BiometricLoginButton } from "@/components/auth/biometric-login-button";
 
 function LoginForm() {
   const router = useRouter();
@@ -19,10 +18,15 @@ function LoginForm() {
   const [magicLoading, setMagicLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [magicSent, setMagicSent] = useState(false);
 
   useEffect(() => {
+    const msg = searchParams.get("msg");
     const urlError = searchParams.get("error");
+    if (msg === "check-email") {
+      setInfo("Account created! Check your email for a confirmation link, then sign in below.");
+    }
     if (urlError === "auth_failed") {
       setError("Google sign-in failed. Please check that Google is enabled in Supabase Auth settings, or use email sign-in below.");
     }
@@ -66,13 +70,11 @@ function LoginForm() {
       setError(error.message);
       setGoogleLoading(false);
     }
-    // On success the browser redirects — no need to setLoading(false)
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4">
       <div className="w-full max-w-md animate-fade-in">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="mb-4 flex justify-center">
             <AppIcon size={56} />
@@ -83,6 +85,13 @@ function LoginForm() {
 
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-card">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Sign in to your account</h2>
+
+          {info && (
+            <div className="flex items-start gap-2 text-blue-700 dark:text-blue-300 text-sm bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4">
+              <Mail className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span>{info}</span>
+            </div>
+          )}
 
           {magicSent ? (
             <div className="text-center py-6">
@@ -102,7 +111,6 @@ function LoginForm() {
             </div>
           ) : (
             <>
-              {/* Google */}
               <button
                 onClick={handleGoogle}
                 disabled={googleLoading}
@@ -167,20 +175,6 @@ function LoginForm() {
                 <Sparkles className="w-3.5 h-3.5" />
                 {magicLoading ? "Sending magic link…" : "Send magic link instead"}
               </button>
-
-              {process.env.NEXT_PUBLIC_ENABLE_BIOMETRIC !== "false" && (
-                <>
-                  <div className="relative my-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-100 dark:border-gray-800" />
-                    </div>
-                    <div className="relative flex justify-center text-xs">
-                      <span className="bg-white dark:bg-gray-900 px-3 text-gray-400 dark:text-gray-500">or</span>
-                    </div>
-                  </div>
-                  <BiometricLoginButton email={email} />
-                </>
-              )}
             </>
           )}
         </div>
