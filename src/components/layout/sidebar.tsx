@@ -131,7 +131,7 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
         )}
       </div>
 
-      <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-3">
+      <nav className="flex-1 px-2 py-2 overflow-y-auto no-scrollbar space-y-3">
         {SECTIONS.map((section, si) => (
           <div key={si}>
             {section.label && section.icon && (

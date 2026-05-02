@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Sparkles } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
+import { BiometricLoginButton } from "@/components/auth/biometric-login-button";
 
 function LoginForm() {
   const router = useRouter();
@@ -166,13 +167,23 @@ function LoginForm() {
                 <Sparkles className="w-3.5 h-3.5" />
                 {magicLoading ? "Sending magic link…" : "Send magic link instead"}
               </button>
+
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-100 dark:border-gray-800" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-white dark:bg-gray-900 px-3 text-gray-400 dark:text-gray-500">or</span>
+                </div>
+              </div>
+              <BiometricLoginButton email={email} />
             </>
           )}
         </div>
 
         <p className="text-center text-gray-500 dark:text-gray-400 text-sm mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/register" className="text-orange-600 dark:text-indigo-400 hover:text-orange-700 dark:hover:text-indigo-300 font-medium">
+          <Link href="/auth/register" className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium">
             Sign up free
           </Link>
         </p>

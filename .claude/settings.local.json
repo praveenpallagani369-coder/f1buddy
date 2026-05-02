@@ -1,4 +1,4 @@
-{
+﻿{
   "permissions": {
     "allow": [
       "Bash(node *)",
@@ -14,8 +14,8 @@
       "Bash(npx vitest *)",
       "Bash(npx tsc *)",
       "Bash(npx next *)",
-      "Bash(git -C /c/Users/palla/projects/f1buddy status)",
-      "Bash(git -C /c/Users/palla/projects/f1buddy remote -v)",
+      "Bash(git -C /c/Users/palla/projects/visabuddy status)",
+      "Bash(git -C /c/Users/palla/projects/visabuddy remote -v)",
       "Bash(git *)",
       "Skill(design-audit)",
       "Skill(dark-mode-fix)",

@@ -357,6 +357,44 @@ export const subscriptions = pgTable("subscriptions", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ---- Push Subscriptions (Web Push API) ----
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  endpoint: text("endpoint").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ---- WebAuthn Credentials (Biometric Auth) ----
+export const webauthnCredentials = pgTable("webauthn_credentials", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  credentialId: text("credential_id").notNull().unique(),
+  publicKey: text("public_key").notNull(),
+  counter: integer("counter").default(0).notNull(),
+  deviceName: text("device_name"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const webauthnChallenges = pgTable("webauthn_challenges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  challenge: text("challenge").notNull(),
+  type: text("type").notNull(), // "registration" | "authentication"
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ---- Relations ----
 export const usersRelations = relations(users, ({ many, one }) => ({
   deadlines: many(complianceDeadlines),
@@ -372,4 +410,6 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   optApplicationSteps: many(optApplicationSteps),
   cptRecords: many(cptRecords),
   aiConversation: one(aiConversations),
+  pushSubscription: one(pushSubscriptions),
+  webauthnCredentials: many(webauthnCredentials),
 }));
