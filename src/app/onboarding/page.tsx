@@ -66,6 +66,33 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
   const [fileName, setFileName] = useState("");
   const [extractedSummary, setExtractedSummary] = useState<Record<string, string | null>>({});
 
+    // Resize + compress image via canvas so it fits within Vercel's 4 MB body limit.
+  // Phone photos are 4–12 MB; after compression they're < 200 KB — still sharp
+  // enough for the vision model to read text on documents.
+  async function compressImage(file: File): Promise<{ base64: string; mimeType: string }> {
+    const MAX_SIDE = 1280;
+    const QUALITY = 0.88;
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { naturalWidth: w, naturalHeight: h } = img;
+        if (w > MAX_SIDE || h > MAX_SIDE) {
+          if (w >= h) { h = Math.round(h * MAX_SIDE / w); w = MAX_SIDE; }
+          else        { w = Math.round(w * MAX_SIDE / h); h = MAX_SIDE; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL("image/jpeg", QUALITY);
+        resolve({ base64: dataUrl.split(",")[1], mimeType: "image/jpeg" });
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
   async function handleFile(file: File) {
     if (!file) return;
 
@@ -74,9 +101,9 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
       setScanMsg("Please use a photo (JPG, PNG, WEBP). PDFs can't be scanned.");
       return;
     }
-    if (file.size > 5_000_000) {
+    if (file.size > 20_000_000) {
       setScanState("error");
-      setScanMsg("Image is too large — please use a photo under 5 MB.");
+      setScanMsg("Image is too large — please use a photo under 20 MB.");
       return;
     }
 
@@ -85,17 +112,13 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
     setScanMsg("Scanning document with AI…");
 
     try {
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string).split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Compress before sending — avoids Vercel 4 MB body limit
+      const { base64, mimeType: compressedMime } = await compressImage(file);
 
       const res = await fetch("/api/ai/scan-document", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64, mimeType: file.type, docType }),
+        body: JSON.stringify({ imageBase64: base64, mimeType: compressedMime, docType }),
       });
 
       const data = await res.json();

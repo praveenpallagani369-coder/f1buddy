@@ -116,8 +116,9 @@ export async function POST(request: Request) {
 
   const { imageBase64, mimeType, docType } = parsed.data;
 
-  if (imageBase64.length > 5_000_000) {
-    return err("TOO_LARGE", "Image is too large for AI scanning", 413);
+  // Client compresses images to ~200 KB — 4 MB base64 is a generous server-side safety net
+  if (imageBase64.length > 4_000_000) {
+    return err("TOO_LARGE", "Image is too large. Please take a clearer, closer photo.", 413);
   }
 
   const dataUrl = `data:${mimeType};base64,${imageBase64}`;
