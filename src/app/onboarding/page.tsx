@@ -96,14 +96,14 @@ export default function OnboardingPage() {
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                i < step ? "bg-indigo-600 text-white" :
-                i === step ? "bg-indigo-600 text-white ring-4 ring-indigo-600/30" :
+                i < step ? "bg-orange-600 text-white" :
+                i === step ? "bg-orange-600 text-white ring-4 ring-orange-600/30" :
                 "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
               }`}>
                 {i < step ? "✓" : i + 1}
               </div>
               {i < STEPS.length - 1 && (
-                <div className={`h-0.5 w-8 ${i < step ? "bg-indigo-600" : "bg-gray-200 dark:bg-gray-700"}`} />
+                <div className={`h-0.5 w-8 ${i < step ? "bg-orange-600" : "bg-gray-200 dark:bg-gray-700"}`} />
               )}
             </div>
           ))}

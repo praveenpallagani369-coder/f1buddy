@@ -5,6 +5,11 @@
 /* ── Base reset ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Remove iOS/Android blue tap flash — makes web feel native */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 html {
   scroll-behavior: smooth;
   text-size-adjust: 100%;
@@ -18,6 +23,19 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* When installed as a PWA — disable body bounce/overscroll */
+@media (display-mode: standalone) {
+  html, body {
+    overscroll-behavior: none;
+  }
+}
+
+/* iOS momentum scrolling on all scroll containers */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 /* ── CSS design tokens ──────────────────────────────────── */
@@ -85,8 +103,13 @@ a, button, [role="button"] {
   .text-balance { text-wrap: balance; }
   .font-tabular { font-variant-numeric: tabular-nums; }
 
-  /* Page fade-in for route transitions */
+  /* Page transition — subtle slide-up fade (native app feel) */
   .page-enter {
-    animation: fade-in 0.15s ease-out;
+    animation: page-enter 0.18s ease-out both;
+  }
+
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 }

@@ -92,7 +92,7 @@ function StatCard({
   const iconBg = ICON_BG[accent] ?? "bg-gray-100";
   const iconColor = ICON_COLOR[accent] ?? "text-gray-500";
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] p-4 relative overflow-hidden hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] dark:shadow-[0_1px_3px_rgba(0,0,0,0.3)] p-4 relative overflow-hidden hover:shadow-md active:scale-[0.98] transition-all duration-150">
       <div className={`absolute inset-x-0 top-0 h-1 ${accent} rounded-t-2xl`} />
       <div className="flex items-start justify-between mb-2">
         <p className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold leading-tight pr-2 break-words">{label}</p>
@@ -225,7 +225,7 @@ export default async function DashboardPage() {
 
       {/* ── Phase Banner ─────────────────────────────────────────── */}
       <div className={`rounded-2xl border ${phaseConfig.border} bg-gradient-to-r ${phaseConfig.gradient} p-5`}>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             <div className={`w-8 h-8 rounded-xl ${phaseConfig.badge} flex items-center justify-center text-lg flex-shrink-0`}>
               {phaseConfig.icon}
@@ -260,13 +260,13 @@ export default async function DashboardPage() {
               )}
             </div>
           </div>
-          <div className="flex-shrink-0">
-            {phase === "f1_active"          && <Link href="/dashboard/opt/timeline"   className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>Plan OPT →</Link>}
-            {phase === "opt_pending"        && <Link href="/dashboard/opt/timeline"   className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>Track Application →</Link>}
-            {phase === "opt_active"         && <Link href="/dashboard/opt/stem-timeline" className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>Plan STEM OPT →</Link>}
-            {phase === "stem_opt_active"    && <Link href="/dashboard/opt/stem-reports"  className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>STEM Reports →</Link>}
-            {phase === "stem_180_extension" && <Link href="/dashboard/opt/stem-reports"  className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>STEM Reports →</Link>}
-            {phase === "grace_period"       && <Link href="/dashboard/opt/h1b"           className={`text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 transition-opacity`}>H-1B Cap-Gap →</Link>}
+          <div className="sm:flex-shrink-0">
+            {phase === "f1_active"          && <Link href="/dashboard/opt/timeline"   className={`inline-flex text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 active:scale-95 transition-all`}>Plan OPT →</Link>}
+            {phase === "opt_pending"        && <Link href="/dashboard/opt/timeline"   className={`inline-flex text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 active:scale-95 transition-all`}>Track Application →</Link>}
+            {phase === "opt_active"         && <Link href="/dashboard/opt/stem-timeline" className={`inline-flex text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 active:scale-95 transition-all`}>Plan STEM OPT →</Link>}
+            {phase === "stem_opt_active"    && <Link href="/dashboard/opt/stem-reports"  className={`inline-flex text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 active:scale-95 transition-all`}>STEM Reports →</Link>}
+            {phase === "stem_180_extension" && <Link href="/dashboard/opt/stem-reports"  className={`inline-flex text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 active:scale-95 transition-all`}>STEM Reports →</Link>}
+            {phase === "grace_period"       && <Link href="/dashboard/opt/h1b"           className={`inline-flex text-xs px-3 py-1.5 rounded-lg font-medium ${phaseConfig.badge} hover:opacity-80 active:scale-95 transition-all`}>H-1B Cap-Gap →</Link>}
           </div>
         </div>
       </div>
@@ -398,7 +398,7 @@ export default async function DashboardPage() {
               deadlines.map((d) => {
                 const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
                 return (
-                  <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+                  <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 active:scale-[0.98] transition-all duration-150">
                     <div className={`w-2 h-2 rounded-full flex-shrink-0 ${d.severity === "critical" ? "bg-red-400" : d.severity === "warning" ? "bg-amber-400" : "bg-blue-400"}`} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm text-gray-800 dark:text-gray-200 font-medium truncate">{d.title}</p>
@@ -469,7 +469,7 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
             {QUICK_LINKS[phase].map(({ href, icon, label, color }) => (
               <Link key={href} href={href}
-                className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 transition-all text-center">
+                className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 active:scale-[0.95] active:shadow-none transition-all text-center">
                 <span className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center`}>{icon}</span>
                 <span className="text-xs text-gray-600 dark:text-gray-400 font-medium leading-tight">{label}</span>
               </Link>
@@ -490,7 +490,7 @@ export default async function DashboardPage() {
             { href: "/dashboard/emergency",icon: <ShieldAlert className="w-5 h-5" />, label: "Emergency",  desc: "Contacts & rights",color: "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400"  },
           ].map(({ href, icon, label, desc, color }) => (
             <Link key={href} href={href}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-center hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-center hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 active:scale-[0.95] active:shadow-none transition-all">
               <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
               <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">{label}</span>
               <span className="text-xs text-gray-500 dark:text-gray-400">{desc}</span>

@@ -1,18 +1,28 @@
 {
-  "name": "VisaBuddy",
+  "name": "VisaBuddy — Immigration Manager",
   "short_name": "VisaBuddy",
-  "description": "Track visa deadlines, OPT status, travel records, and immigration compliance.",
+  "description": "Track visa deadlines, OPT unemployment days, travel records, and immigration compliance. Built for F-1 students and H-1B workers.",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#030712",
-  "theme_color": "#4338ca",
+  "background_color": "#fff7ed",
+  "theme_color": "#ea580c",
   "orientation": "portrait",
+  "categories": ["productivity", "education", "utilities"],
   "icons": [
     {
       "src": "/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon.svg",
+      "sizes": "1290x2796",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Compliance Dashboard"
     }
   ]
 }

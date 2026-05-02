@@ -23,12 +23,12 @@ export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {
         className={cn(
           "fixed right-4 z-40 lg:hidden",
           "w-14 h-14 rounded-full flex items-center justify-center",
-          "shadow-lg transition-transform active:scale-95",
+          "shadow-lg transition-all duration-200 active:scale-90",
           isAI
             ? "bg-indigo-700 shadow-indigo-500/50"
             : "bg-gradient-to-br from-indigo-500 to-violet-600 shadow-indigo-500/40",
         )}
-        style={{ bottom: "calc(3.5rem + env(safe-area-inset-bottom) + 10px)" }}
+        style={{ bottom: "calc(3.75rem + env(safe-area-inset-bottom) + 10px)" }}
         aria-label="AI Assistant"
       >
         <Sparkles className="w-6 h-6 text-white" />
@@ -39,35 +39,48 @@ export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {
 
       {/* Bottom nav bar */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+        className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200/80 dark:border-gray-700/80"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="flex items-center justify-around h-14">
+        <div className="flex items-center h-15" style={{ height: "3.75rem" }}>
           {TABS.map(({ href, label, icon: Icon, exact }) => {
             const active = exact ? pathname === href : pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
                 key={href}
                 href={href}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors",
-                  active
-                    ? "text-orange-600 dark:text-orange-400"
-                    : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                )}
+                className="flex flex-col items-center justify-center flex-1 h-full active:opacity-70 transition-opacity"
               >
-                <Icon className={cn("w-5 h-5", active && "scale-110 transition-transform")} />
-                <span className="text-[11px] font-medium leading-none">{label}</span>
+                {/* Pill wraps icon + label when active */}
+                <div className={cn(
+                  "flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl transition-all duration-200",
+                  active
+                    ? "bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400"
+                    : "text-gray-400 dark:text-gray-500"
+                )}>
+                  <Icon className={cn(
+                    "w-5 h-5 transition-transform duration-200",
+                    active && "scale-110"
+                  )} />
+                  <span className={cn(
+                    "text-[11px] leading-none transition-all",
+                    active ? "font-semibold" : "font-medium"
+                  )}>
+                    {label}
+                  </span>
+                </div>
               </Link>
             );
           })}
 
           <button
             onClick={onMoreClick}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="flex flex-col items-center justify-center flex-1 h-full active:opacity-70 transition-opacity"
           >
-            <Menu className="w-5 h-5" />
-            <span className="text-[11px] font-medium leading-none">More</span>
+            <div className="flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl text-gray-400 dark:text-gray-500">
+              <Menu className="w-5 h-5" />
+              <span className="text-[11px] font-medium leading-none">More</span>
+            </div>
           </button>
         </div>
       </nav>
