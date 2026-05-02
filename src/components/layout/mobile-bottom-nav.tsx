@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils/cn";
 const TABS = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock, exact: false },
-  { href: "/dashboard/opt", label: "Work Auth", icon: Briefcase, exact: false },
+  { href: "/dashboard/opt", label: "Work", icon: Briefcase, exact: false },
   { href: "/dashboard/documents", label: "Records", icon: FolderOpen, exact: false },
 ];
 
@@ -63,7 +63,7 @@ export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {
                     active && "scale-110"
                   )} />
                   <span className={cn(
-                    "text-[11px] leading-none transition-all",
+                    "text-[11px] leading-none transition-all whitespace-nowrap",
                     active ? "font-semibold" : "font-medium"
                   )}>
                     {label}
@@ -79,7 +79,7 @@ export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {
           >
             <div className="flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl text-gray-400 dark:text-gray-500">
               <Menu className="w-5 h-5" />
-              <span className="text-[11px] font-medium leading-none">More</span>
+              <span className="text-[11px] font-medium leading-none whitespace-nowrap">More</span>
             </div>
           </button>
         </div>
