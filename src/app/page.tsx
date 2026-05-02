@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import {
   CalendarClock,
   Briefcase,
@@ -73,7 +73,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/auth/register"
-              className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+              className="text-sm px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors"
             >
               Get Started Free
             </Link>
@@ -82,36 +82,45 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <div className="max-w-4xl mx-auto text-center px-6 pt-20 pb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-300 text-xs font-medium mb-6">
-          <span>🛂</span>
-          Built for F-1 students, H-1B workers & NRIs
+      <div className="relative overflow-hidden">
+        {/* Subtle radial gradient mesh — purely decorative */}
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-orange-500/[0.07] blur-3xl" />
+          <div className="absolute top-10 right-0 w-[400px] h-[400px] rounded-full bg-amber-400/[0.05] blur-2xl" />
+          <div className="absolute top-20 left-0 w-[300px] h-[300px] rounded-full bg-orange-300/[0.06] blur-2xl" />
         </div>
-        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-6">
-          Never miss an{" "}
-          <span className="text-indigo-600">immigration</span>{" "}
-          deadline again
-        </h1>
-        <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto">
-          VisaBuddy tracks your OPT unemployment days, visa deadlines, travel limits, and tax obligations so you can focus on studying — not spreadsheets.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/auth/register"
-            className="px-8 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors text-lg"
-          >
-            Start Free — No Credit Card
-          </Link>
-          <Link
-            href="/auth/login"
-            className="px-8 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-lg"
-          >
-            Sign In
-          </Link>
+
+        <div className="max-w-4xl mx-auto text-center px-6 pt-20 pb-16">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-orange-600 dark:bg-orange-950/60 dark:border-orange-800 dark:text-orange-300 text-xs font-medium mb-6">
+            <span>🛂</span>
+            Built for F-1 students, H-1B workers & NRIs
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-6 text-balance">
+            Never miss an{" "}
+            <span className="text-orange-600 dark:text-orange-400">immigration</span>{" "}
+            deadline again
+          </h1>
+          <p className="text-lg text-gray-500 mb-8 max-w-2xl mx-auto leading-relaxed">
+            VisaBuddy tracks your OPT unemployment days, visa deadlines, travel limits, and tax obligations so you can focus on studying — not spreadsheets.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/auth/register"
+              className="px-8 py-3 rounded-xl bg-orange-600 text-white font-semibold hover:bg-orange-700 transition-colors text-lg shadow-lg shadow-orange-200/60 dark:shadow-orange-900/40"
+            >
+              Start Free — No Credit Card
+            </Link>
+            <Link
+              href="/auth/login"
+              className="px-8 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-lg"
+            >
+              Sign In
+            </Link>
+          </div>
+          <p className="text-sm text-gray-400 mt-4">
+            Free plan · Premium $6.99/mo · University licenses available
+          </p>
         </div>
-        <p className="text-sm text-gray-400 mt-4">
-          Free plan · Premium $6.99/mo · University licenses available
-        </p>
       </div>
 
       {/* Stats */}
@@ -119,7 +128,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-3 gap-6 text-center">
           {stats.map((s) => (
             <div key={s.label} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
-              <p className="text-3xl font-bold text-indigo-600">{s.value}</p>
+              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 [font-variant-numeric:tabular-nums]">{s.value}</p>
               <p className="text-sm text-gray-500 mt-1">{s.label}</p>
             </div>
           ))}
@@ -136,13 +145,13 @@ export default function LandingPage() {
           {features.map(({ icon: Icon, title, desc, color }) => (
             <div
               key={title}
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-sm transition-all"
+              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:border-orange-200 dark:hover:border-orange-800 hover:shadow-sm transition-all"
             >
               <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center mb-3`}>
                 <Icon className="w-5 h-5" />
               </div>
               <h3 className="text-gray-900 dark:text-gray-100 font-semibold mb-1">{title}</h3>
-              <p className="text-gray-500 text-sm">{desc}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
@@ -150,16 +159,16 @@ export default function LandingPage() {
 
       {/* CTA */}
       <div className="max-w-2xl mx-auto px-6 pb-20 text-center">
-        <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-10 dark:bg-indigo-950/40 dark:border-indigo-800">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+        <div className="bg-gradient-to-br from-orange-600 to-amber-600 rounded-2xl p-10 shadow-xl shadow-orange-200/50 dark:shadow-orange-900/30">
+          <h2 className="text-2xl font-bold text-white mb-3">
             Ready to stop worrying about deadlines?
           </h2>
-          <p className="text-gray-500 mb-6">
+          <p className="text-orange-100 mb-6">
             Join international students staying in compliance with VisaBuddy
           </p>
           <Link
             href="/auth/register"
-            className="inline-block px-8 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors"
+            className="inline-block px-8 py-3 rounded-xl bg-white text-orange-600 font-semibold hover:bg-orange-50 transition-colors"
           >
             Create Free Account →
           </Link>

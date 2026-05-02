@@ -52,12 +52,12 @@ export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors",
                   active
-                    ? "text-indigo-600 dark:text-indigo-400"
+                    ? "text-orange-600 dark:text-orange-400"
                     : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                 )}
               >
                 <Icon className={cn("w-5 h-5", active && "scale-110 transition-transform")} />
-                <span className="text-[10px] font-medium leading-none">{label}</span>
+                <span className="text-[11px] font-medium leading-none">{label}</span>
               </Link>
             );
           })}
@@ -67,7 +67,7 @@ export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {
             className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           >
             <Menu className="w-5 h-5" />
-            <span className="text-[10px] font-medium leading-none">More</span>
+            <span className="text-[11px] font-medium leading-none">More</span>
           </button>
         </div>
       </nav>

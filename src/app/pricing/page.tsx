@@ -44,7 +44,7 @@ export default function PricingPage() {
             <Link href="/auth/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Sign in
             </Link>
-            <Link href="/auth/register" className="text-sm px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+            <Link href="/auth/register" className="text-sm px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors">
               Get Started Free
             </Link>
           </div>
@@ -85,27 +85,27 @@ export default function PricingPage() {
           </div>
 
           {/* Premium */}
-          <div className="bg-indigo-600 rounded-2xl p-7 relative md:-mt-2 shadow-xl shadow-indigo-200 dark:shadow-indigo-900/40">
+          <div className="bg-orange-600 rounded-2xl p-7 relative md:-mt-2 shadow-xl shadow-orange-200 dark:shadow-orange-900/40">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
               Most Popular
             </div>
-            <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-2">Premium</p>
+            <p className="text-xs font-bold text-orange-200 uppercase tracking-widest mb-2">Premium</p>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-4xl font-bold text-white">$6.99</span>
-              <span className="text-indigo-200">/mo</span>
+              <span className="text-orange-200">/mo</span>
             </div>
-            <p className="text-sm text-indigo-200 mb-1">or $59.99/year <span className="text-amber-300 font-medium">(save 28%)</span></p>
-            <p className="text-xs text-indigo-300 mb-6">Cancel anytime.</p>
+            <p className="text-sm text-orange-200 mb-1">or $59.99/year <span className="text-amber-300 font-medium">(save 28%)</span></p>
+            <p className="text-xs text-orange-300 mb-6">Cancel anytime.</p>
             <div className="flex flex-col gap-2 mb-6">
               <a
                 href="/api/payments/create-checkout?plan=monthly"
-                className="block text-center px-6 py-2.5 rounded-xl bg-white text-indigo-600 hover:bg-indigo-50 transition-colors text-sm font-semibold"
+                className="block text-center px-6 py-2.5 rounded-xl bg-white text-orange-600 hover:bg-indigo-50 transition-colors text-sm font-semibold"
               >
                 Subscribe Monthly →
               </a>
               <a
                 href="/api/payments/create-checkout?plan=yearly"
-                className="block text-center px-6 py-2 rounded-xl border border-indigo-300 text-indigo-100 hover:bg-indigo-500 transition-colors text-xs font-medium"
+                className="block text-center px-6 py-2 rounded-xl border border-orange-300 text-orange-100 hover:bg-orange-500 transition-colors text-xs font-medium"
               >
                 Subscribe Yearly (save 28%) →
               </a>
@@ -113,8 +113,8 @@ export default function PricingPage() {
             <ul className="space-y-2.5">
               {PREMIUM_FEATURES.map(({ label }) => (
                 <li key={label} className="flex items-start gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-indigo-200 flex-shrink-0 mt-0.5" />
-                  <span className="text-indigo-100">{label}</span>
+                  <Check className="w-4 h-4 text-orange-200 flex-shrink-0 mt-0.5" />
+                  <span className="text-orange-100">{label}</span>
                 </li>
               ))}
             </ul>
@@ -129,7 +129,7 @@ export default function PricingPage() {
             <p className="text-sm text-gray-500 mb-6">$15–25/student/year. For ISSS offices.</p>
             <a
               href="mailto:hello@visabuddy.app?subject=University%20License%20Inquiry"
-              className="block text-center px-6 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 transition-colors text-sm font-medium mb-6"
+              className="block text-center px-6 py-2.5 rounded-xl bg-orange-600 text-white hover:bg-orange-700 transition-colors text-sm font-medium mb-6"
             >
               Contact Us
             </a>

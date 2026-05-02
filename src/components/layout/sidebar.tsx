@@ -11,7 +11,7 @@ import {
   FlaskConical, ClipboardList, Building2, Calculator, FileText,
   BookOpen, Plane, ClipboardCheck, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, ArrowLeftRight, CalendarDays, Newspaper,
-  BookMarked, ShieldAlert, LogOut, X, Sun, Moon, Settings,
+  BookMarked, ShieldAlert, LogOut, X, Sun, Moon, Settings, ChevronRight,
   type LucideIcon,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -141,7 +141,7 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
               >
                 <section.icon className="w-[18px] h-[18px] flex-shrink-0" />
                 <span className="flex-1 text-left">{section.label}</span>
-                <span className={cn("text-xs transition-transform flex-shrink-0", isSectionOpen(section) && "rotate-90")}>▸</span>
+                <ChevronRight className={cn("w-3.5 h-3.5 flex-shrink-0 transition-transform duration-150", isSectionOpen(section) && "rotate-90")} />
               </button>
             )}
             {isSectionOpen(section) && <div className="space-y-0.5">
@@ -156,13 +156,12 @@ export function Sidebar({ user, onMobileClose }: { user: { name: string; email: 
                     className={cn(
                       "flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all duration-150",
                       active
-                        ? "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold"
+                        ? "bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-semibold"
                         : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                     )}
                   >
                     <Icon className="w-[18px] h-[18px] flex-shrink-0" />
                     <span className="truncate">{label}</span>
-                    {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400 flex-shrink-0" />}
                   </Link>
                 );
               })}

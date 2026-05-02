@@ -85,15 +85,15 @@ function LoginForm() {
 
           {magicSent ? (
             <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center mx-auto mb-4">
-                <Mail className="w-7 h-7 text-indigo-600" />
+              <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-orange-950/60 flex items-center justify-center mx-auto mb-4">
+                <Mail className="w-7 h-7 text-orange-600" />
               </div>
               <p className="text-gray-900 dark:text-gray-100 font-semibold">Check your email</p>
               <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
                 We sent a magic link to <strong className="text-gray-900 dark:text-gray-100">{email}</strong>
               </p>
               <button
-                className="text-indigo-600 text-sm mt-4 hover:text-indigo-700"
+                className="text-orange-600 text-sm mt-4 hover:text-orange-700"
                 onClick={() => setMagicSent(false)}
               >
                 Try again
@@ -161,7 +161,7 @@ function LoginForm() {
               <button
                 onClick={handleMagicLink}
                 disabled={magicLoading}
-                className="w-full mt-3 flex items-center justify-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-700 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/60 transition-colors disabled:opacity-50"
+                className="w-full mt-3 flex items-center justify-center gap-1.5 text-sm text-orange-600 hover:text-orange-700 py-2 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-950/60 transition-colors disabled:opacity-50"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 {magicLoading ? "Sending magic link…" : "Send magic link instead"}
@@ -172,7 +172,7 @@ function LoginForm() {
 
         <p className="text-center text-gray-500 dark:text-gray-400 text-sm mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/register" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
+          <Link href="/auth/register" className="text-orange-600 dark:text-indigo-400 hover:text-orange-700 dark:hover:text-indigo-300 font-medium">
             Sign up free
           </Link>
         </p>

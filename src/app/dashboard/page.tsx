@@ -50,7 +50,7 @@ function detectPhase(opt: OPTRow | null, today: Date): Phase {
 }
 
 const PHASE_CONFIG: Record<Phase, { label: string; icon: React.ReactNode; gradient: string; border: string; text: string; badge: string; tagline: string }> = {
-  f1_active:         { label: "F-1 Student — Active",            icon: <GraduationCap className="w-4 h-4" />, gradient: "from-indigo-50 to-blue-50 dark:from-indigo-950/50 dark:to-blue-950/50",   border: "border-indigo-200 dark:border-indigo-800", text: "text-indigo-700 dark:text-indigo-300", badge: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300", tagline: "Enrolled and in status. Keep enrollment full-time and report address changes within 10 days." },
+  f1_active:         { label: "F-1 Student — Active",            icon: <GraduationCap className="w-4 h-4" />, gradient: "from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40",   border: "border-orange-200 dark:border-orange-800", text: "text-orange-700 dark:text-orange-300", badge: "bg-orange-100 text-orange-700 dark:bg-orange-900/60 dark:text-orange-300", tagline: "Enrolled and in status. Keep enrollment full-time and report address changes within 10 days." },
   opt_pending:       { label: "OPT Application Pending",         icon: <Hourglass className="w-4 h-4" />, gradient: "from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50",  border: "border-amber-200 dark:border-amber-800",  text: "text-amber-700 dark:text-amber-300",  badge: "bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300",  tagline: "You CANNOT work yet. Wait for the physical EAD card before starting any job." },
   opt_active:        { label: "OPT Active",                      icon: <Briefcase className="w-4 h-4" />, gradient: "from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/50",  border: "border-emerald-200 dark:border-emerald-800", text: "text-emerald-700 dark:text-emerald-300", badge: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300", tagline: "Work must be directly related to your degree. Track unemployment days carefully." },
   stem_opt_active:   { label: "STEM OPT Active",                 icon: <FlaskConical className="w-4 h-4" />, gradient: "from-violet-50 to-purple-50 dark:from-violet-950/50 dark:to-purple-950/50", border: "border-violet-200 dark:border-violet-800", text: "text-violet-700 dark:text-violet-300", badge: "bg-violet-100 text-violet-700 dark:bg-violet-900/60 dark:text-violet-300", tagline: "150-day cumulative unemployment cap. Submit validation reports on time. Employer must stay E-Verify enrolled." },
@@ -100,7 +100,7 @@ function StatCard({
           {icon}
         </div>
       </div>
-      <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none mb-1">{value}</div>
+      <div className="text-3xl font-bold text-gray-900 dark:text-gray-100 leading-none mb-1 [font-variant-numeric:tabular-nums]">{value}</div>
       {sub && <div className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">{sub}</div>}
       {children}
     </div>
@@ -197,11 +197,11 @@ export default async function DashboardPage() {
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   const QUICK_LINKS: Record<Phase, { href: string; icon: React.ReactNode; label: string; color: string }[]> = {
-    f1_active:          [{ href: "/dashboard/opt/timeline", icon: <ListChecks className="w-4 h-4" />, label: "Plan OPT", color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300" }, { href: "/dashboard/cpt", icon: <BookOpen className="w-4 h-4" />, label: "CPT Tracker", color: "bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-300" }, { href: "/dashboard/travel", icon: <Plane className="w-4 h-4" />, label: "Log Trip", color: "bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
+    f1_active:          [{ href: "/dashboard/opt/timeline", icon: <ListChecks className="w-4 h-4" />, label: "Plan OPT", color: "bg-orange-50 text-orange-600 dark:bg-orange-950/60 dark:text-orange-300" }, { href: "/dashboard/cpt", icon: <BookOpen className="w-4 h-4" />, label: "CPT Tracker", color: "bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-300" }, { href: "/dashboard/travel", icon: <Plane className="w-4 h-4" />, label: "Log Trip", color: "bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
     opt_pending:        [{ href: "/dashboard/opt/timeline", icon: <ListChecks className="w-4 h-4" />, label: "Track App", color: "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Upload Docs", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/travel/checklist", icon: <ClipboardCheck className="w-4 h-4" />, label: "Travel Check", color: "bg-teal-50 text-teal-600 dark:bg-teal-950/60 dark:text-teal-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
-    opt_active:         [{ href: "/dashboard/opt", icon: <Briefcase className="w-4 h-4" />, label: "Log Employer", color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300" }, { href: "/dashboard/opt/stem-timeline", icon: <FlaskConical className="w-4 h-4" />, label: "Plan STEM", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }, { href: "/dashboard/travel", icon: <Plane className="w-4 h-4" />, label: "Log Trip", color: "bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300" }],
-    stem_opt_active:    [{ href: "/dashboard/opt/stem-reports", icon: <ClipboardList className="w-4 h-4" />, label: "STEM Reports", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }, { href: "/dashboard/opt", icon: <Briefcase className="w-4 h-4" />, label: "Log Employer", color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300" }, { href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Timeline", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300" }],
-    stem_180_extension: [{ href: "/dashboard/opt/stem-reports", icon: <ClipboardList className="w-4 h-4" />, label: "STEM Reports", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
+    opt_active:         [{ href: "/dashboard/opt", icon: <Briefcase className="w-4 h-4" />, label: "Log Employer", color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300" }, { href: "/dashboard/opt/stem-timeline", icon: <FlaskConical className="w-4 h-4" />, label: "Plan STEM", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }, { href: "/dashboard/travel", icon: <Plane className="w-4 h-4" />, label: "Log Trip", color: "bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
+    stem_opt_active:    [{ href: "/dashboard/opt/stem-reports", icon: <ClipboardList className="w-4 h-4" />, label: "STEM Reports", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }, { href: "/dashboard/opt", icon: <Briefcase className="w-4 h-4" />, label: "Log Employer", color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-300" }, { href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Timeline", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
+    stem_180_extension: [{ href: "/dashboard/opt/stem-reports", icon: <ClipboardList className="w-4 h-4" />, label: "STEM Reports", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-orange-50 text-orange-600 dark:bg-orange-950/60 dark:text-orange-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
     grace_period:       [{ href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Info", color: "bg-red-50 text-red-600 dark:bg-red-950/60 dark:text-red-300" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
     program_ended:      [{ href: "/dashboard/opt/h1b", icon: <Building2 className="w-4 h-4" />, label: "H-1B Info", color: "bg-gray-50 text-gray-600 dark:bg-gray-800 dark:text-gray-400" }, { href: "/dashboard/deadlines", icon: <CalendarClock className="w-4 h-4" />, label: "Deadlines", color: "bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300" }, { href: "/dashboard/documents", icon: <FolderOpen className="w-4 h-4" />, label: "Documents", color: "bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300" }, { href: "/dashboard/ai", icon: <Sparkles className="w-4 h-4" />, label: "Ask AI", color: "bg-violet-50 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300" }],
   };
@@ -284,10 +284,10 @@ export default async function DashboardPage() {
           {opt && (
             <div className="mt-3">
               <Progress value={unemployPct} max={100} color={unemployColor} />
-              {!opt && <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-2 block">Set up OPT →</Link>}
+              {!opt && <Link href="/dashboard/opt" className="text-xs text-orange-600 hover:underline mt-2 block">Set up OPT →</Link>}
             </div>
           )}
-          {!opt && <Link href="/dashboard/opt" className="text-xs text-indigo-600 hover:underline mt-2 block">Set up OPT →</Link>}
+          {!opt && <Link href="/dashboard/opt" className="text-xs text-orange-600 hover:underline mt-2 block">Set up OPT →</Link>}
         </StatCard>
 
         {/* Days Outside US */}
@@ -342,14 +342,14 @@ export default async function DashboardPage() {
 
       {/* ── OPT Setup Prompt ─────────────────────────────────────── */}
       {!opt && phase === "f1_active" && (
-        <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 flex items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold text-indigo-700 dark:text-indigo-300 mb-0.5">Set up your OPT tracker</p>
-            <p className="text-xs text-indigo-600 dark:text-indigo-400">Add your EAD dates to track unemployment days, get compliance alerts, and let the AI assistant answer questions specific to your status.</p>
+            <p className="text-sm font-semibold text-orange-700 dark:text-orange-300 mb-0.5">Set up your OPT tracker</p>
+            <p className="text-xs text-orange-600 dark:text-orange-400">Add your EAD dates to track unemployment days, get compliance alerts, and let the AI assistant answer questions specific to your status.</p>
           </div>
           <Link
             href="/dashboard/opt"
-            className="flex-shrink-0 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors whitespace-nowrap"
+            className="flex-shrink-0 px-4 py-2 rounded-xl bg-orange-600 text-white text-sm font-medium hover:bg-orange-700 transition-colors whitespace-nowrap"
           >
             Set up OPT →
           </Link>
@@ -386,7 +386,7 @@ export default async function DashboardPage() {
               <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center"><CalendarClock className="w-4 h-4" /></div>
               <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">Upcoming Deadlines</p>
             </div>
-            <Link href="/dashboard/deadlines" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium">View all →</Link>
+            <Link href="/dashboard/deadlines" className="text-xs text-orange-600 dark:text-orange-400 hover:underline font-medium">View all →</Link>
           </div>
           <div className="px-5 pb-5 space-y-2">
             {deadlines.length === 0 ? (
@@ -411,7 +411,7 @@ export default async function DashboardPage() {
                 );
               })
             )}
-            <Link href="/dashboard/deadlines" className="block text-center text-xs text-indigo-600 dark:text-indigo-400 hover:underline pt-2">
+            <Link href="/dashboard/deadlines" className="block text-center text-xs text-orange-600 dark:text-orange-400 hover:underline pt-2">
               + Add custom deadline
             </Link>
           </div>
@@ -439,7 +439,7 @@ export default async function DashboardPage() {
             ) : (
               <div>
                 <p className="text-gray-500 dark:text-gray-400 text-sm">No current employer logged</p>
-                <Link href="/dashboard/opt" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline mt-1 block">Add employer →</Link>
+                <Link href="/dashboard/opt" className="text-xs text-orange-600 dark:text-orange-400 hover:underline mt-1 block">Add employer →</Link>
               </div>
             )}
           </div>
@@ -447,7 +447,7 @@ export default async function DashboardPage() {
           {/* Program Info */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5 overflow-hidden">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
+              <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
               <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program Info</p>
             </div>
             <div className="space-y-2 text-sm">
