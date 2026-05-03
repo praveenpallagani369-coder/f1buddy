@@ -3,8 +3,9 @@ import { NextResponse } from "next/server";
 
 // CLAUDE.md: "Never store AI conversation content longer than 90 days"
 export async function GET(request: Request) {
-  const cronSecret = request.headers.get("x-cron-secret") ?? new URL(request.url).searchParams.get("secret");
-  if (cronSecret !== process.env.CRON_SECRET) {
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

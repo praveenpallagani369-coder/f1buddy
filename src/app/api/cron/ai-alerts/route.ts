@@ -6,8 +6,9 @@ import { NextResponse } from "next/server";
 const MAX_USERS_PER_RUN = 15; // stay comfortably within 30 RPM
 
 export async function GET(request: Request) {
-  const cronSecret = request.headers.get("x-cron-secret") ?? new URL(request.url).searchParams.get("secret");
-  if (cronSecret !== process.env.CRON_SECRET) {
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import Link from "next/link";
 
 const DOC_OPTIONS = ["Valid Passport","Valid F-1 Visa Stamp","I-20 with Travel Signature","EAD Card","I-94 Print","Proof of Enrollment","Offer Letter","Recent Pay Stubs"];
 

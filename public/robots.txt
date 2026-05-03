@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /privacy
+Allow: /terms
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /onboarding/
+
+Sitemap: https://visabuddy.vercel.app/sitemap.xml

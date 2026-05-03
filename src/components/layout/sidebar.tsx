@@ -24,6 +24,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock },
+      { href: "/dashboard/travel", label: "Travel", icon: Plane },
     ],
   },
   {
@@ -32,13 +33,6 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard/opt", label: "OPT Tracker", icon: Briefcase },
       { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen },
-    ],
-  },
-  {
-    label: "Travel",
-    icon: Plane,
-    items: [
-      { href: "/dashboard/travel", label: "Travel", icon: Plane },
     ],
   },
   {
