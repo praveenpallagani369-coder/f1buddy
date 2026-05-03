@@ -10,7 +10,7 @@ import {
   Sparkles, MessageCircle, Settings,
   BookMarked, ShieldAlert,
   Sun, Moon, LogOut, X, BookOpen,
-  CalendarClock,
+  CalendarClock, Gavel,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,6 +32,7 @@ const SHEET_SECTIONS: SheetSection[] = [
     items: [
       { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles, badge: "AI" },
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
+      { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
     ],
   },
   {

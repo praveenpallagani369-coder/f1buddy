@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // VisaBuddy Database Schema (Drizzle ORM)
 // Used to generate SQL migrations for Supabase
 // ============================================================
@@ -22,6 +22,7 @@ export const userRoleEnum = pgEnum("user_role", [
   "student",
   "premium",
   "university_admin",
+  "lawyer",
   "admin",
 ]);
 export const deadlineCategoryEnum = pgEnum("deadline_category", [
@@ -395,6 +396,35 @@ export const webauthnChallenges = pgTable("webauthn_challenges", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const lawyerProfiles = pgTable("lawyer_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bio: text("bio"),
+  barNumber: text("bar_number").notNull(),
+  statesLicensed: jsonb("states_licensed").$type<string[]>().default([]).notNull(),
+  consultationUrl: text("consultation_url"),
+  hourlyRate: integer("hourly_rate"),
+  isVerified: boolean("is_verified").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const lawyerReviews = pgTable("lawyer_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  lawyerId: uuid("lawyer_id")
+    .notNull()
+    .references(() => lawyerProfiles.id, { onDelete: "cascade" }),
+  studentId: uuid("student_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ---- Relations ----
 export const usersRelations = relations(users, ({ many, one }) => ({
   deadlines: many(complianceDeadlines),
@@ -412,4 +442,25 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   aiConversation: one(aiConversations),
   pushSubscription: one(pushSubscriptions),
   webauthnCredentials: many(webauthnCredentials),
+  lawyerProfile: one(lawyerProfiles),
+  lawyerReviews: many(lawyerReviews),
+}));
+
+export const lawyerProfilesRelations = relations(lawyerProfiles, ({ one, many }) => ({
+  user: one(users, {
+    fields: [lawyerProfiles.userId],
+    references: [users.id],
+  }),
+  reviews: many(lawyerReviews),
+}));
+
+export const lawyerReviewsRelations = relations(lawyerReviews, ({ one }) => ({
+  lawyer: one(lawyerProfiles, {
+    fields: [lawyerReviews.lawyerId],
+    references: [lawyerProfiles.id],
+  }),
+  student: one(users, {
+    fields: [lawyerReviews.studentId],
+    references: [users.id],
+  }),
 }));

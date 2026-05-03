@@ -1,4 +1,4 @@
-﻿{
+{
   "permissions": {
     "allow": [
       "Bash(node *)",
@@ -23,7 +23,14 @@
       "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+OR+SEVIS&conditions%5Bagencies%5D%5B%5D=citizenship-and-immigration-services-bureau&per_page=3&order=newest&fields%5B%5D=title,publication_date,type\")",
       "Bash(python -m json.tool)",
       "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+OR+SEVIS&conditions%5Bagencies%5D%5B%5D=citizenship-and-immigration-services-bureau&per_page=3&order=newest\")",
-      "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+SEVIS&per_page=3&order=newest\")"
+      "Bash(curl -s \"https://www.federalregister.gov/api/v1/documents.json?conditions%5Bterm%5D=optional+practical+training+OR+F-1+SEVIS&per_page=3&order=newest\")",
+      "Skill(startup-team)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\palla\\\\projects\\\\f1buddy\" -Force | Select-Object Name, FullName, @{Name=\"Type\";Expression={if\\($_.PSIsContainer\\){\"DIR\"}else{\"FILE\"}}} | Format-Table -AutoSize)",
+      "Bash(npm view *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(dir \"C:\\\\Users\\\\palla\\\\projects\\\\f1buddy\\\\src\\\\app\\\\dashboard\")",
+      "Bash(findstr \"jobs\")",
+      "Bash(powershell *)"
     ]
   }
 }

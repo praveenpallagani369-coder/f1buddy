@@ -4,7 +4,7 @@ import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 
-const VISION_MODEL = "meta-llama/llama-4-scout-17b-16e-instruct";
+const VISION_MODEL = "llama-3.2-11b-vision-preview";
 
 const schema = z.object({
   imageBase64: z.string().min(1),

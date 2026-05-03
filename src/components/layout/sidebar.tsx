@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,7 +10,7 @@ import {
   LayoutDashboard, CalendarClock, Briefcase,
   BookOpen, Plane, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, BookMarked, Route, Search,
-  LogOut, X, Sun, Moon, Settings, ChevronRight,
+  LogOut, X, Sun, Moon, Settings, ChevronRight, Gavel,
   type LucideIcon,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -51,6 +51,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
+      { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
       { href: "/dashboard/guides", label: "Guides & Tools", icon: BookMarked },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
     ],

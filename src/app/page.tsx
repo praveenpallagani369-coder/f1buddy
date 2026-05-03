@@ -8,6 +8,13 @@ import {
   Sparkles,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "VisaBuddy — International Student Life Manager",
+  description: "Never miss an immigration deadline again. Track OPT unemployment, SEVIS status, and travel limits automatically.",
+  keywords: ["F-1 visa", "OPT tracker", "STEM OPT", "international student", "USCIS deadlines"],
+};
 
 const features = [
   {
@@ -107,10 +114,11 @@ export default function LandingPage() {
             <Link href="/pricing" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors hidden sm:block">
               Pricing
             </Link>
-            <Link href="/auth/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+            <Link id="nav-login" href="/auth/login" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
               Sign in
             </Link>
             <Link
+              id="nav-register"
               href="/auth/register"
               className="text-sm px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors"
             >
@@ -144,12 +152,14 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
+              id="hero-register"
               href="/auth/register"
               className="px-8 py-3 rounded-xl bg-orange-600 text-white font-semibold hover:bg-orange-700 transition-colors text-lg shadow-lg shadow-orange-200/60 dark:shadow-orange-900/40"
             >
               Start Free — No Credit Card
             </Link>
             <Link
+              id="hero-login"
               href="/auth/login"
               className="px-8 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-lg"
             >
@@ -321,6 +331,7 @@ export default function LandingPage() {
             Free forever. No credit card. Takes 3 minutes to set up.
           </p>
           <Link
+            id="cta-register"
             href="/auth/register"
             className="inline-block px-8 py-3 rounded-xl bg-white text-orange-600 font-semibold hover:bg-orange-50 transition-colors"
           >
