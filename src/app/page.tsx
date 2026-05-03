@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "VisaBuddy — International Student Life Manager",
@@ -100,7 +102,14 @@ const testimonials = [
   },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // If user is already logged in, skip the marketing page
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Nav */}
