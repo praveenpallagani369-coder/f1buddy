@@ -78,17 +78,17 @@ const steps = [
 const testimonials = [
   {
     quote: "I was tracking OPT unemployment days in a spreadsheet and nearly missed the 90-day limit. VisaBuddy now shows me exactly where I am in real-time.",
-    name: "Priya S.",
+    name: "Krupakar P.",
     school: "MS Computer Science, University of Illinois",
   },
   {
     quote: "The AI assistant answered my STEM OPT question at midnight with CFR citations. My DSO didn't even know that specific rule off the top of their head.",
-    name: "Rajan M.",
+    name: "Shiva S.",
     school: "MBA, University of Texas at Austin",
   },
   {
     quote: "Uploading my EAD and having the expiry date auto-detected and added to my deadline tracker took 30 seconds. This app is exactly what we needed.",
-    name: "Li W.",
+    name: "Jagan P.",
     school: "PhD Electrical Engineering, Georgia Tech",
   },
 ];
