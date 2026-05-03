@@ -2,7 +2,7 @@
   "name": "VisaBuddy — Immigration Manager",
   "short_name": "VisaBuddy",
   "description": "Track visa deadlines, OPT unemployment days, travel records, and immigration compliance. Built for F-1 students and H-1B workers.",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#fff7ed",
   "theme_color": "#ea580c",
