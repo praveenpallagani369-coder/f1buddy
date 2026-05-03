@@ -7,11 +7,10 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils/cn";
 import {
-  LayoutDashboard, Route, CalendarClock, Briefcase, ListChecks,
-  FlaskConical, ClipboardList, Building2, Calculator, FileText,
-  BookOpen, Plane, ClipboardCheck, FolderOpen, Receipt, Mail,
-  Sparkles, MessageCircle, ArrowLeftRight, CalendarDays, Newspaper,
-  BookMarked, ShieldAlert, LogOut, X, Sun, Moon, Settings, ChevronRight,
+  LayoutDashboard, CalendarClock, Briefcase,
+  BookOpen, Plane, FolderOpen, Receipt, Mail,
+  Sparkles, MessageCircle, BookMarked,
+  LogOut, X, Sun, Moon, Settings, ChevronRight,
   type LucideIcon,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -24,7 +23,6 @@ const SECTIONS: NavSection[] = [
     label: null,
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: Route },
       { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock },
     ],
   },
@@ -34,12 +32,6 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard/opt", label: "OPT Tracker", icon: Briefcase },
       { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen },
-      { href: "/dashboard/opt/timeline", label: "OPT Steps", icon: ListChecks },
-      { href: "/dashboard/opt/stem-timeline", label: "STEM Steps", icon: FlaskConical },
-      { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: ClipboardList },
-      { href: "/dashboard/opt/h1b", label: "H-1B Timeline", icon: Building2 },
-      { href: "/dashboard/opt/calculator", label: "Auth Calculator", icon: Calculator },
-      { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: FileText },
     ],
   },
   {
@@ -47,7 +39,6 @@ const SECTIONS: NavSection[] = [
     icon: Plane,
     items: [
       { href: "/dashboard/travel", label: "Travel", icon: Plane },
-      { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: ClipboardCheck },
     ],
   },
   {
@@ -60,21 +51,11 @@ const SECTIONS: NavSection[] = [
     ],
   },
   {
-    label: "Resources",
-    icon: BookMarked,
-    items: [
-      { href: "/dashboard/currency", label: "Currency", icon: ArrowLeftRight },
-      { href: "/dashboard/holidays", label: "Holidays", icon: CalendarDays },
-      { href: "/dashboard/news", label: "News", icon: Newspaper },
-      { href: "/dashboard/guides", label: "Guides", icon: BookMarked },
-      { href: "/dashboard/emergency", label: "Emergency", icon: ShieldAlert },
-    ],
-  },
-  {
     label: null,
     items: [
       { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
+      { href: "/dashboard/guides", label: "Guides & Tools", icon: BookMarked },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
     ],
   },

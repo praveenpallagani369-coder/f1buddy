@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, CalendarClock, Briefcase, FolderOpen, Menu, Sparkles } from "lucide-react";
+import { LayoutDashboard, Plane, Briefcase, FolderOpen, Menu, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const TABS = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock, exact: false },
-  { href: "/dashboard/opt", label: "Work", icon: Briefcase, exact: false },
-  { href: "/dashboard/documents", label: "Records", icon: FolderOpen, exact: false },
+  { href: "/dashboard/travel", label: "Travel", icon: Plane, exact: false },
+  { href: "/dashboard/opt", label: "OPT", icon: Briefcase, exact: false },
+  { href: "/dashboard/documents", label: "Docs", icon: FolderOpen, exact: false },
 ];
 
 export function MobileBottomNav({ onMoreClick }: { onMoreClick: () => void }) {

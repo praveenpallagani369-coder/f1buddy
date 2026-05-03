@@ -9,7 +9,6 @@ import {
   GraduationCap, Hourglass, Briefcase, FlaskConical, RefreshCw,
   Timer, ClipboardList, Plane, CalendarClock, FolderOpen,
   Building2, ListChecks, ClipboardCheck, Sparkles, BookOpen,
-  ArrowLeftRight, CalendarDays, Newspaper, BookMarked, ShieldAlert,
   CircleCheck,
 } from "lucide-react";
 
@@ -477,27 +476,6 @@ export default async function DashboardPage() {
               </Link>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* ── Tools & Resources ────────────────────────────────────── */}
-      <div>
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Tools & Resources</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {[
-            { href: "/dashboard/currency", icon: <ArrowLeftRight className="w-5 h-5" />, label: "Currency",  desc: "Exchange rates", color: "bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400"  },
-            { href: "/dashboard/holidays", icon: <CalendarDays className="w-5 h-5" />, label: "Holidays",  desc: "Bank closures",  color: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"   },
-            { href: "/dashboard/news",     icon: <Newspaper className="w-5 h-5" />, label: "News",       desc: "Rule changes",   color: "bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400" },
-            { href: "/dashboard/guides",   icon: <BookMarked className="w-5 h-5" />, label: "Guides",     desc: "SSN, bank, etc.",color: "bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400" },
-            { href: "/dashboard/emergency",icon: <ShieldAlert className="w-5 h-5" />, label: "Emergency",  desc: "Contacts & rights",color: "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400"  },
-          ].map(({ href, icon, label, desc, color }) => (
-            <Link key={href} href={href}
-              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-center hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 active:scale-[0.95] active:shadow-none transition-all">
-              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
-              <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">{label}</span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">{desc}</span>
-            </Link>
-          ))}
         </div>
       </div>
 

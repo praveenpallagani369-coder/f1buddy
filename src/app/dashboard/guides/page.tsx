@@ -1,6 +1,15 @@
 ﻿"use client";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { ArrowLeftRight, CalendarDays, Newspaper, ShieldAlert } from "lucide-react";
+
+const TOOLS = [
+  { href: "/dashboard/currency", icon: <ArrowLeftRight className="w-5 h-5" />, label: "Currency Converter", desc: "Live exchange rates", color: "bg-green-50 dark:bg-green-950/40 text-green-600 dark:text-green-400" },
+  { href: "/dashboard/holidays", icon: <CalendarDays className="w-5 h-5" />, label: "US Holidays", desc: "Bank & federal closures", color: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400" },
+  { href: "/dashboard/news", icon: <Newspaper className="w-5 h-5" />, label: "Immigration News", desc: "Rule changes & alerts", color: "bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400" },
+  { href: "/dashboard/emergency", icon: <ShieldAlert className="w-5 h-5" />, label: "Emergency & Rights", desc: "Contacts & know your rights", color: "bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400" },
+];
 
 type GuideId = "ssn" | "bank" | "phone" | "housing" | "health" | "driving" | "credit";
 
@@ -167,8 +176,27 @@ export default function GuidesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">New Arrival Guides</h1>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">Step-by-step guides for settling into the US as an international student</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Guides & Tools</h1>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Resources, tools, and step-by-step guides for international students</p>
+      </div>
+
+      {/* Tools grid */}
+      <div>
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Quick Tools</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {TOOLS.map(({ href, icon, label, desc, color }) => (
+            <Link key={href} href={href}
+              className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-center hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 active:scale-[0.95] transition-all">
+              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>{icon}</div>
+              <span className="text-sm text-gray-800 dark:text-gray-200 font-semibold">{label}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{desc}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">New Arrival Guides</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">

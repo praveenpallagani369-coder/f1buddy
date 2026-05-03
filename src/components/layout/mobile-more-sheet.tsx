@@ -6,12 +6,11 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils/cn";
 import {
-  Plane, ClipboardCheck, Receipt, Mail,
-  Sparkles, MessageCircle, Settings, ArrowLeftRight,
-  CalendarDays, Newspaper, BookMarked, ShieldAlert,
-  Sun, Moon, LogOut, Route, X, BookOpen,
-  ListChecks, FlaskConical, ClipboardList, Building2,
-  Calculator, FileText,
+  Receipt, Mail,
+  Sparkles, MessageCircle, Settings,
+  BookMarked, ShieldAlert,
+  Sun, Moon, LogOut, X, BookOpen,
+  CalendarClock,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,47 +19,26 @@ type SheetSection = { heading: string; items: SheetItem[] };
 
 const SHEET_SECTIONS: SheetSection[] = [
   {
-    heading: "Travel",
+    heading: "Compliance",
     items: [
-      { href: "/dashboard/travel", label: "Travel Tracker", icon: Plane },
-      { href: "/dashboard/travel/checklist", label: "Pre-Travel Checklist", icon: ClipboardCheck },
-    ],
-  },
-  {
-    heading: "Work Authorization",
-    items: [
-      { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen },
-      { href: "/dashboard/opt/timeline", label: "OPT Steps", icon: ListChecks },
-      { href: "/dashboard/opt/stem-timeline", label: "STEM Extension Steps", icon: FlaskConical },
-      { href: "/dashboard/opt/stem-reports", label: "STEM Reports", icon: ClipboardList },
-      { href: "/dashboard/opt/h1b", label: "H-1B Timeline", icon: Building2 },
-      { href: "/dashboard/opt/calculator", label: "Auth Calculator", icon: Calculator },
-      { href: "/dashboard/opt/i983", label: "I-983 Guide", icon: FileText },
-    ],
-  },
-  {
-    heading: "Records",
-    items: [
+      { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock },
       { href: "/dashboard/tax", label: "Tax Guide", icon: Receipt },
+      { href: "/dashboard/cpt", label: "CPT Tracker", icon: BookOpen },
       { href: "/dashboard/dso-email", label: "DSO Emails", icon: Mail },
+    ],
+  },
+  {
+    heading: "Community",
+    items: [
+      { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles, badge: "AI" },
+      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
   {
     heading: "Resources",
     items: [
-      { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: Route },
-      { href: "/dashboard/currency", label: "Currency Converter", icon: ArrowLeftRight },
-      { href: "/dashboard/holidays", label: "US Holidays", icon: CalendarDays },
-      { href: "/dashboard/news", label: "Immigration News", icon: Newspaper },
-      { href: "/dashboard/guides", label: "New Arrival Guides", icon: BookMarked },
+      { href: "/dashboard/guides", label: "Guides & Tools", icon: BookMarked },
       { href: "/dashboard/emergency", label: "Emergency & Rights", icon: ShieldAlert },
-    ],
-  },
-  {
-    heading: "Community & AI",
-    items: [
-      { href: "/dashboard/ai", label: "AI Immigration Assistant", icon: Sparkles, badge: "AI" },
-      { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
     ],
   },
   {

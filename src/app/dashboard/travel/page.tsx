@@ -114,13 +114,9 @@ export default function TravelPage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Travel Tracker</h1>
           <p className="text-gray-600 dark:text-gray-400 text-sm">Stay within the 5-month limit. Traveling while unemployed still counts toward OPT unemployment days.</p>
         </div>
-        <div className="flex gap-2">
-          <Link href="/dashboard/travel/checklist">
-            <Button variant="outline">🗂️ Pre-Travel Checklist</Button>
-          </Link>
-          <Button onClick={() => setShowForm(true)}>+ Log Trip</Button>
-        </div>
+        <Button onClick={() => setShowForm(true)}>+ Log Trip</Button>
       </div>
+
 
       {/* Critical alert at 4 months (spec requirement) */}
       {atLimit && (
