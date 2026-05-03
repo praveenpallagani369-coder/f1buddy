@@ -339,7 +339,7 @@ export default function OnboardingPage() {
     }).eq("id", user.id);
 
     const optType = getOptType();
-    if (optType && (form.eadStartDate || form.eadEndDate)) {
+    if (optType) {
       await supabase.from("opt_status").upsert({
         user_id: user.id,
         opt_type: optType,

@@ -28,14 +28,16 @@ interface OPTRow {
 function detectPhase(opt: OPTRow | null, today: Date): Phase {
   if (!opt) return "f1_active";
   if (opt.application_date && !opt.ead_start_date) return "opt_pending";
-  if (!opt.ead_start_date || !opt.ead_end_date) return "f1_active";
+  if (!opt.ead_start_date || !opt.ead_end_date) {
+    return opt.opt_type === "stem_extension" ? "stem_opt_active" : "opt_active";
+  }
 
   const eadStart = parseISO(opt.ead_start_date);
   const eadEnd = parseISO(opt.ead_end_date);
   const graceEnd = addDays(eadEnd, 60);
   const stem180End = addDays(eadEnd, 180);
 
-  if (today < eadStart) return opt.application_date ? "opt_pending" : "f1_active";
+  if (today < eadStart) return "opt_pending";
   if (today <= eadEnd) return opt.opt_type === "stem_extension" ? "stem_opt_active" : "opt_active";
 
   if (
