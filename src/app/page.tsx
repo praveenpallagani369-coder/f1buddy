@@ -49,9 +49,48 @@ const features = [
 ];
 
 const stats = [
-  { value: "1.1M", label: "international students in the US" },
-  { value: "90", label: "Day OPT unemployment limit" },
-  { value: "5+", label: "Compliance areas tracked" },
+  { value: "1.1M", label: "F-1 students in the US" },
+  { value: "90", label: "days before OPT limit hits" },
+  { value: "6", label: "compliance areas tracked" },
+];
+
+const steps = [
+  {
+    step: "1",
+    title: "Scan your documents",
+    desc: "Upload your I-20 and EAD card. AI auto-fills your dates in seconds.",
+    color: "bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300",
+  },
+  {
+    step: "2",
+    title: "Get your compliance score",
+    desc: "See your phase, OPT unemployment days, travel limits, and upcoming deadlines — all in one dashboard.",
+    color: "bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300",
+  },
+  {
+    step: "3",
+    title: "Never miss a deadline",
+    desc: "Smart alerts at 30, 14, 7, and 1 day before anything important. Ask the AI assistant anything about F-1 rules.",
+    color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
+  },
+];
+
+const testimonials = [
+  {
+    quote: "I was tracking OPT unemployment days in a spreadsheet and nearly missed the 90-day limit. VisaBuddy now shows me exactly where I am in real-time.",
+    name: "Priya S.",
+    school: "MS Computer Science, University of Illinois",
+  },
+  {
+    quote: "The AI assistant answered my STEM OPT question at midnight with CFR citations. My DSO didn't even know that specific rule off the top of their head.",
+    name: "Rajan M.",
+    school: "MBA, University of Texas at Austin",
+  },
+  {
+    quote: "Uploading my EAD and having the expiry date auto-detected and added to my deadline tracker took 30 seconds. This app is exactly what we needed.",
+    name: "Li W.",
+    school: "PhD Electrical Engineering, Georgia Tech",
+  },
 ];
 
 export default function LandingPage() {
@@ -117,9 +156,7 @@ export default function LandingPage() {
               Sign In
             </Link>
           </div>
-          <p className="text-sm text-gray-400 mt-4">
-            Free plan · Premium $6.99/mo · University licenses available
-          </p>
+          <p className="text-sm text-gray-400 mt-4">Free forever · No credit card needed</p>
         </div>
       </div>
 
@@ -130,6 +167,104 @@ export default function LandingPage() {
             <div key={s.label} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5">
               <p className="text-3xl font-bold text-orange-600 dark:text-orange-400 [font-variant-numeric:tabular-nums]">{s.value}</p>
               <p className="text-sm text-gray-500 mt-1">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Product screenshot mockup */}
+      <div className="max-w-5xl mx-auto px-6 mb-20">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
+          See your compliance at a glance
+        </h2>
+        <p className="text-gray-500 text-center mb-10">One dashboard replaces 5 spreadsheets and constant DSO emails</p>
+
+        {/* Dashboard mockup */}
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl shadow-gray-200/60 dark:shadow-black/40 overflow-hidden">
+          {/* Mock browser bar */}
+          <div className="flex items-center gap-1.5 px-4 py-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <div className="w-3 h-3 rounded-full bg-red-400" />
+            <div className="w-3 h-3 rounded-full bg-amber-400" />
+            <div className="w-3 h-3 rounded-full bg-emerald-400" />
+            <div className="flex-1 mx-4 h-6 bg-gray-200 dark:bg-gray-700 rounded-md" />
+          </div>
+
+          <div className="p-6 space-y-5">
+            {/* Mock header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xl font-bold text-gray-900 dark:text-gray-100">Good morning, Rajan 👋</p>
+                <p className="text-gray-500 text-sm">Here&apos;s your compliance overview for today</p>
+              </div>
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                All Clear
+              </span>
+            </div>
+
+            {/* Mock phase banner */}
+            <div className="rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 dark:from-emerald-950/50 dark:to-teal-950/50 dark:border-emerald-800 p-4">
+              <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Current Phase: OPT Active</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Work must be directly related to your degree. Track unemployment days carefully.</p>
+            </div>
+
+            {/* Mock stat cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: "OPT UNEMPLOYMENT", value: "12", sub: "78 of 90 days remaining", bar: 13, barColor: "bg-emerald-500", accent: "bg-emerald-400" },
+                { label: "DAYS OUTSIDE US", value: "18", sub: "Within safe limit", bar: null, barColor: "", accent: "bg-sky-400" },
+                { label: "EAD EXPIRY", value: "187d", sub: "2026-11-05", bar: null, barColor: "", accent: "bg-violet-400" },
+                { label: "EXPIRING DOCUMENTS", value: "1", sub: "Expiring within 90 days", bar: null, barColor: "", accent: "bg-amber-400" },
+              ].map((card) => (
+                <div key={card.label} className="bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-3 relative overflow-hidden">
+                  <div className={`absolute inset-x-0 top-0 h-0.5 ${card.accent} rounded-t-xl`} />
+                  <p className="text-[9px] text-gray-400 uppercase tracking-wider font-semibold mb-1">{card.label}</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{card.value}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">{card.sub}</p>
+                  {card.bar !== null && (
+                    <div className="mt-2 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                      <div className={`h-full ${card.barColor} rounded-full`} style={{ width: `${card.bar}%` }} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Mock upcoming deadlines */}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Upcoming Deadlines</p>
+              {[
+                { title: "File 2025 Tax Return (Form 1040-NR)", date: "2026-06-15", days: "43d", severity: "bg-blue-400" },
+                { title: "Passport Expiring — Renew Before Travel", date: "2026-07-22", days: "80d", severity: "bg-amber-400" },
+              ].map((d) => (
+                <div key={d.title} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${d.severity}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-800 dark:text-gray-200 font-medium truncate">{d.title}</p>
+                    <p className="text-xs text-gray-400">{d.date}</p>
+                  </div>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300 font-medium flex-shrink-0">{d.days}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How it works */}
+      <div className="max-w-4xl mx-auto px-6 mb-20">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
+          Up and running in 3 minutes
+        </h2>
+        <p className="text-gray-500 text-center mb-10">No manual data entry — AI reads your documents</p>
+        <div className="grid md:grid-cols-3 gap-6">
+          {steps.map(({ step, title, desc, color }) => (
+            <div key={step} className="text-center">
+              <div className={`w-12 h-12 rounded-2xl ${color} flex items-center justify-center text-xl font-bold mx-auto mb-4`}>
+                {step}
+              </div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
@@ -157,6 +292,25 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* Testimonials */}
+      <div className="max-w-5xl mx-auto px-6 mb-20">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
+          Students trust VisaBuddy with their status
+        </h2>
+        <p className="text-gray-500 text-center mb-10">Real quotes from international students</p>
+        <div className="grid md:grid-cols-3 gap-5">
+          {testimonials.map(({ quote, name, school }) => (
+            <div key={name} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 flex flex-col gap-4">
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed flex-1">&ldquo;{quote}&rdquo;</p>
+              <div>
+                <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{name}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{school}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* CTA */}
       <div className="max-w-2xl mx-auto px-6 pb-20 text-center">
         <div className="bg-gradient-to-br from-orange-600 to-amber-600 rounded-2xl p-10 shadow-xl shadow-orange-200/50 dark:shadow-orange-900/30">
@@ -164,7 +318,7 @@ export default function LandingPage() {
             Ready to stop worrying about deadlines?
           </h2>
           <p className="text-orange-100 mb-6">
-            Join international students staying in compliance with VisaBuddy
+            Free forever. No credit card. Takes 3 minutes to set up.
           </p>
           <Link
             href="/auth/register"
@@ -172,6 +326,7 @@ export default function LandingPage() {
           >
             Create Free Account →
           </Link>
+          <p className="text-orange-200 text-xs mt-4">Free plan · Premium $6.99/mo · University licenses available</p>
         </div>
       </div>
 

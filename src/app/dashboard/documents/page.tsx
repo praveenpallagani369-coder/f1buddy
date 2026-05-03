@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,13 @@ interface DocumentRecord {
 }
 
 type AiScanState = "idle" | "scanning" | "done" | "error";
+
+const SCAN_STEPS = [
+  "Reading document...",
+  "Analyzing with AI...",
+  "Extracting fields...",
+  "Almost done...",
+];
 
 interface AiScanResult {
   expirationDate: string | null;
@@ -106,6 +113,8 @@ async function pdfToImage(file: File): Promise<{ base64: string; mimeType: strin
 
 export default function DocumentsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
+  const scanControllerRef = useRef<AbortController | null>(null);
+  const scanStepTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [docs, setDocs] = useState<DocumentRecord[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -117,8 +126,17 @@ export default function DocumentsPage() {
   const [aiScanState, setAiScanState] = useState<AiScanState>("idle");
   const [aiResult, setAiResult] = useState<AiScanResult | null>(null);
   const [aiErrorCode, setAiErrorCode] = useState<string | null>(null);
+  const [scanStep, setScanStep] = useState(0);
 
   useEffect(() => { load(); }, []);
+
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      scanControllerRef.current?.abort();
+      if (scanStepTimerRef.current) clearInterval(scanStepTimerRef.current);
+    };
+  }, []);
 
   async function load() {
     const res = await fetch("/api/documents");
@@ -127,20 +145,45 @@ export default function DocumentsPage() {
     setLoading(false);
   }
 
+  const stopScanTimers = useCallback(() => {
+    if (scanStepTimerRef.current) {
+      clearInterval(scanStepTimerRef.current);
+      scanStepTimerRef.current = null;
+    }
+  }, []);
+
   async function scanFile(file: File, docType: string) {
     const isPDF = file.type === "application/pdf";
     const isImage = IMAGE_TYPES.includes(file.type);
-    if (!isPDF && !isImage) return; // won't happen given our file filter, but guard anyway
+    if (!isPDF && !isImage) return;
+
+    // Cancel any in-flight scan before starting a new one
+    if (scanControllerRef.current) {
+      scanControllerRef.current.abort();
+      scanControllerRef.current = null;
+    }
+    stopScanTimers();
 
     setAiScanState("scanning");
     setAiResult(null);
     setAiErrorCode(null);
+    setScanStep(0);
+
+    // Cycle through progress step labels every 4s
+    scanStepTimerRef.current = setInterval(() => {
+      setScanStep(s => (s + 1) % SCAN_STEPS.length);
+    }, 4000);
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => { controller.abort(); setAiErrorCode("TIMEOUT"); }, 25_000);
+    scanControllerRef.current = controller;
+    const timeout = setTimeout(() => { controller.abort(); }, 25_000);
 
     try {
       const imageData = isPDF ? await pdfToImage(file) : await prepareImageForScan(file);
+
+      // If aborted during image prep (e.g. user changed docType), exit silently
+      if (controller.signal.aborted) { stopScanTimers(); return; }
+
       const res = await fetch("/api/ai/scan-document", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -148,6 +191,9 @@ export default function DocumentsPage() {
         signal: controller.signal,
       });
       clearTimeout(timeout);
+      stopScanTimers();
+      scanControllerRef.current = null;
+
       const json = await res.json();
       if (json.success && json.data?.extracted) {
         const extracted = json.data.extracted as AiScanResult;
@@ -162,6 +208,14 @@ export default function DocumentsPage() {
       }
     } catch {
       clearTimeout(timeout);
+      stopScanTimers();
+      scanControllerRef.current = null;
+      if (controller.signal.aborted) {
+        // Cancelled intentionally (docType changed or component unmounted) — show timeout message
+        setAiErrorCode("TIMEOUT");
+        setAiScanState("error");
+        return;
+      }
       setAiScanState("error");
     }
   }
@@ -306,9 +360,17 @@ export default function DocumentsPage() {
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Document Type *</label>
-                <Select value={form.docType} onChange={(e) => handleDocTypeChange(e.target.value)}>
+                <Select
+                  value={form.docType}
+                  onChange={(e) => handleDocTypeChange(e.target.value)}
+                  disabled={aiScanState === "scanning"}
+                  className={aiScanState === "scanning" ? "opacity-60 cursor-not-allowed" : ""}
+                >
                   {Object.entries(DOC_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                 </Select>
+                {aiScanState === "scanning" && (
+                  <p className="text-xs text-indigo-500 mt-1">Locked during AI scan</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
@@ -377,11 +439,13 @@ export default function DocumentsPage() {
             {aiScanState === "scanning" && (
               <div className="flex items-center gap-3 p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800">
                 <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
-                    🤖 AI scanning {selectedFile?.type === "application/pdf" ? "PDF" : "image"} for dates...
+                    🤖 {SCAN_STEPS[scanStep]}
                   </p>
-                  <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">You can upload now or wait for results to auto-fill</p>
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+                    You can upload now or wait for results to auto-fill
+                  </p>
                 </div>
               </div>
             )}

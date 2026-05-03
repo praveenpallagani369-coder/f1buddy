@@ -144,8 +144,36 @@ export default function CommunityPage() {
   const filtered = filter === "All" ? posts : posts.filter(p => p.category === filter);
 
   if (loading) return (
-    <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+    <div className="space-y-6 animate-pulse">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <div className="h-7 w-36 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+          <div className="h-4 w-60 bg-gray-100 dark:bg-gray-800 rounded" />
+        </div>
+        <div className="h-9 w-36 bg-gray-100 dark:bg-gray-800 rounded-xl" />
+      </div>
+      <div className="h-10 rounded-lg bg-gray-100 dark:bg-gray-800" />
+      <div className="flex gap-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-7 w-16 bg-gray-100 dark:bg-gray-800 rounded-full" />
+        ))}
+      </div>
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 space-y-3">
+            <div className="flex justify-between">
+              <div className="h-4 w-72 bg-gray-200 dark:bg-gray-700 rounded" />
+              <div className="h-5 w-12 bg-gray-100 dark:bg-gray-800 rounded-full" />
+            </div>
+            <div className="h-3 w-full bg-gray-100 dark:bg-gray-800 rounded" />
+            <div className="h-3 w-4/5 bg-gray-100 dark:bg-gray-800 rounded" />
+            <div className="flex gap-3">
+              <div className="h-3 w-16 bg-gray-100 dark:bg-gray-800 rounded" />
+              <div className="h-3 w-16 bg-gray-100 dark:bg-gray-800 rounded" />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 
@@ -212,9 +240,22 @@ export default function CommunityPage() {
       {/* Posts */}
       <div className="space-y-3">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <p className="text-3xl mb-2">💬</p>
-            <p>No posts in this category yet — be the first to ask!</p>
+          <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <p className="text-4xl mb-3">💬</p>
+            <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+              {filter === "All" ? "No questions yet" : `No ${filter} questions yet`}
+            </p>
+            <p className="text-gray-500 text-sm mb-5">
+              {filter === "All"
+                ? "Be the first to ask the community a question about F-1 compliance."
+                : `Be the first to ask a ${filter} question — your peers will thank you.`}
+            </p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="px-5 py-2.5 rounded-xl bg-orange-600 text-white text-sm font-medium hover:bg-orange-700 transition-colors"
+            >
+              Ask the first question →
+            </button>
           </div>
         ) : (
           filtered.map((post) => {

@@ -3,7 +3,14 @@
 // All F-1 immigration rules codified here.
 // CFR references included per rule.
 // ============================================================
-import { differenceInCalendarDays, parseISO, isAfter, isBefore, startOfYear, endOfYear, format, addMonths } from "date-fns";
+import { differenceInCalendarDays, parseISO, isAfter, isBefore, isValid, startOfYear, endOfYear, format, addMonths } from "date-fns";
+
+// Safe wrapper — returns null instead of Invalid Date
+function safeParse(dateStr: string | null | undefined): Date | null {
+  if (!dateStr) return null;
+  const d = parseISO(dateStr);
+  return isValid(d) ? d : null;
+}
 
 // ---- OPT Unemployment Counter ----
 // CFR: 8 CFR 214.2(f)(10)(ii)(E)
@@ -15,35 +22,43 @@ export function calculateUnemploymentDays(
   employmentPeriods: { startDate: string; endDate: string | null }[],
   today: Date = new Date()
 ): number {
-  const ead = parseISO(eadStartDate);
-  if (isAfter(ead, today)) return 0;
+  const ead = safeParse(eadStartDate);
+  if (!ead || isAfter(ead, today)) return 0;
 
-  // Build a set of employed days
-  const employedDays = new Set<string>();
-  for (const period of employmentPeriods) {
-    const start = parseISO(period.startDate);
-    const end = period.endDate ? parseISO(period.endDate) : today;
-    let current = start;
-    while (!isAfter(current, end)) {
-      employedDays.add(format(current, "yyyy-MM-dd"));
-      current = new Date(current);
-      current.setDate(current.getDate() + 1);
+  // Total calendar days on OPT (inclusive of both endpoints)
+  const totalDays = differenceInCalendarDays(today, ead) + 1;
+
+  // Build intervals clipped to [ead, today], filter out invalid/empty ones, sort by start
+  const intervals = employmentPeriods
+    .map((p) => {
+      const s = safeParse(p.startDate);
+      const e = p.endDate ? safeParse(p.endDate) : today;
+      if (!s || !e) return null;
+      return {
+        start: isAfter(s, ead) ? s : ead,
+        end: isAfter(e, today) ? today : e,
+      };
+    })
+    .filter((p): p is { start: Date; end: Date } => p !== null && !isAfter(p.start, p.end))
+    .sort((a, b) => a.start.getTime() - b.start.getTime());
+
+  // Merge overlapping/adjacent intervals then sum employed days
+  const merged: { start: Date; end: Date }[] = [];
+  for (const p of intervals) {
+    const last = merged[merged.length - 1];
+    if (!last || isAfter(p.start, last.end)) {
+      merged.push({ start: p.start, end: p.end });
+    } else if (isAfter(p.end, last.end)) {
+      last.end = p.end;
     }
   }
 
-  // Count days since EAD start that are NOT employed
-  let unemployedCount = 0;
-  let current = ead;
-  while (!isAfter(current, today)) {
-    const dateStr = format(current, "yyyy-MM-dd");
-    if (!employedDays.has(dateStr)) {
-      unemployedCount++;
-    }
-    current = new Date(current);
-    current.setDate(current.getDate() + 1);
-  }
+  const employedDays = merged.reduce(
+    (sum, p) => sum + differenceInCalendarDays(p.end, p.start) + 1,
+    0
+  );
 
-  return unemployedCount;
+  return Math.max(0, totalDays - employedDays);
 }
 
 export function getUnemploymentLimit(optType: "pre_completion" | "post_completion" | "stem_extension"): number {
@@ -73,8 +88,9 @@ export function calculateDaysOutsideUS(
 
   let totalDays = 0;
   for (const trip of travelRecords) {
-    const departure = parseISO(trip.departureDate);
-    const returnDate = trip.returnDate ? parseISO(trip.returnDate) : effectiveEnd;
+    const departure = safeParse(trip.departureDate);
+    const returnDate = trip.returnDate ? safeParse(trip.returnDate) : effectiveEnd;
+    if (!departure || !returnDate) continue;
 
     // Clip to this year
     const start = isAfter(departure, yearStart) ? departure : yearStart;
@@ -96,8 +112,9 @@ export function checkFiveMonthRule(
   const today = new Date();
 
   for (const trip of travelRecords) {
-    const departure = parseISO(trip.departureDate);
-    const returnDate = trip.returnDate ? parseISO(trip.returnDate) : today;
+    const departure = safeParse(trip.departureDate);
+    if (!departure) continue;
+    const returnDate = trip.returnDate ? (safeParse(trip.returnDate) ?? today) : today;
     const days = differenceInCalendarDays(returnDate, departure);
     if (days > maxConsecutive) maxConsecutive = days;
     if (isAfter(returnDate, addMonths(departure, 5))) violated = true;
@@ -148,7 +165,8 @@ export function generateSystemDeadlines(student: StudentDeadlineInput): Generate
 
   // OPT application window (90 days before program end)
   if (student.programEndDate) {
-    const programEnd = parseISO(student.programEndDate);
+    const programEnd = safeParse(student.programEndDate);
+    if (!programEnd) return deadlines;
     const optApplyBy = new Date(programEnd);
     optApplyBy.setDate(optApplyBy.getDate() - 90);
     if (isAfter(optApplyBy, today)) {
@@ -165,7 +183,8 @@ export function generateSystemDeadlines(student: StudentDeadlineInput): Generate
 
   // EAD expiration
   if (student.eadEndDate) {
-    const eadEnd = parseISO(student.eadEndDate);
+    const eadEnd = safeParse(student.eadEndDate);
+    if (!eadEnd) return deadlines;
     const daysToEAD = differenceInCalendarDays(eadEnd, today);
     if (daysToEAD > 0 && daysToEAD <= 90) {
       deadlines.push({
@@ -180,7 +199,8 @@ export function generateSystemDeadlines(student: StudentDeadlineInput): Generate
 
   // Passport expiry (alert at 6 months out — needed for visa stamp renewal)
   if (student.passportExpiry) {
-    const passportExp = parseISO(student.passportExpiry);
+    const passportExp = safeParse(student.passportExpiry);
+    if (!passportExp) return deadlines;
     const daysToPassport = differenceInCalendarDays(passportExp, today);
     if (daysToPassport > 0 && daysToPassport <= 180) {
       deadlines.push({

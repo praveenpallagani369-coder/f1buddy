@@ -70,18 +70,30 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users who haven't completed onboarding
+  // Redirect authenticated users who haven't completed onboarding.
+  // Cache the result in a short-lived httpOnly cookie to avoid a DB hit on every page load.
   if (user && isDashboard && !isOnboarding) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("onboarding_completed")
-      .eq("id", user.id)
-      .single();
+    const onboardingDone = request.cookies.get("ob_done")?.value === "1";
+    if (!onboardingDone) {
+      const { data: profile } = await supabase
+        .from("users")
+        .select("onboarding_completed")
+        .eq("id", user.id)
+        .single();
 
-    if (profile && !profile.onboarding_completed) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/onboarding";
-      return NextResponse.redirect(url);
+      if (profile && !profile.onboarding_completed) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/onboarding";
+        return NextResponse.redirect(url);
+      }
+
+      // Onboarding is complete — cache so we skip the DB query for the next hour
+      supabaseResponse.cookies.set("ob_done", "1", {
+        httpOnly: true,
+        sameSite: "lax",
+        maxAge: 3600,
+        path: "/",
+      });
     }
   }
 
