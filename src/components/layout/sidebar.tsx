@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils/cn";
 import {
   LayoutDashboard, CalendarClock, Briefcase,
   BookOpen, Plane, FolderOpen, Receipt, Mail,
-  Sparkles, MessageCircle, BookMarked,
+  Sparkles, MessageCircle, BookMarked, Route,
   LogOut, X, Sun, Moon, Settings, ChevronRight,
   type LucideIcon,
 } from "lucide-react";
@@ -24,6 +24,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
       { href: "/dashboard/deadlines", label: "Deadlines", icon: CalendarClock },
+      { href: "/dashboard/visa-timeline", label: "Visa Timeline", icon: Route },
       { href: "/dashboard/travel", label: "Travel", icon: Plane },
     ],
   },
