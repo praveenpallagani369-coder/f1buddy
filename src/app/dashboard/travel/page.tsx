@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { differenceInCalendarDays, parseISO } from "date-fns";
+
+interface CountryInfo {
+  code: string;
+  name: string;
+  flag: string;
+  capital: string | null;
+  currency: { code: string; name: string; symbol: string } | null;
+  timezone: string | null;
+  region: string | null;
+}
 
 const DOC_OPTIONS = ["Valid Passport","Valid F-1 Visa Stamp","I-20 with Travel Signature","EAD Card","I-94 Print","Proof of Enrollment","Offer Letter","Recent Pay Stubs"];
 
@@ -39,9 +49,28 @@ export default function TravelPage() {
     purpose: "vacation", travelType: "personal",
     documentsCarried: [] as string[], notes: ""
   });
+  const [countryInfo, setCountryInfo] = useState<CountryInfo | null>(null);
+  const [countryLoading, setCountryLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    const name = form.destinationCountry.trim();
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (name.length < 3) { setCountryInfo(null); return; }
+    debounceRef.current = setTimeout(async () => {
+      setCountryLoading(true);
+      try {
+        const res = await fetch(`/api/countries?name=${encodeURIComponent(name)}`);
+        const json = await res.json();
+        setCountryInfo(json.success ? json.data : null);
+      } catch { setCountryInfo(null); }
+      finally { setCountryLoading(false); }
+    }, 600);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [form.destinationCountry]);
 
   async function load() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -188,6 +217,22 @@ export default function TravelPage() {
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">Destination Country *</label>
                 <Input placeholder="India" value={form.destinationCountry} onChange={(e) => setForm(f => ({ ...f, destinationCountry: e.target.value }))} />
+                {countryLoading && (
+                  <p className="text-xs text-gray-400 mt-1.5">Looking up country...</p>
+                )}
+                {countryInfo && !countryLoading && (
+                  <div className="mt-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 flex items-center gap-3">
+                    <span className="text-2xl flex-shrink-0">{countryInfo.flag}</span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{countryInfo.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {countryInfo.capital && <>Capital: {countryInfo.capital}</>}
+                        {countryInfo.currency && <> · {countryInfo.currency.symbol} {countryInfo.currency.code}</>}
+                        {countryInfo.timezone && <> · {countryInfo.timezone}</>}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm text-gray-600 mb-1.5">Travel Type *</label>

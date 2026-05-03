@@ -7,12 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
-// USCIS OPT processing time estimates (weeks) — based on typical processing
-const PROCESSING_ESTIMATES = {
-  optimistic: 10,  // weeks
-  typical: 16,
-  slow: 24,
-};
+// Static fallback used until live data loads
+const PROCESSING_FALLBACK = { optimisticWeeks: 10, typicalWeeks: 16, slowWeeks: 24 };
 
 interface TimelineStep {
   id: string;
@@ -26,10 +22,10 @@ interface TimelineStep {
   tip: string;
 }
 
-function buildTimeline(programEndDate: Date, _optType: string): TimelineStep[] {
+function buildTimeline(programEndDate: Date, _optType: string, estimates = PROCESSING_FALLBACK): TimelineStep[] {
   const applyBy = subDays(programEndDate, 90);
   const dsoRequestBy = subDays(applyBy, 14);
-  const typicalEADDate = addDays(applyBy, PROCESSING_ESTIMATES.typical * 7);
+  const typicalEADDate = addDays(applyBy, estimates.typicalWeeks * 7);
 
   return [
     {
@@ -96,7 +92,7 @@ function buildTimeline(programEndDate: Date, _optType: string): TimelineStep[] {
       completedDate: null,
       isCompleted: false,
       isCritical: false,
-      tip: `Typical: ${PROCESSING_ESTIMATES.typical} weeks. Slow period: ${PROCESSING_ESTIMATES.slow} weeks. Track at egov.uscis.gov using your receipt number. Do NOT start working before your EAD card arrives and your authorized start date.`,
+      tip: `Typical: ${estimates.typicalWeeks} weeks. Slow period: ${estimates.slowWeeks} weeks. Track at egov.uscis.gov using your receipt number. Do NOT start working before your EAD card arrives and your authorized start date.`,
     },
     {
       id: "ead_received",
@@ -120,6 +116,8 @@ export default function OPTTimelinePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [customEndDate, setCustomEndDate] = useState("");
+  const [processingTimes, setProcessingTimes] = useState(PROCESSING_FALLBACK);
+  const [processingSource, setProcessingSource] = useState<"live" | "static">("static");
 
   useEffect(() => {
     async function load() {
@@ -136,11 +134,25 @@ export default function OPTTimelinePage() {
       setLoading(false);
     }
     load();
+    // Fetch live USCIS processing times
+    fetch("/api/uscis-processing")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success) {
+          setProcessingTimes({
+            optimisticWeeks: json.data.optimisticWeeks,
+            typicalWeeks: json.data.typicalWeeks,
+            slowWeeks: json.data.slowWeeks,
+          });
+          setProcessingSource(json.data.source);
+        }
+      })
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const endDate = customEndDate || profile?.program_end_date;
-  const timeline = endDate ? buildTimeline(parseISO(endDate), opt?.opt_type ?? "post_completion") : null;
+  const timeline = endDate ? buildTimeline(parseISO(endDate), opt?.opt_type ?? "post_completion", processingTimes) : null;
 
   // Merge saved step completion data into timeline
   const mergedTimeline = timeline?.map((step) => {
@@ -181,21 +193,30 @@ export default function OPTTimelinePage() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">OPT Application Timeline</h1>
       </div>
 
-      {/* Intro + processing times */}
-      <div className="grid sm:grid-cols-3 gap-3">
-        {[
-          { label: "Fastest Processing", value: `${PROCESSING_ESTIMATES.optimistic} weeks`, color: "text-emerald-600" },
-          { label: "Typical Processing", value: `${PROCESSING_ESTIMATES.typical} weeks`, color: "text-amber-600" },
-          { label: "Slow Period", value: `${PROCESSING_ESTIMATES.slow} weeks`, color: "text-red-600" },
-        ].map((item) => (
-          <Card key={item.label}>
-            <CardContent className="p-4 text-center">
-              <p className="text-xs text-gray-500 mb-1">{item.label}</p>
-              <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
-              <p className="text-xs text-gray-500 mt-1">EAD processing</p>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Live USCIS processing times */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">I-765 Processing Times (EAD)</p>
+          {processingSource === "live"
+            ? <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-medium">Live from USCIS</span>
+            : <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 font-medium">Historical estimates</span>
+          }
+        </div>
+        <div className="grid sm:grid-cols-3 gap-3">
+          {[
+            { label: "Fastest", value: processingTimes.optimisticWeeks, color: "text-emerald-600" },
+            { label: "Typical", value: processingTimes.typicalWeeks, color: "text-amber-600" },
+            { label: "Slow Period", value: processingTimes.slowWeeks, color: "text-red-600" },
+          ].map((item) => (
+            <Card key={item.label}>
+              <CardContent className="p-4 text-center">
+                <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+                <p className={`text-xl font-bold ${item.color}`}>{item.value} weeks</p>
+                <p className="text-xs text-gray-500 mt-1">EAD processing</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* Program end date input */}
