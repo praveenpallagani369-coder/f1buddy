@@ -276,3 +276,21 @@ create policy "posts_update_own" on community_posts for update using (auth.uid()
 create policy "answers_read_all" on community_answers for select using (auth.role() = 'authenticated');
 create policy "answers_write_own" on community_answers for insert with check (auth.uid() = user_id);
 create policy "answers_update_own" on community_answers for update using (auth.uid() = user_id);
+
+-- Feedback (also shipped as migrations/008_feedback.sql)
+create table if not exists feedback (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  submitter_email text not null,
+  submitter_name text,
+  message text not null,
+  category text not null default 'general',
+  created_at timestamptz not null default now()
+);
+create index if not exists idx_feedback_created_at on feedback (created_at desc);
+alter table feedback enable row level security;
+create policy "feedback_insert_own" on feedback for insert with check (auth.uid() = user_id);
+create policy "feedback_select_own" on feedback for select using (auth.uid() = user_id);
+create policy "feedback_select_admin" on feedback for select using (
+  exists (select 1 from users u where u.id = auth.uid() and u.role = 'admin')
+);

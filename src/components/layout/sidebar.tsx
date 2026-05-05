@@ -10,7 +10,7 @@ import {
   LayoutDashboard, CalendarClock, Briefcase,
   BookOpen, Plane, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, BookMarked, Route, Search,
-  LogOut, X, Sun, Moon, Settings, ChevronRight, Gavel,
+  LogOut, X, Sun, Moon, Settings, ChevronRight, Gavel, SendHorizontal,
   type LucideIcon,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -53,6 +53,7 @@ const SECTIONS: NavSection[] = [
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
       { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
       { href: "/dashboard/guides", label: "Guides & Tools", icon: BookMarked },
+      { href: "/dashboard/feedback", label: "Feedback", icon: SendHorizontal },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
     ],
   },

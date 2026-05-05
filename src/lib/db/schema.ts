@@ -425,6 +425,18 @@ export const lawyerReviews = pgTable("lawyer_reviews", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const feedback = pgTable("feedback", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  submitterEmail: text("submitter_email").notNull(),
+  submitterName: text("submitter_name"),
+  message: text("message").notNull(),
+  category: text("category").notNull().default("general"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // ---- Relations ----
 export const usersRelations = relations(users, ({ many, one }) => ({
   deadlines: many(complianceDeadlines),
@@ -444,6 +456,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   webauthnCredentials: many(webauthnCredentials),
   lawyerProfile: one(lawyerProfiles),
   lawyerReviews: many(lawyerReviews),
+  feedback: many(feedback),
 }));
 
 export const lawyerProfilesRelations = relations(lawyerProfiles, ({ one, many }) => ({
