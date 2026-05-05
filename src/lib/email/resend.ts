@@ -120,8 +120,10 @@ export async function sendFeedbackNotification(data: FeedbackNotificationData): 
   const safeCategory = escapeHtml(data.category.toUpperCase());
   const safeMessage = escapeHtml(data.message).replace(/\n/g, "<br>");
 
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+
   await resend.emails.send({
-    from: "VisaBuddy Feedback <alerts@visabuddy.app>",
+    from: `VisaBuddy Feedback <${fromEmail}>`,
     to: adminEmail,
     subject: `[New Feedback] ${safeCategory}: from ${safeName}`,
     html: `
