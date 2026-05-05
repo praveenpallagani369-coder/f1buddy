@@ -10,6 +10,8 @@ export interface ComplianceStatus {
 
 export function generateComplianceBrief(data: {
   optStatus?: any;
+  /** When set (from live calculateUnemploymentDays), overrides DB unemployment_days_used */
+  liveUnemploymentDays?: number;
   deadlines?: any[];
   travelRecords?: any[];
   documents?: any[];
@@ -18,7 +20,10 @@ export function generateComplianceBrief(data: {
 
   // 1. Check OPT Unemployment (Highest Priority)
   if (data.optStatus) {
-    const used = data.optStatus.unemployment_days_used || 0;
+    const used =
+      typeof data.liveUnemploymentDays === "number"
+        ? data.liveUnemploymentDays
+        : data.optStatus.unemployment_days_used || 0;
     const limit = data.optStatus.unemployment_limit || 90;
     const remaining = limit - used;
 
@@ -74,18 +79,25 @@ export function generateComplianceBrief(data: {
   }
 
   // 4. Check Travel Rules — 5-month rule is a CONTINUOUS absence > 5 calendar months
-  const activeTrip = data.travelRecords?.find((t: { return_date: string | null }) => !t.return_date);
-  if (activeTrip) {
+  const activeTrip = data.travelRecords?.find(
+    (t: { return_date: string | null; departure_date?: string }) => !t.return_date && t.departure_date
+  );
+  if (activeTrip?.departure_date) {
     const daysOut = differenceInDays(today, parseISO(activeTrip.departure_date));
-    const { violated } = checkFiveMonthRule([activeTrip]);
-    if (violated || daysOut >= 120) {
-      const fiveMonthMark = addMonths(parseISO(activeTrip.departure_date), 5);
-      const daysToLimit = Math.max(0, differenceInDays(fiveMonthMark, today));
+    const mapped = {
+      departureDate: activeTrip.departure_date,
+      returnDate: activeTrip.return_date as string | null,
+    };
+    const { violated } = checkFiveMonthRule([mapped]);
+    const fiveMonthMark = addMonths(parseISO(activeTrip.departure_date), 5);
+    const daysToLimit = Math.max(0, differenceInDays(fiveMonthMark, today));
+    const approaching = !violated && daysToLimit > 0 && daysToLimit <= 45;
+    if (violated || approaching) {
       return {
         status: violated ? "critical" : "warning",
         oneLiner: violated
           ? `✈️ You've been outside the US for over 5 continuous months — SEVIS may be at risk. Contact your DSO immediately.`
-          : `✈️ Day ${daysOut} abroad — approaching the 5-month continuous absence limit (${daysToLimit} days to threshold).`,
+          : `✈️ Day ${daysOut} abroad — approaching the 5-month continuous absence limit (${daysToLimit} calendar days to threshold).`,
         daysRemaining: daysToLimit,
         category: "Travel",
       };

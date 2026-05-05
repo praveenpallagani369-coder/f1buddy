@@ -57,6 +57,8 @@ export async function middleware(request: NextRequest) {
   const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
   const isAuth = request.nextUrl.pathname.startsWith("/auth");
   const isOnboarding = request.nextUrl.pathname === "/onboarding";
+  /** Let logged-in users finish Supabase password recovery (session after email link). */
+  const isUpdatePassword = request.nextUrl.pathname === "/auth/update-password";
 
   if (!user && isDashboard) {
     const url = request.nextUrl.clone();
@@ -64,7 +66,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && isAuth) {
+  if (user && isAuth && !isUpdatePassword) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);

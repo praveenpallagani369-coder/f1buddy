@@ -27,6 +27,9 @@ function LoginForm() {
     if (msg === "check-email") {
       setInfo("Account created! Check your email for a confirmation link, then sign in below.");
     }
+    if (msg === "password-updated") {
+      setInfo("Password updated. Sign in with your new password.");
+    }
     if (urlError === "auth_failed") {
       setError("Google sign-in failed. Please check that Google is enabled in Supabase Auth settings, or use email sign-in below.");
     }
@@ -146,7 +149,15 @@ function LoginForm() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                    <Link
+                      href="/auth/forgot-password"
+                      className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
                   <Input
                     type="password"
                     placeholder="••••••••"

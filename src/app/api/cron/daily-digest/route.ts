@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { generateComplianceBrief } from "@/lib/immigration/compliance-brief";
+import { calculateUnemploymentDays } from "@/lib/immigration/rules";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -29,16 +30,32 @@ export async function GET(request: Request) {
       { data: optStatus },
       { data: deadlines },
       { data: documents },
-      { data: travelRecords }
+      { data: travelRecords },
+      { data: employmentRows },
     ] = await Promise.all([
       supabase.from("opt_status").select("*").eq("user_id", user.id).single(),
       supabase.from("compliance_deadlines").select("*").eq("user_id", user.id),
       supabase.from("documents").select("*").eq("user_id", user.id).eq("is_current_version", true),
       supabase.from("travel_records").select("*").eq("user_id", user.id),
+      supabase.from("opt_employment").select("start_date,end_date").eq("user_id", user.id).order("start_date"),
     ]);
+
+    const today = new Date();
+    const liveUnemploymentDays =
+      optStatus?.ead_start_date && employmentRows
+        ? calculateUnemploymentDays(
+            optStatus.ead_start_date,
+            employmentRows.map((e: { start_date: string; end_date: string | null }) => ({
+              startDate: e.start_date,
+              endDate: e.end_date,
+            })),
+            today
+          )
+        : undefined;
 
     const brief = generateComplianceBrief({
       optStatus,
+      liveUnemploymentDays,
       deadlines: deadlines || [],
       documents: documents || [],
       travelRecords: travelRecords || [],

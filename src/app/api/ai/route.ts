@@ -6,6 +6,7 @@ import { ok, UNAUTHORIZED } from "@/lib/api/helpers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { differenceInCalendarDays, parseISO, format } from "date-fns";
+import { calculateUnemploymentDays } from "@/lib/immigration/rules";
 
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 4000;
@@ -80,6 +81,8 @@ function buildProfileContext(
   travelRecords: TravelRecord[],
   docsExpiring: DocExpiry[],
   tax: TaxRecord | null,
+  /** From calculateUnemploymentDays(opt employment periods); not raw DB column */
+  optUnemploymentDaysLive: number,
 ): string {
   const today = new Date();
   const currentYear = today.getFullYear();
@@ -102,9 +105,8 @@ function buildProfileContext(
       const daysLeft = differenceInCalendarDays(parseISO(opt.ead_end_date), today);
       lines.push(`EAD days remaining: ${daysLeft}`);
     }
-    const unemployDays = opt.unemployment_days_used ?? 0;
     const unemployLimit = opt.unemployment_limit ?? 90;
-    lines.push(`Unemployment days used: ${unemployDays}/${unemployLimit} (${unemployLimit - unemployDays} remaining)`);
+    lines.push(`Unemployment days used: ${optUnemploymentDaysLive}/${unemployLimit} (${unemployLimit - optUnemploymentDaysLive} remaining)`);
     if (opt.application_date && !opt.ead_start_date) lines.push(`OPT application filed: ${opt.application_date} — still pending`);
   } else {
     lines.push("\nOPT Status: Not on OPT");
@@ -204,24 +206,49 @@ export async function POST(request: Request) {
   const sixtyDaysOut = format(new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000), "yyyy-MM-dd");
   const todayStr = format(today, "yyyy-MM-dd");
 
-  const [profileRes, optRes, employerRes, deadlinesRes, travelRes, docsExpiringRes, taxRes] = await Promise.all([
+  const [profileRes, optRes, employmentRes, deadlinesRes, travelRes, docsExpiringRes, taxRes] = await Promise.all([
     supabase.from("users").select("name,school_name,program_name,degree_level,program_end_date,home_country").eq("id", user.id).single(),
     supabase.from("opt_status").select("*").eq("user_id", user.id).single(),
-    supabase.from("opt_employment").select("*").eq("user_id", user.id).eq("is_current", true).single(),
+    supabase.from("opt_employment").select("employer_name,position_title,e_verify_employer,reported_to_school,is_current,start_date,end_date").eq("user_id", user.id).order("start_date"),
     supabase.from("compliance_deadlines").select("title,deadline_date,severity").eq("user_id", user.id).eq("status", "pending").order("deadline_date").limit(5),
     supabase.from("travel_records").select("days_outside,return_date").eq("user_id", user.id).gte("departure_date", `${currentYear}-01-01`),
     supabase.from("documents").select("doc_type,expiration_date").eq("user_id", user.id).is("deleted_at", null).not("expiration_date", "is", null).lte("expiration_date", sixtyDaysOut).gte("expiration_date", todayStr).order("expiration_date"),
     supabase.from("tax_records").select("tax_year,filing_status,federal_filed,form_8843_filed").eq("user_id", user.id).eq("tax_year", currentYear).single(),
   ]);
 
+  const employmentRows = employmentRes.data ?? [];
+  const currentEmployerRow = employmentRows.find((e: { is_current: boolean }) => e.is_current);
+  const employerForContext: EmployerData | null = currentEmployerRow
+    ? {
+        employer_name: currentEmployerRow.employer_name,
+        position_title: currentEmployerRow.position_title,
+        e_verify_employer: currentEmployerRow.e_verify_employer,
+        reported_to_school: currentEmployerRow.reported_to_school,
+      }
+    : null;
+
+  const optRow = optRes.data;
+  const optUnemploymentDaysLive =
+    optRow?.ead_start_date
+      ? calculateUnemploymentDays(
+          optRow.ead_start_date,
+          employmentRows.map((e: { start_date: string; end_date: string | null }) => ({
+            startDate: e.start_date,
+            endDate: e.end_date,
+          })),
+          today
+        )
+      : (optRow?.unemployment_days_used ?? 0);
+
   const profileContext = buildProfileContext(
     profileRes.data,
-    optRes.data,
-    employerRes.data,
+    optRow,
+    employerForContext,
     deadlinesRes.data ?? [],
     travelRes.data ?? [],
     docsExpiringRes.data ?? [],
     taxRes.data,
+    optUnemploymentDaysLive,
   );
 
   const systemPromptWithContext = `${IMMIGRATION_SYSTEM_PROMPT}\n\n${profileContext}`;

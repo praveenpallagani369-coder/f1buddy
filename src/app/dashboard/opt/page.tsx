@@ -254,11 +254,11 @@ export default function OPTPage() {
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-2">Unemployment Days</p>
                 <div className="flex items-baseline gap-1 mb-2">
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{opt.unemployment_days_used}</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{unemployed}</span>
                   <span className="text-gray-500 dark:text-gray-400">/ {opt.unemployment_limit} days</span>
                 </div>
-                <Progress value={opt.unemployment_days_used} max={opt.unemployment_limit} color={unemployColor} />
-                <p className="text-xs text-gray-600 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
+                <Progress value={unemployed} max={opt.unemployment_limit} color={unemployColor} />
+                <p className="text-xs text-gray-600 mt-1">{opt.unemployment_limit - unemployed} days remaining</p>
                 {opt.opt_type === "stem_extension" && (
                   <>
                     <p className="text-xs text-gray-500 mt-1">150-day cumulative limit across post-completion OPT + STEM extension combined — 8 CFR 214.2(f)(10)(ii)(E)</p>

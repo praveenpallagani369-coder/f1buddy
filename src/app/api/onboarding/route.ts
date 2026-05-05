@@ -1,5 +1,5 @@
 import { getAuthUser, ok, UNAUTHORIZED } from "@/lib/api/helpers";
-import { generateSystemDeadlines } from "@/lib/immigration/rules";
+import { calculateUnemploymentDays, generateSystemDeadlines } from "@/lib/immigration/rules";
 import { encryptIfPresent } from "@/lib/crypto";
 import { z } from "zod";
 
@@ -27,11 +27,27 @@ export async function POST(request: Request) {
     .eq("id", user.id)
     .single();
 
-  const { data: opt } = await supabase
-    .from("opt_status")
-    .select("ead_end_date, opt_type, unemployment_days_used, unemployment_limit")
-    .eq("user_id", user.id)
-    .single();
+  const [{ data: opt }, { data: employmentRows }] = await Promise.all([
+    supabase
+      .from("opt_status")
+      .select("ead_start_date,ead_end_date, opt_type, unemployment_days_used, unemployment_limit")
+      .eq("user_id", user.id)
+      .single(),
+    supabase.from("opt_employment").select("start_date,end_date").eq("user_id", user.id).order("start_date"),
+  ]);
+
+  const today = new Date();
+  const liveUnemployment =
+    opt?.ead_start_date && employmentRows
+      ? calculateUnemploymentDays(
+          opt.ead_start_date,
+          employmentRows.map((e: { start_date: string; end_date: string | null }) => ({
+            startDate: e.start_date,
+            endDate: e.end_date,
+          })),
+          today
+        )
+      : (opt?.unemployment_days_used ?? 0);
 
   // Build input for deadline generator
   const deadlineInput = {
@@ -39,7 +55,7 @@ export async function POST(request: Request) {
     eadEndDate: opt?.ead_end_date ?? null,
     passportExpiry: profile?.passport_expiry ?? null,
     optType: (opt?.opt_type as "pre_completion" | "post_completion" | "stem_extension" | null) ?? null,
-    unemploymentDaysUsed: opt?.unemployment_days_used ?? 0,
+    unemploymentDaysUsed: liveUnemployment,
     unemploymentLimit: opt?.unemployment_limit ?? 90,
   };
 
