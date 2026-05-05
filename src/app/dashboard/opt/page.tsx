@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 interface OPTRow { opt_type: string | null; ead_end_date: string | null; unemployment_days_used: number; unemployment_limit: number; ead_start_date: string | null; ead_category: string | null; application_date: string | null; [key: string]: unknown }
@@ -155,6 +156,8 @@ export default function OPTPage() {
     setSaving(false);
   }
 
+  const today = new Date().toISOString().split("T")[0];
+
   if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading OPT data...</div>;
 
   const stemAlert = stemOptAlert(opt);
@@ -275,6 +278,15 @@ export default function OPTPage() {
         <Card className="border-indigo-200">
           <CardHeader><CardTitle className="text-base">{opt ? "Update OPT Status" : "Set Up OPT"}</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            {optForm.optType === "stem_extension" && (
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">OPT (Post-Completion) — Already complete</p>
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5 opacity-80">Since you&apos;re on STEM OPT extension, your regular OPT is done. Enter your STEM OPT EAD dates below.</p>
+                </div>
+              </div>
+            )}
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">OPT Type</label>
@@ -302,7 +314,10 @@ export default function OPTPage() {
               </div>
               <div>
                 <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">EAD Start Date</label>
-                <Input type="date" value={optForm.eadStartDate} onChange={(e) => setOptForm(f => ({ ...f, eadStartDate: e.target.value }))} />
+                <Input type="date" value={optForm.eadStartDate} onChange={(e) => setOptForm(f => ({ ...f, eadStartDate: e.target.value }))} max={today} />
+                {optForm.eadStartDate && optForm.eadStartDate > today && (
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-1">EAD start date can&apos;t be in the future — you&apos;re already on OPT</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">EAD End Date</label>

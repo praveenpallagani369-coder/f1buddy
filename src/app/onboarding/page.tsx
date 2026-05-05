@@ -212,9 +212,9 @@ function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
 
 // ─── Field helper ─────────────────────────────────────────────────────────────
 
-function Field({ label, id, type = "text", placeholder, value, onChange, required, highlighted }: {
+function Field({ label, id, type = "text", placeholder, value, onChange, required, highlighted, max }: {
   label: string; id: string; type?: string; placeholder?: string;
-  value: string; onChange: (v: string) => void; required?: boolean; highlighted?: boolean;
+  value: string; onChange: (v: string) => void; required?: boolean; highlighted?: boolean; max?: string;
 }) {
   return (
     <div>
@@ -225,6 +225,7 @@ function Field({ label, id, type = "text", placeholder, value, onChange, require
         id={id} type={type} placeholder={placeholder} value={value}
         onChange={(e) => onChange(e.target.value)}
         className={highlighted ? "ring-2 ring-emerald-400 dark:ring-emerald-600" : ""}
+        max={max}
       />
       {highlighted && <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Auto-filled by AI — verify and edit if needed</p>}
     </div>
@@ -267,6 +268,8 @@ export default function OnboardingPage() {
   }
 
   const isOPT = OPT_STATUSES.includes(form.visaStatus as VisaStatus);
+  const today = new Date().toISOString().split("T")[0];
+  const eadStartInFuture = isOPT && !!form.eadStartDate && form.eadStartDate > today;
 
   function getVisaType(): "F1" | "J1" | "M1" {
     if (form.visaStatus === "J1") return "J1";
@@ -315,7 +318,7 @@ export default function OnboardingPage() {
   }, []);
 
   const canContinueStep0 = form.visaStatus !== "" && form.homeCountry !== "";
-  const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "";
+  const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "" && !eadStartInFuture;
 
   async function handleFinish() {
     setLoading(true);
@@ -494,33 +497,53 @@ export default function OnboardingPage() {
 
               {/* OPT-specific: EAD scan + dates */}
               {isOPT && (
-                <div className="border border-orange-200 dark:border-orange-800/50 rounded-xl p-4 bg-orange-50 dark:bg-orange-950/20 space-y-3">
-                  <div>
-                    <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
-                      {form.visaStatus === "F1_STEM_OPT" ? "STEM OPT EAD Card" : "OPT EAD Card"}
-                    </p>
-                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
-                      We&apos;ll use these dates to track your {form.visaStatus === "F1_STEM_OPT" ? "150" : "90"}-day unemployment limit.
-                    </p>
-                  </div>
-
-                  {/* EAD scanner */}
-                  <DocumentScanner
-                    docType="ead"
-                    label="Scan EAD card to auto-fill expiry date"
-                    hint="Take a clear photo of the front of your EAD card · JPG, PNG, WEBP"
-                    onExtracted={handleEADScan}
-                  />
-
-                  {form.eadCategory && (
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Card category: <strong>{form.eadCategory}</strong>
-                    </p>
+                <div className="space-y-3">
+                  {/* STEM OPT: regular OPT is already done */}
+                  {form.visaStatus === "F1_STEM_OPT" && (
+                    <div className="flex items-start gap-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">OPT (Post-Completion) — Already complete</p>
+                        <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">Since you&apos;re on STEM OPT extension, your regular OPT is done. Enter your STEM OPT EAD details below.</p>
+                      </div>
+                    </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="EAD Start Date" id="eadStart" type="date" value={form.eadStartDate} onChange={(v) => set("eadStartDate", v)} highlighted={aiFilledFields.has("eadStartDate")} />
-                    <Field label="EAD End Date" id="eadEnd" type="date" value={form.eadEndDate} onChange={(v) => set("eadEndDate", v)} highlighted={aiFilledFields.has("eadEndDate")} />
+                  <div className="border border-orange-200 dark:border-orange-800/50 rounded-xl p-4 bg-orange-50 dark:bg-orange-950/20 space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
+                        {form.visaStatus === "F1_STEM_OPT" ? "STEM OPT EAD Card" : "OPT EAD Card"}
+                      </p>
+                      <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
+                        We&apos;ll use these dates to track your {form.visaStatus === "F1_STEM_OPT" ? "150" : "90"}-day unemployment limit.
+                      </p>
+                    </div>
+
+                    {/* EAD scanner */}
+                    <DocumentScanner
+                      docType="ead"
+                      label="Scan EAD card to auto-fill expiry date"
+                      hint="Take a clear photo of the front of your EAD card · JPG, PNG, WEBP"
+                      onExtracted={handleEADScan}
+                    />
+
+                    {form.eadCategory && (
+                      <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Card category: <strong>{form.eadCategory}</strong>
+                      </p>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Field label="EAD Start Date" id="eadStart" type="date" value={form.eadStartDate} onChange={(v) => set("eadStartDate", v)} highlighted={aiFilledFields.has("eadStartDate")} max={today} />
+                        {eadStartInFuture && (
+                          <p className="text-[11px] text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> EAD start date can&apos;t be in the future — you&apos;re already on OPT
+                          </p>
+                        )}
+                      </div>
+                      <Field label="EAD End Date" id="eadEnd" type="date" value={form.eadEndDate} onChange={(v) => set("eadEndDate", v)} highlighted={aiFilledFields.has("eadEndDate")} />
+                    </div>
                   </div>
                 </div>
               )}
