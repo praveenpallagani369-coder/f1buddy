@@ -2,6 +2,7 @@ import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
 import { createAdminClient } from "@/lib/supabase/server";
 import { rateLimitDB } from "@/lib/rate-limit";
 import { canViewAllFeedback } from "@/lib/feedback/viewers";
+import { sendFeedbackNotification } from "@/lib/email/resend";
 import { z } from "zod";
 
 const createSchema = z.object({
@@ -71,5 +72,14 @@ export async function POST(request: Request) {
     .single();
 
   if (insErr) return err("DB_ERROR", "Could not save feedback", 500);
+
+  // Send notification email to admin asynchronously
+  sendFeedbackNotification({
+    submitterName: profile?.name ?? null,
+    submitterEmail: profile?.email ?? user.email ?? "",
+    category: parsed.data.category,
+    message: parsed.data.message,
+  }).catch((e) => console.error("Failed to send feedback email:", e));
+
   return ok(data, 201);
 }

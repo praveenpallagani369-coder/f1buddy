@@ -1,4 +1,4 @@
-﻿import { Resend } from "resend";
+import { Resend } from "resend";
 
 let resendClient: Resend | null = null;
 
@@ -99,6 +99,39 @@ export async function sendDeadlineReminder(data: DeadlineReminderData): Promise<
         </div>
       </body>
       </html>
+    `,
+  });
+}
+
+export interface FeedbackNotificationData {
+  submitterName: string | null;
+  submitterEmail: string;
+  category: string;
+  message: string;
+}
+
+export async function sendFeedbackNotification(data: FeedbackNotificationData): Promise<void> {
+  const adminEmail = process.env.FEEDBACK_NOTIFICATION_EMAIL;
+  if (!process.env.RESEND_API_KEY || !adminEmail) return;
+
+  const resend = getResend();
+  const safeName = data.submitterName ? escapeHtml(data.submitterName) : "Anonymous Student";
+  const safeEmail = escapeHtml(data.submitterEmail);
+  const safeCategory = escapeHtml(data.category.toUpperCase());
+  const safeMessage = escapeHtml(data.message).replace(/\n/g, "<br>");
+
+  await resend.emails.send({
+    from: "VisaBuddy Feedback <alerts@visabuddy.app>",
+    to: adminEmail,
+    subject: `[New Feedback] ${safeCategory}: from ${safeName}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;line-height:1.6">
+        <h2 style="color:#4f46e5">New Feedback Received</h2>
+        <p><strong>From:</strong> ${safeName} (${safeEmail})</p>
+        <p><strong>Category:</strong> <span style="background:#f1f5f9;padding:2px 8px;border-radius:4px">${safeCategory}</span></p>
+        <hr style="border:0;border-top:1px solid #e2e8f0;margin:20px 0">
+        <div style="background:#f8fafc;padding:20px;border-radius:8px;white-space:pre-wrap">${safeMessage}</div>
+      </div>
     `,
   });
 }
