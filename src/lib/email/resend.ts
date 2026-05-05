@@ -122,7 +122,7 @@ export async function sendFeedbackNotification(data: FeedbackNotificationData): 
 
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
 
-  await resend.emails.send({
+  const { data: res, error } = await resend.emails.send({
     from: `VisaBuddy Feedback <${fromEmail}>`,
     to: adminEmail,
     subject: `[New Feedback] ${safeCategory}: from ${safeName}`,
@@ -136,4 +136,10 @@ export async function sendFeedbackNotification(data: FeedbackNotificationData): 
       </div>
     `,
   });
+
+  if (error) {
+    console.error("Resend Error:", error);
+  } else {
+    console.log("Feedback email sent successfully:", res?.id);
+  }
 }
