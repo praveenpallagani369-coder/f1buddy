@@ -26,8 +26,10 @@ export default function ForgotPasswordPage() {
 
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     const next = encodeURIComponent("/auth/update-password");
+    // Use /auth/confirm so Supabase can complete recovery with verifyOtp(token_hash)
+    // — works when the email is opened on another device (PKCE /auth/callback often fails).
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${origin}/auth/callback?next=${next}`,
+      redirectTo: `${origin}/auth/confirm?next=${next}`,
     });
 
     if (resetError) {

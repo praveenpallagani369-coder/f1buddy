@@ -31,7 +31,9 @@ function LoginForm() {
       setInfo("Password updated. Sign in with your new password.");
     }
     if (urlError === "auth_failed") {
-      setError("Google sign-in failed. Please check that Google is enabled in Supabase Auth settings, or use email sign-in below.");
+      setError(
+        "That email link is invalid, expired, or was already used — often because it was opened in a different browser than where you requested it. Try Google again, sign in with email and password, send a new magic link, or request another password reset from Forgot password.",
+      );
     }
   }, [searchParams]);
 
