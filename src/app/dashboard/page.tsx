@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { differenceInCalendarDays, parseISO, addDays, format } from "date-fns";
-import { calculateUnemploymentDays } from "@/lib/immigration/rules";
+import { calculateUnemploymentDays, checkFiveMonthRule, calculateDaysOutsideUS } from "@/lib/immigration/rules";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
@@ -147,19 +147,11 @@ export default async function DashboardPage() {
   const phase = detectPhase(opt, today);
   const phaseConfig = PHASE_CONFIG[phase];
 
-  const daysOutsideThisYear = travels.reduce((sum, t) => {
-    const dep = parseISO(t.departure_date);
-    const ret = t.return_date ? parseISO(t.return_date) : today;
-    if (dep.getFullYear() <= thisYear || ret.getFullYear() >= thisYear) {
-      const start = dep.getFullYear() < thisYear ? new Date(thisYear, 0, 1) : dep;
-      const end = ret.getFullYear() > thisYear ? new Date(thisYear, 11, 31) : ret;
-      return sum + Math.max(0, differenceInCalendarDays(end, start));
-    }
-    return sum;
-  }, 0);
-
+  const travelInput = travels.map(t => ({ departureDate: t.departure_date, returnDate: t.return_date }));
+  const daysOutsideThisYear = calculateDaysOutsideUS(travelInput, thisYear, today);
   const currentlyAbroad = travels.some((t) => !t.return_date);
-  const fiveMonthWarning = daysOutsideThisYear >= 120;
+  // Five-month rule is a CONTINUOUS absence exceeding 5 calendar months, not annual total days
+  const { violated: fiveMonthWarning } = checkFiveMonthRule(travelInput);
 
   const expiringDocs = docs.filter((d) => {
     if (!d.expiration_date) return false;

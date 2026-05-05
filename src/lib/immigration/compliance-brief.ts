@@ -1,4 +1,5 @@
-import { differenceInDays, parseISO } from "date-fns";
+import { differenceInDays, parseISO, addMonths } from "date-fns";
+import { checkFiveMonthRule } from "./rules";
 
 export interface ComplianceStatus {
   status: "all_clear" | "warning" | "critical";
@@ -72,15 +73,20 @@ export function generateComplianceBrief(data: {
     };
   }
 
-  // 4. Check Travel Rules
-  const activeTrip = data.travelRecords?.find(t => !t.return_date);
+  // 4. Check Travel Rules — 5-month rule is a CONTINUOUS absence > 5 calendar months
+  const activeTrip = data.travelRecords?.find((t: { return_date: string | null }) => !t.return_date);
   if (activeTrip) {
     const daysOut = differenceInDays(today, parseISO(activeTrip.departure_date));
-    if (daysOut >= 120) { // Close to 5-month rule
+    const { violated } = checkFiveMonthRule([activeTrip]);
+    if (violated || daysOut >= 120) {
+      const fiveMonthMark = addMonths(parseISO(activeTrip.departure_date), 5);
+      const daysToLimit = Math.max(0, differenceInDays(fiveMonthMark, today));
       return {
-        status: "warning",
-        oneLiner: `✈️ Day ${daysOut} abroad — remember the 5-month rule for F-1 students.`,
-        daysRemaining: 150 - daysOut,
+        status: violated ? "critical" : "warning",
+        oneLiner: violated
+          ? `✈️ You've been outside the US for over 5 continuous months — SEVIS may be at risk. Contact your DSO immediately.`
+          : `✈️ Day ${daysOut} abroad — approaching the 5-month continuous absence limit (${daysToLimit} days to threshold).`,
+        daysRemaining: daysToLimit,
         category: "Travel",
       };
     }

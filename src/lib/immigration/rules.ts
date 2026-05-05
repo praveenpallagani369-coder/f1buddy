@@ -222,9 +222,9 @@ export function generateSystemDeadlines(student: StudentDeadlineInput): Generate
   }
   const daysToTax = differenceInCalendarDays(taxDeadline, today);
   deadlines.push({
-    title: `File ${taxDeadline.getFullYear() - 1} Tax Return (Form 1040-NR)`,
+    title: `${taxDeadline.getFullYear() - 1} Tax Filing Deadline`,
     description:
-      "F-1 students must file Form 1040-NR by April 15. Even with no income, file Form 8843. Use Sprintax or Glacier Tax Prep.",
+      "F-1 students with US income must file Form 1040-NR by April 15 (deadline shifts if it falls on a weekend or holiday). Even with no US income, you must still file Form 8843. Use Sprintax or Glacier Tax Prep for nonresident returns.",
     deadlineDate: format(taxDeadline, "yyyy-MM-dd"),
     category: "tax",
     severity: daysToTax <= 14 ? "critical" : daysToTax <= 60 ? "warning" : "info",

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getGroqClient, MODELS } from "@/lib/ai/groq";
 import { differenceInCalendarDays, parseISO, format } from "date-fns";
+import { calculateUnemploymentDays } from "@/lib/immigration/rules";
 import { NextResponse } from "next/server";
 
 const MAX_USERS_PER_RUN = 15; // stay comfortably within 30 RPM
@@ -55,26 +56,33 @@ export async function GET(request: Request) {
 
   for (const userId of eligibleUserIds) {
     try {
-      const [profileRes, optRes, deadlinesRes, travelRes] = await Promise.all([
+      const [profileRes, optRes, deadlinesRes, travelRes, employmentRes] = await Promise.all([
         supabase.from("users").select("name,program_end_date,home_country").eq("id", userId).single(),
-        supabase.from("opt_status").select("opt_type,ead_end_date,unemployment_days_used,unemployment_limit").eq("user_id", userId).single(),
+        supabase.from("opt_status").select("opt_type,ead_start_date,ead_end_date,unemployment_days_used,unemployment_limit").eq("user_id", userId).single(),
         supabase.from("compliance_deadlines").select("title,deadline_date,severity").eq("user_id", userId).eq("status", "pending").gte("deadline_date", todayStr).order("deadline_date").limit(3),
         supabase.from("travel_records").select("days_outside,return_date").eq("user_id", userId).gte("departure_date", `${currentYear}-01-01`),
+        supabase.from("opt_employment").select("start_date,end_date").eq("user_id", userId),
       ]);
 
       const profile = profileRes.data;
       const opt = optRes.data;
       const deadlines = deadlinesRes.data ?? [];
+      const employment = (employmentRes.data ?? []).map((e: { start_date: string; end_date: string | null }) => ({ startDate: e.start_date, endDate: e.end_date }));
       const travelDays = (travelRes.data ?? []).reduce((sum: number, r: { days_outside: number }) => sum + (r.days_outside ?? 0), 0);
       const currentlyAbroad = (travelRes.data ?? []).some((r: { return_date: string | null }) => !r.return_date);
+
+      // Use live unemployment calculation — DB unemployment_days_used is not updated in real time
+      const liveUnemployment = opt?.ead_start_date
+        ? calculateUnemploymentDays(opt.ead_start_date, employment, today)
+        : (opt?.unemployment_days_used ?? 0);
 
       const contextLines: string[] = [`Today: ${todayStr}`];
       if (opt?.ead_end_date) {
         const eadDays = differenceInCalendarDays(parseISO(opt.ead_end_date), today);
         contextLines.push(`EAD expires in ${eadDays} days (${opt.ead_end_date})`);
       }
-      if (opt?.unemployment_days_used != null && opt.unemployment_limit != null) {
-        contextLines.push(`OPT unemployment: ${opt.unemployment_days_used}/${opt.unemployment_limit} days used`);
+      if (opt?.unemployment_limit != null) {
+        contextLines.push(`OPT unemployment: ${liveUnemployment}/${opt.unemployment_limit} days used`);
       }
       if (travelDays > 0) contextLines.push(`Days outside US this year: ${travelDays}${currentlyAbroad ? " (currently abroad)" : ""}`);
       deadlines.forEach(d => {

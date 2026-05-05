@@ -64,10 +64,10 @@ function calculate(input: {
       results.push({
         label: "Gap Between Program End & OPT Start",
         value: `${gapDays} days`,
-        status: gapDays > 60 ? "critical" : "warning",
+        status: "warning",
         note: gapDays > 60
-          ? "Gap exceeds 60 days — this may indicate an issue with your application. Consult your DSO."
-          : "Normal gap. You cannot work during this period.",
+          ? "Gap exceeds 60 days. This often happens due to USCIS processing delays and does not necessarily indicate a problem. Check your case at egov.uscis.gov and contact your DSO if you have concerns."
+          : "Normal gap during USCIS processing. You cannot work during this period.",
       });
     }
   }
@@ -299,7 +299,7 @@ export default function CalculatorPage() {
               <ul className="space-y-2 text-xs text-gray-600">
                 <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work before EAD start date printed on card</li>
                 <li className="flex gap-2"><span className="text-red-600">✗</span> Cannot work after EAD end date (unless STEM pending → 180-day auto-ext)</li>
-                <li className="flex gap-2"><span className="text-red-600">✗</span> Receipt notice does NOT authorize work — only physical EAD card</li>
+                <li className="flex gap-2"><span className="text-red-600">✗</span> Receipt notice alone does NOT authorize work — physical EAD required (exception: STEM OPT 180-day auto-extension, where I-797 receipt + expired EAD together serve as proof of continued work authorization)</li>
                 <li className="flex gap-2"><span className="text-red-600">✗</span> CANNOT work during any grace period</li>
                 <li className="flex gap-2"><span className="text-amber-600">△</span> STEM: must have E-Verify employer + timely file before OPT expires</li>
                 <li className="flex gap-2"><span className="text-amber-600">△</span> STEM pending at OPT expiry = 180-day auto-extension to keep working</li>

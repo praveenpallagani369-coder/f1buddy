@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { calculateUnemploymentDays } from "@/lib/immigration/rules";
 
 interface OPTRow { opt_type: string | null; ead_end_date: string | null; unemployment_days_used: number; unemployment_limit: number; ead_start_date: string | null; ead_category: string | null; application_date: string | null; [key: string]: unknown }
 interface EmployerRow { id: string; employer_name: string; position_title: string | null; employment_type: string; start_date: string; end_date: string | null; is_current: boolean; reported_to_school: boolean; e_verify_employer: boolean; is_stem_related: boolean; [key: string]: unknown }
@@ -161,7 +162,15 @@ export default function OPTPage() {
   if (loading) return <div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading OPT data...</div>;
 
   const stemAlert = stemOptAlert(opt);
-  const unemployed = opt?.unemployment_days_used ?? 0;
+  // Live calculation from employment records — consistent with dashboard
+  const liveUnemployed = opt?.ead_start_date
+    ? calculateUnemploymentDays(
+        opt.ead_start_date,
+        employers.map(e => ({ startDate: e.start_date, endDate: e.end_date })),
+        new Date()
+      )
+    : (opt?.unemployment_days_used ?? 0);
+  const unemployed = liveUnemployed;
   const limit = opt?.unemployment_limit ?? 90;
 
   // Spec: alert at EXACTLY 60, 75, 85 days — not percentages
@@ -251,7 +260,10 @@ export default function OPTPage() {
                 <Progress value={opt.unemployment_days_used} max={opt.unemployment_limit} color={unemployColor} />
                 <p className="text-xs text-gray-600 mt-1">{opt.unemployment_limit - opt.unemployment_days_used} days remaining</p>
                 {opt.opt_type === "stem_extension" && (
-                  <p className="text-xs text-gray-500 mt-1">150 total = 90 OPT + 60 STEM (cumulative, never resets) — 8 CFR 214.2(f)(10)(ii)(E)</p>
+                  <>
+                    <p className="text-xs text-gray-500 mt-1">150-day cumulative limit across post-completion OPT + STEM extension combined — 8 CFR 214.2(f)(10)(ii)(E)</p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">⚠ Count shown is from STEM EAD start only. Add any unemployment days from your regular OPT period to get your true total.</p>
+                  </>
                 )}
               </div>
             </div>
