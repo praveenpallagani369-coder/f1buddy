@@ -53,6 +53,12 @@ export default function OPTPage() {
       ]);
       setOpt(optRes.data);
       setEmployers(empRes.data ?? []);
+      
+      // Auto-generate STEM Validation deadlines if missing (for users who onboarded before this feature was added)
+      if (optRes.data?.opt_type === "stem_extension" && optRes.data.ead_start_date) {
+        await upsertStemValidationDeadlines(supabase, user.id, optRes.data.ead_start_date);
+      }
+      
       setLoading(false);
     }
     load();

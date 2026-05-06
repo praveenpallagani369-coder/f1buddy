@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { differenceInCalendarDays, parseISO, addDays, format } from "date-fns";
 import { calculateUnemploymentDays, checkFiveMonthRule, calculateDaysOutsideUS } from "@/lib/immigration/rules";
+import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
@@ -130,7 +131,14 @@ export default async function DashboardPage() {
   const currentEmployer = allEmployment.find((e) => e.is_current) ?? null;
   const travels = travelRes.data ?? [];
   const docs = docsRes.data ?? [];
-  const nextStemDeadline = stemDeadlinesRes.data?.[0] ?? null;
+  let nextStemDeadline = stemDeadlinesRes.data?.[0] ?? null;
+
+  if (opt?.opt_type === "stem_extension" && opt?.ead_start_date && !nextStemDeadline) {
+    await upsertStemValidationDeadlines(supabase, user.id, opt.ead_start_date);
+    // Refetch next stem deadline
+    const { data: retryStemDeadlines } = await supabase.from("compliance_deadlines").select("*").eq("user_id", user.id).eq("status", "pending").like("title", "%STEM OPT%Validation Report%").order("deadline_date").limit(1);
+    nextStemDeadline = retryStemDeadlines?.[0] ?? null;
+  }
 
   const today = new Date();
   const thisYear = today.getFullYear();
