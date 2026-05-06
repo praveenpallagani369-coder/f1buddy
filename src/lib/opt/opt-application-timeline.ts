@@ -189,3 +189,43 @@ export function stemUserHasIncompleteOptSteps(
     return !row?.is_completed;
   });
 }
+
+/** Automatically create/update the 90-day STEM OPT application window deadline. */
+export async function upsertStemApplicationDeadline(
+  supabase: SupabaseClient,
+  userId: string,
+  eadEndDateISO: string
+): Promise<void> {
+  const expiry = parseISO(eadEndDateISO);
+  const earliestFiling = subDays(expiry, 90);
+  
+  const title = "File STEM OPT Extension (Form I-765)";
+  const description = `Your STEM OPT application window opens 90 days before your current EAD expires. You must file Form I-765 with USCIS no later than ${eadEndDateISO}. Earliest filing date: ${format(earliestFiling, "yyyy-MM-dd")}. — 8 CFR 214.2(f)(10)(ii)(C)`;
+
+  // Check if it already exists
+  const { data: existing } = await supabase
+    .from("compliance_deadlines")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("title", title)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase.from("compliance_deadlines").update({
+      deadline_date: eadEndDateISO,
+      description,
+      updated_at: new Date().toISOString(),
+    }).eq("id", existing.id);
+  } else {
+    await supabase.from("compliance_deadlines").insert({
+      user_id: userId,
+      title,
+      description,
+      deadline_date: eadEndDateISO,
+      category: "opt",
+      severity: "critical",
+      status: "pending",
+      is_system_generated: true,
+    });
+  }
+}

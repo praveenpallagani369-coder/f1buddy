@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { calculateUnemploymentDays } from "@/lib/immigration/rules";
-import { markPostCompletionOptStepsCompleted } from "@/lib/opt/opt-application-timeline";
+import { markPostCompletionOptStepsCompleted, upsertStemApplicationDeadline } from "@/lib/opt/opt-application-timeline";
 import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
 
 interface OPTRow { opt_type: string | null; ead_end_date: string | null; unemployment_days_used: number; unemployment_limit: number; ead_start_date: string | null; ead_category: string | null; application_date: string | null; [key: string]: unknown }
@@ -72,6 +72,10 @@ export default function OPTPage() {
     if (!user) return;
     const limit = optForm.optType === "stem_extension" ? 150 : 90;
     await supabase.from("opt_status").upsert({ user_id: user.id, opt_type: optForm.optType, ead_category: optForm.eadCategory, ead_start_date: optForm.eadStartDate, ead_end_date: optForm.eadEndDate, unemployment_limit: limit, application_date: optForm.applicationDate || null, approval_date: optForm.approvalDate || null, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
+
+    if (optForm.optType === "post_completion" && optForm.eadEndDate) {
+      await upsertStemApplicationDeadline(supabase, user.id, optForm.eadEndDate);
+    }
 
     if (optForm.optType === "stem_extension") {
       const { data: profileRow } = await supabase.from("users").select("program_end_date").eq("id", user.id).single();

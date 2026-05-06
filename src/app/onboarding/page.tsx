@@ -2,7 +2,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { markPostCompletionOptStepsCompleted } from "@/lib/opt/opt-application-timeline";
+import { markPostCompletionOptStepsCompleted, upsertStemApplicationDeadline } from "@/lib/opt/opt-application-timeline";
 import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -192,6 +192,10 @@ export default function OnboardingPage() {
         unemployment_limit: optType === "stem_extension" ? 150 : 90,
         updated_at: new Date().toISOString(),
       }, { onConflict: "user_id" });
+
+      if (optType === "post_completion" && form.eadEndDate) {
+        await upsertStemApplicationDeadline(supabase, user.id, form.eadEndDate);
+      }
 
       let finalEmployerName = form.employerName.trim();
       if (!finalEmployerName && form.employmentStartDate) {
