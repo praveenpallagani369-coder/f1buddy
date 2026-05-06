@@ -188,7 +188,7 @@ export default function STEMTimelinePage() {
       {/* Processing time info */}
       <div className="grid sm:grid-cols-3 gap-3">
         {[
-          { label: "Application Window Opens", value: opt?.ead_end_date ? format(subDays(parseISO(opt.ead_end_date), 90), "MMM d, yyyy") : "Set OPT first", color: "text-amber-600" },
+          { label: "Application Window Opens", value: refDateISO ? format(subDays(parseISO(refDateISO), 90), "MMM d, yyyy") : "Set OPT first", color: "text-amber-600" },
           { label: "USCIS Processing", value: "3–5 months", color: "text-gray-600 dark:text-gray-400" },
           { label: "STEM OPT Duration", value: "24 months", color: "text-violet-400" },
         ].map((item) => (
