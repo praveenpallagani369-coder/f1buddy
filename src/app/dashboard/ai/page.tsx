@@ -167,7 +167,7 @@ export default function AIPage() {
   const isEmpty = historyLoaded && messages.length === 0;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-7rem)]">
+    <div className="flex flex-col h-[calc(100dvh-13rem)] lg:h-[calc(100vh-7rem)]">
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
         <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
