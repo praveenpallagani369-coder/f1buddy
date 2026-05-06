@@ -172,21 +172,25 @@ export default async function DashboardPage() {
   const graceEnd = eadEnd ? addDays(eadEnd, 60) : null;
   const daysInGrace = (phase === "grace_period" && graceEnd) ? differenceInCalendarDays(graceEnd, today) : null;
 
-  const criticalDeadlines = deadlines.filter((d) => {
-    const days = differenceInCalendarDays(parseISO(d.deadline_date), today);
-    return days <= 7 || d.severity === "critical";
-  });
+  const upcomingDeadlines = deadlines.map(d => ({
+    ...d,
+    days: differenceInCalendarDays(parseISO(d.deadline_date), today)
+  }));
+
+  const hasUrgent = upcomingDeadlines.some(d => d.days <= 7) || criticalDeadlines.length > 0 || phase === "grace_period" || phase === "program_ended" || liveUnemploymentDays >= unemploymentLimit * 0.9;
+  const hasTakeAction = upcomingDeadlines.some(d => d.days <= 30) || expiringDocs.length > 0 || liveUnemploymentDays >= unemploymentLimit * 0.7;
+  const hasActionNeeded = upcomingDeadlines.some(d => d.days <= 60) || fiveMonthWarning || phase === "stem_180_extension";
 
   const overallStatus =
-    phase === "grace_period" || phase === "program_ended" || criticalDeadlines.length > 0 || liveUnemploymentDays >= unemploymentLimit * 0.9
-      ? "red"
-      : phase === "stem_180_extension" || deadlines.length > 0 || expiringDocs.length > 0 || fiveMonthWarning || liveUnemploymentDays >= unemploymentLimit * 0.7
-      ? "yellow"
-      : "green";
+    hasUrgent ? "red" :
+    hasTakeAction ? "orange" :
+    hasActionNeeded ? "yellow" :
+    "green";
 
   const statusConfig = {
     green:  { dot: "bg-emerald-400", text: "All Clear",     textColor: "text-emerald-700 dark:text-emerald-300", bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800" },
     yellow: { dot: "bg-amber-400",   text: "Action Needed", textColor: "text-amber-700 dark:text-amber-300",     bg: "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800"       },
+    orange: { dot: "bg-orange-500",  text: "Take Action",   textColor: "text-orange-700 dark:text-orange-300",   bg: "bg-orange-50 border-orange-200 dark:bg-orange-950/40 dark:border-orange-800"   },
     red:    { dot: "bg-red-400",     text: "Urgent",        textColor: "text-red-700 dark:text-red-300",         bg: "bg-red-50 border-red-200 dark:bg-red-950/40 dark:border-red-800"               },
   }[overallStatus];
 
