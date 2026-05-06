@@ -119,8 +119,8 @@ export function buildOptApplicationTimeline(
   ];
 }
 
-/** Mark initial OPT checkpoints complete for STEM students (post-completion OPT is done). Idempotent upserts into `opt_application_steps`. */
-export async function markOptApplicationStepsCompletedForStemUser(
+/** Mark initial OPT checkpoints complete for users already on OPT or STEM. Idempotent upserts into `opt_application_steps`. */
+export async function markPostCompletionOptStepsCompleted(
   supabase: SupabaseClient,
   userId: string,
   programEndDateISO: string | null

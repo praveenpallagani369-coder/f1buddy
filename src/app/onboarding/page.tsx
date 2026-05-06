@@ -2,7 +2,7 @@
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { markOptApplicationStepsCompletedForStemUser } from "@/lib/opt/opt-application-timeline";
+import { markPostCompletionOptStepsCompleted } from "@/lib/opt/opt-application-timeline";
 import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -212,17 +212,22 @@ export default function OnboardingPage() {
         });
       }
 
-      if (optType === "stem_extension") {
-        await markOptApplicationStepsCompletedForStemUser(
+      // 1. Mark regular OPT application steps as done if they are already on OPT or STEM
+      if (optType === "post_completion" || optType === "stem_extension") {
+        await markPostCompletionOptStepsCompleted(
           supabase,
           user.id,
           form.programEndDate || null
         );
+      }
+
+      // 2. Mark STEM OPT application steps as done if they are already on STEM
+      if (optType === "stem_extension") {
         if (form.eadStartDate) {
           await upsertStemValidationDeadlines(supabase, user.id, form.eadStartDate);
           
           if (form.eadStartDate <= today) {
-            // mark stem opt steps as done
+            // mark stem opt application steps as done
             const stemSteps = [
               "stem_eligibility", "stem_employer_verify", "stem_i983_draft", 
               "stem_dso_request", "stem_file_i765", "stem_receipt", "stem_ead_received"
