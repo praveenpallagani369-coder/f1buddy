@@ -10,7 +10,7 @@ import {
   LayoutDashboard, CalendarClock, Briefcase,
   BookOpen, Plane, FolderOpen, Receipt, Mail,
   Sparkles, MessageCircle, BookMarked, Route, Search,
-  LogOut, X, Sun, Moon, Settings, ChevronRight, Gavel, SendHorizontal,
+  LogOut, X, Sun, Moon, Settings, ChevronRight, SendHorizontal,
   type LucideIcon,
 } from "lucide-react";
 import { AppIcon } from "@/components/icons/AppIcon";

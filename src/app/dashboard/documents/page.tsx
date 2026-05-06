@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,48 +9,16 @@ import { differenceInCalendarDays, parseISO } from "date-fns";
 
 const DOC_LABELS: Record<string, string> = { i20:"I-20", ead:"EAD Card", passport:"Passport", visa_stamp:"Visa Stamp", i94:"I-94", ssn_card:"SSN Card", offer_letter:"Offer Letter", pay_stub:"Pay Stub", tax_return:"Tax Return", transcript:"Transcript", other:"Other" };
 const DOC_ICONS: Record<string, string> = { i20:"📋", ead:"💳", passport:"🛂", visa_stamp:"🔖", i94:"📄", ssn_card:"🪪", offer_letter:"📝", pay_stub:"💵", tax_return:"🧾", transcript:"📜", other:"📎" };
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 interface DocumentRecord {
   id: string;
   user_id: string;
   doc_type: string;
-  file_url: string | null;
-  file_name: string | null;
-  file_size_bytes: number | null;
-  mime_type: string | null;
   expiration_date: string | null;
-  is_current_version: boolean;
   notes: string | null;
-  ai_extracted_data: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
-}
-
-type AiScanState = "idle" | "scanning" | "done" | "error";
-
-const SCAN_STEPS = [
-  "Reading document...",
-  "Analyzing with AI...",
-  "Extracting fields...",
-  "Almost done...",
-];
-
-interface AiScanResult {
-  expirationDate: string | null;
-  documentNumber: string | null;
-  holderName: string | null;
-  sevisId?: string | null;
-  category?: string | null;
-  nationality?: string | null;
-  fullName?: string | null;
-  visaCategory?: string | null;
-  classOfAdmission?: string | null;
-  programEndDate?: string | null;
-  studentName?: string | null;
-  [key: string]: string | null | undefined;
 }
 
 export default function DocumentsPage() {
@@ -120,19 +88,7 @@ export default function DocumentsPage() {
     && differenceInCalendarDays(parseISO(d.expiration_date), today) <= 90
     && differenceInCalendarDays(parseISO(d.expiration_date), today) >= 0);
 
-  const reviewFields: { label: string; value: string; field?: "expirationDate" }[] = [];
-  if (aiResult) {
-    const expiry = aiResult.expirationDate ?? aiResult.programEndDate ?? null;
-    if (expiry) reviewFields.push({ label: "Expiry Date", value: expiry, field: "expirationDate" });
-    const name = aiResult.fullName ?? aiResult.holderName ?? aiResult.studentName ?? null;
-    if (name) reviewFields.push({ label: "Name on Document", value: name });
-    if (aiResult.documentNumber) reviewFields.push({ label: "Document Number", value: aiResult.documentNumber });
-    if (aiResult.sevisId) reviewFields.push({ label: "SEVIS ID", value: aiResult.sevisId });
-    if (aiResult.nationality) reviewFields.push({ label: "Nationality", value: aiResult.nationality });
-    if (aiResult.visaCategory) reviewFields.push({ label: "Visa Category", value: aiResult.visaCategory });
-    if (aiResult.category) reviewFields.push({ label: "Card Category", value: aiResult.category });
-    if (aiResult.classOfAdmission) reviewFields.push({ label: "Class of Admission", value: aiResult.classOfAdmission });
-  }
+
 
   if (loading) return (
     <div className="flex items-center justify-center py-20">

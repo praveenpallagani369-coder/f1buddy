@@ -10,7 +10,7 @@ import {
   Sparkles, MessageCircle, Settings,
   BookMarked, ShieldAlert,
   Sun, Moon, LogOut, X, BookOpen,
-  CalendarClock, Gavel, SendHorizontal,
+  CalendarClock, SendHorizontal,
   type LucideIcon,
 } from "lucide-react";
 

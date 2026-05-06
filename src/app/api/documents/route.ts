@@ -2,18 +2,6 @@ import { getAuthUser, ok, err, UNAUTHORIZED } from "@/lib/api/helpers";
 import { rateLimitDB } from "@/lib/rate-limit";
 import { z } from "zod";
 
-const ALLOWED_EXTENSIONS = ["pdf", "png", "jpg", "jpeg", "webp", "gif", "tiff"];
-const ALLOWED_MIME_TYPES: Record<string, string> = {
-  pdf: "application/pdf",
-  png: "image/png",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  webp: "image/webp",
-  gif: "image/gif",
-  tiff: "image/tiff",
-};
-const ALLOWED_MIME_SET = new Set(Object.values(ALLOWED_MIME_TYPES));
-
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 const uploadSchema = z.object({

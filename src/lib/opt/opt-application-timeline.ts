@@ -139,7 +139,6 @@ export async function markOptApplicationStepsCompletedForStemUser(
         tip: "",
       }));
 
-  const now = format(new Date(), "yyyy-MM-dd");
   const updatedAt = new Date().toISOString();
 
   for (const step of steps) {
