@@ -18,18 +18,9 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 const uploadSchema = z.object({
   docType: z.enum(["i20","ead","passport","visa_stamp","i94","ssn_card","offer_letter","pay_stub","tax_return","transcript","other"]),
-  fileName: z.string().min(1).max(255).refine(
-    (name) => {
-      const ext = name.split(".").pop()?.toLowerCase() ?? "";
-      return ALLOWED_EXTENSIONS.includes(ext);
-    },
-    { message: "File type not allowed. Accepted: PDF, PNG, JPG, WEBP, GIF, TIFF" }
-  ),
-  mimeType: z.string().refine(
-    (mt) => ALLOWED_MIME_SET.has(mt),
-    { message: "Content type not allowed. Accepted: PDF, PNG, JPG, WEBP, GIF, TIFF" }
-  ),
-  fileSizeBytes: z.number().int().min(1).max(MAX_FILE_SIZE, `File size must be under ${MAX_FILE_SIZE / 1024 / 1024} MB`).optional(),
+  fileName: z.string().max(255).optional().nullable(),
+  mimeType: z.string().optional().nullable(),
+  fileSizeBytes: z.number().int().min(1).max(MAX_FILE_SIZE).optional().nullable(),
   expirationDate: z.string().optional().nullable(),
   notes: z.string().max(1000).optional().nullable(),
 });
@@ -62,31 +53,28 @@ export async function POST(request: Request) {
   const parsed = uploadSchema.safeParse(body);
   if (!parsed.success) return err("VALIDATION", parsed.error.issues[0]?.message ?? "Invalid input");
 
-  const { docType, fileName, mimeType: clientMimeType, expirationDate, notes } = parsed.data;
-
-  const ext = (fileName.split(".").pop() ?? "pdf").toLowerCase();
-  const expectedMime = ALLOWED_MIME_TYPES[ext];
-  if (expectedMime && clientMimeType !== expectedMime) {
-    return err("VALIDATION", "File extension and content type do not match");
-  }
-  const mimeType = clientMimeType;
-  const storagePath = `${user.id}/${docType}/${Date.now()}.${ext}`;
-
+  const { docType, fileName, mimeType, expirationDate, notes } = parsed.data;
   let uploadUrl: string | null = null;
   let publicUrl: string | null = null;
+  let storagePath: string | null = null;
 
-  try {
-    const { data: uploadData } = await supabase.storage
-      .from("documents")
-      .createSignedUploadUrl(storagePath);
-    uploadUrl = uploadData?.signedUrl ?? null;
+  if (fileName) {
+    const ext = (fileName.split(".").pop() ?? "pdf").toLowerCase();
+    storagePath = `${user.id}/${docType}/${Date.now()}.${ext}`;
 
-    const { data: urlData } = await supabase.storage
-      .from("documents")
-      .createSignedUrl(storagePath, 60 * 60); // 1 hour — re-sign on demand
-    publicUrl = urlData?.signedUrl ?? null;
-  } catch {
-    // Storage not configured — store record without file
+    try {
+      const { data: uploadData } = await supabase.storage
+        .from("documents")
+        .createSignedUploadUrl(storagePath);
+      uploadUrl = uploadData?.signedUrl ?? null;
+
+      const { data: urlData } = await supabase.storage
+        .from("documents")
+        .createSignedUrl(storagePath, 60 * 60);
+      publicUrl = urlData?.signedUrl ?? null;
+    } catch {
+      // Storage failure
+    }
   }
 
   const { data: doc, error: dbErr } = await supabase
@@ -94,10 +82,10 @@ export async function POST(request: Request) {
     .insert({
       user_id: user.id,
       doc_type: docType,
-      file_url: publicUrl ?? `pending://${storagePath}`,
-      file_name: fileName,
+      file_url: publicUrl ?? (storagePath ? `pending://${storagePath}` : null),
+      file_name: fileName || null,
       file_size_bytes: parsed.data.fileSizeBytes ?? null,
-      mime_type: mimeType,
+      mime_type: mimeType || null,
       expiration_date: expirationDate || null,
       notes: notes || null,
       is_current_version: true,
