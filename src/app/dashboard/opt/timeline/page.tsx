@@ -1,112 +1,18 @@
 ﻿"use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { addDays, subDays, parseISO, differenceInCalendarDays, format, isBefore } from "date-fns";
+import {
+  OPT_PROCESSING_FALLBACK,
+  buildOptApplicationTimeline,
+  markOptApplicationStepsCompletedForStemUser,
+  stemUserHasIncompleteOptSteps,
+  type OptTimelineStep,
+} from "@/lib/opt/opt-application-timeline";
+import { parseISO, differenceInCalendarDays, format, isBefore, subDays } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-
-// Static fallback used until live data loads
-const PROCESSING_FALLBACK = { optimisticWeeks: 10, typicalWeeks: 16, slowWeeks: 24 };
-
-interface TimelineStep {
-  id: string;
-  order: number;
-  title: string;
-  description: string;
-  targetDate: Date | null;
-  completedDate: string | null;
-  isCompleted: boolean;
-  isCritical: boolean;
-  tip: string;
-}
-
-function buildTimeline(programEndDate: Date, _optType: string, estimates = PROCESSING_FALLBACK): TimelineStep[] {
-  const applyBy = subDays(programEndDate, 90);
-  const dsoRequestBy = subDays(applyBy, 14);
-  const typicalEADDate = addDays(applyBy, estimates.typicalWeeks * 7);
-
-  return [
-    {
-      id: "dso_request",
-      order: 1,
-      title: "Request DSO Recommendation",
-      description: "Email your DSO to request an OPT I-20. Provide your desired OPT start date and employer (if known).",
-      targetDate: dsoRequestBy,
-      completedDate: null,
-      isCompleted: false,
-      isCritical: true,
-      tip: "Give your DSO 5–10 business days to process. Be specific about your requested OPT start date. Use the DSO Email Generator in VisaBuddy.",
-    },
-    {
-      id: "dso_i20",
-      order: 2,
-      title: "Receive OPT-Endorsed I-20",
-      description: "DSO updates your SEVIS record and issues a new I-20 with OPT recommendation.",
-      targetDate: subDays(applyBy, 5),
-      completedDate: null,
-      isCompleted: false,
-      isCritical: true,
-      tip: "Review the I-20 carefully — check that your OPT start date and degree level are correct. Errors cause delays.",
-    },
-    {
-      id: "file_uscis",
-      order: 3,
-      title: "File Form I-765 with USCIS",
-      description: `Submit Form I-765 (Application for Employment Authorization) to USCIS. This is the filing deadline — you must apply at least 90 days before program end or no later than 60 days after.`,
-      targetDate: applyBy,
-      completedDate: null,
-      isCompleted: false,
-      isCritical: true,
-      tip: "Application window: 90 days before program end to 60 days after. Filing early = earlier EAD start date. Required documents: I-765 form, I-20 (OPT recommended), passport photo, copy of prior EAD (if any), filing fee check or fee waiver.",
-    },
-    {
-      id: "receipt_notice",
-      order: 4,
-      title: "Receive USCIS Receipt Notice (Form I-797)",
-      description: "USCIS mails a receipt notice (I-797) confirming they received your application. Arrives 2–4 weeks after filing.",
-      targetDate: addDays(applyBy, 21),
-      completedDate: null,
-      isCompleted: false,
-      isCritical: false,
-      tip: "Keep this receipt notice — it can serve as proof your application is pending. You CANNOT work until you have a physical EAD card.",
-    },
-    {
-      id: "biometrics",
-      order: 5,
-      title: "Biometrics Appointment (if required)",
-      description: "Some OPT applicants are scheduled for fingerprinting. Not always required.",
-      targetDate: addDays(applyBy, 35),
-      completedDate: null,
-      isCompleted: false,
-      isCritical: false,
-      tip: "Attend on the scheduled date. Missing it causes significant delays. Bring your appointment notice, passport, and receipt notice.",
-    },
-    {
-      id: "ead_approved",
-      order: 6,
-      title: "Application Approved — EAD Card Mailed",
-      description: "USCIS approves your application and mails the EAD card. Typical processing: 10–24 weeks.",
-      targetDate: typicalEADDate,
-      completedDate: null,
-      isCompleted: false,
-      isCritical: false,
-      tip: `Typical: ${estimates.typicalWeeks} weeks. Slow period: ${estimates.slowWeeks} weeks. Track at egov.uscis.gov using your receipt number. Do NOT start working before your EAD card arrives and your authorized start date.`,
-    },
-    {
-      id: "ead_received",
-      order: 7,
-      title: "EAD Card Received — You Can Start Working!",
-      description: "Physical EAD card arrives. You may start working on or after the start date printed on the card.",
-      targetDate: addDays(typicalEADDate, 7),
-      completedDate: null,
-      isCompleted: false,
-      isCritical: true,
-      tip: "Check: correct name, correct start/end dates, correct category (C3B for post-completion OPT). If there is any error, report it to USCIS immediately. Report your new employer to your DSO within 10 days of starting work.",
-    },
-  ];
-}
 
 export default function OPTTimelinePage() {
   const supabase = createClient();
@@ -116,7 +22,8 @@ export default function OPTTimelinePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [customEndDate, setCustomEndDate] = useState("");
-  const [processingTimes, setProcessingTimes] = useState(PROCESSING_FALLBACK);
+  const stemStepsSyncedRef = useRef(false);
+  const [processingTimes, setProcessingTimes] = useState(OPT_PROCESSING_FALLBACK);
   const [processingSource, setProcessingSource] = useState<"live" | "static">("static");
 
   useEffect(() => {
@@ -138,7 +45,7 @@ export default function OPTTimelinePage() {
     fetch("/api/uscis-processing")
       .then((r) => r.json())
       .then((json) => {
-        if (json.success) {
+        if (json.success && json.data) {
           setProcessingTimes({
             optimisticWeeks: json.data.optimisticWeeks,
             typicalWeeks: json.data.typicalWeeks,
@@ -151,8 +58,47 @@ export default function OPTTimelinePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    stemStepsSyncedRef.current = false;
+  }, [opt?.opt_type]);
+
   const endDate = customEndDate || profile?.program_end_date;
-  const timeline = endDate ? buildTimeline(parseISO(endDate), opt?.opt_type ?? "post_completion", processingTimes) : null;
+  const timeline = endDate
+    ? buildOptApplicationTimeline(parseISO(endDate), opt?.opt_type ?? "post_completion", processingTimes)
+    : null;
+
+  useEffect(() => {
+    if (loading || opt?.opt_type !== "stem_extension" || stemStepsSyncedRef.current) return;
+
+    async function syncStemSteps() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      let programEnd: string | null = endDate ?? null;
+      if (!programEnd) {
+        const { data: urow } = await supabase.from("users").select("program_end_date").eq("id", user.id).single();
+        programEnd = urow?.program_end_date ?? null;
+      }
+
+      const { data: stepRows } = await supabase
+        .from("opt_application_steps")
+        .select("step_name, is_completed")
+        .eq("user_id", user.id);
+
+      if (!stemUserHasIncompleteOptSteps(stepRows, programEnd ?? undefined)) {
+        stemStepsSyncedRef.current = true;
+        return;
+      }
+
+      stemStepsSyncedRef.current = true;
+      await markOptApplicationStepsCompletedForStemUser(supabase, user.id, programEnd);
+      const { data } = await supabase.from("opt_application_steps").select("*").eq("user_id", user.id).order("step_order");
+      setSavedSteps(data ?? []);
+    }
+
+    syncStemSteps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, opt?.opt_type, endDate]);
 
   // Merge saved step completion data into timeline
   const mergedTimeline = timeline?.map((step) => {
@@ -160,7 +106,7 @@ export default function OPTTimelinePage() {
     return { ...step, isCompleted: saved?.is_completed ?? false, completedDate: saved?.completed_date ?? null };
   });
 
-  async function toggleStep(step: TimelineStep) {
+  async function toggleStep(step: OptTimelineStep) {
     setSaving(step.id);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -245,36 +191,16 @@ export default function OPTTimelinePage() {
         </CardContent>
       </Card>
 
-      {/* STEM OPT notice */}
       {opt?.opt_type === "stem_extension" && (
         <Card className="border-emerald-200">
-          <CardContent className="p-4 flex items-center justify-between gap-4 flex-wrap">
-            <div>
-              <p className="text-emerald-600 font-medium text-sm">✅ You&apos;re on STEM OPT — initial OPT is complete</p>
-              <p className="text-gray-500 text-xs mt-0.5">These steps tracked your original OPT application. Mark them all done to clear the overdue flags.</p>
-            </div>
-            <button
-              onClick={async () => {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (!user || !mergedTimeline) return;
-                const now = format(new Date(), "yyyy-MM-dd");
-                for (const step of mergedTimeline) {
-                  if (!step.isCompleted) {
-                    const existing = savedSteps.find((s) => s.step_name === step.id);
-                    if (existing) {
-                      await supabase.from("opt_application_steps").update({ is_completed: true, completed_date: now, updated_at: new Date().toISOString() }).eq("id", existing.id);
-                    } else {
-                      await supabase.from("opt_application_steps").insert({ user_id: user.id, step_name: step.id, step_order: step.order, target_date: step.targetDate ? format(step.targetDate, "yyyy-MM-dd") : null, is_completed: true, completed_date: now });
-                    }
-                  }
-                }
-                const { data } = await supabase.from("opt_application_steps").select("*").eq("user_id", user.id).order("step_order");
-                setSavedSteps(data ?? []);
-              }}
-              className="text-xs px-4 py-2 rounded-lg bg-emerald-600/20 border border-emerald-700 text-emerald-600 hover:bg-emerald-600/30 transition-colors whitespace-nowrap"
-            >
-              Mark All Done ✓
-            </button>
+          <CardContent className="p-4 space-y-2">
+            <p className="text-emerald-600 font-medium text-sm">✅ You&apos;re on STEM OPT — initial post-completion OPT is treated as complete</p>
+            <p className="text-gray-500 text-xs">
+              These steps were for your first OPT application; VisaBuddy marks them done automatically. For your STEM EAD, submit I‑983 validation reports to your DSO at 6, 12, 18, and 24 months — see{" "}
+              <Link href="/dashboard/deadlines" className="text-emerald-700 underline font-medium">Deadlines</Link>
+              {" "}and{" "}
+              <Link href="/dashboard/opt/stem-reports" className="text-emerald-700 underline font-medium">STEM Reports</Link>.
+            </p>
           </CardContent>
         </Card>
       )}
@@ -358,17 +284,19 @@ export default function OPTTimelinePage() {
                           {step.completedDate && (
                             <p className="text-xs text-emerald-600">Done {step.completedDate}</p>
                           )}
-                          <button
-                            onClick={() => toggleStep(step)}
-                            disabled={saving === step.id}
-                            className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-                              step.isCompleted
-                                ? "border-gray-200 text-gray-500 hover:border-slate-600"
-                                : "border-indigo-700 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-300 dark:hover:bg-indigo-950/60"
-                            }`}
-                          >
-                            {saving === step.id ? "..." : step.isCompleted ? "Undo" : "Mark Done ✓"}
-                          </button>
+                          {opt?.opt_type !== "stem_extension" && (
+                            <button
+                              onClick={() => toggleStep(step)}
+                              disabled={saving === step.id}
+                              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                                step.isCompleted
+                                  ? "border-gray-200 text-gray-500 hover:border-slate-600"
+                                  : "border-indigo-700 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-600 dark:text-indigo-300 dark:hover:bg-indigo-950/60"
+                              }`}
+                            >
+                              {saving === step.id ? "..." : step.isCompleted ? "Undo" : "Mark Done ✓"}
+                            </button>
+                          )}
                         </div>
                       </div>
                     </CardContent>

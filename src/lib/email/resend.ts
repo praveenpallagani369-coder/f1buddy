@@ -120,7 +120,10 @@ export async function sendFeedbackNotification(data: FeedbackNotificationData): 
   const safeCategory = escapeHtml(data.category.toUpperCase());
   const safeMessage = escapeHtml(data.message).replace(/\n/g, "<br>");
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
+  // Use Resend's shared domain until f1buddy.app is verified in Resend dashboard
+  // After verifying your domain at resend.com/domains, change this to:
+  //   process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev"
+  const fromEmail = "onboarding@resend.dev";
 
   const { data: res, error } = await resend.emails.send({
     from: `VisaBuddy Feedback <${fromEmail}>`,

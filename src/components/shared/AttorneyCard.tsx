@@ -1,6 +1,6 @@
 import { CheckCircle2, Mail } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@/lib/utils/cn";
 
 interface AttorneyCardProps {
   name: string;
@@ -31,9 +31,16 @@ export function AttorneyCard({
       )}
 
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex-shrink-0 overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="relative w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex-shrink-0 overflow-hidden border border-gray-200 dark:border-gray-700">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+            <Image
+              src={avatarUrl}
+              alt={name}
+              fill
+              className="object-cover"
+              sizes="64px"
+              unoptimized
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-xl font-bold text-gray-400">
               {name.charAt(0)}

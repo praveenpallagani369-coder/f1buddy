@@ -218,6 +218,7 @@ export default function STEMReportsPage() {
         <p className="text-sm font-bold text-red-700 mb-2">🚨 Non-Recoverable Deadline — Read This First</p>
         <p className="text-sm text-red-800 leading-relaxed">
           STEM OPT requires 4 validation reports (I-983) submitted to your DSO at 6, 12, 18, and 24 months from your STEM EAD start date.
+          VisaBuddy mirrors those dates as <Link href="/dashboard/deadlines" className="underline font-semibold">compliance deadlines</Link> when you save STEM OPT in the OPT Tracker (for reminders and dashboard tracking).
           You have <strong>10 business days (~14 calendar days)</strong> to report to your DSO after each milestone.
           At months 12 and 24, a <strong>self-evaluation (I-983 page 5)</strong> is also required.
           Missing these deadlines can jeopardize your STEM OPT authorization.

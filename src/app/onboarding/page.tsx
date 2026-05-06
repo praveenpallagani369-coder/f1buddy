@@ -2,6 +2,8 @@
 import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { markOptApplicationStepsCompletedForStemUser } from "@/lib/opt/opt-application-timeline";
+import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -353,6 +355,16 @@ export default function OnboardingPage() {
         unemployment_limit: optType === "stem_extension" ? 150 : 90,
         updated_at: new Date().toISOString(),
       }, { onConflict: "user_id" });
+      if (optType === "stem_extension") {
+        await markOptApplicationStepsCompletedForStemUser(
+          supabase,
+          user.id,
+          form.programEndDate || null
+        );
+        if (form.eadStartDate) {
+          await upsertStemValidationDeadlines(supabase, user.id, form.eadStartDate);
+        }
+      }
     }
 
     await fetch("/api/onboarding", {

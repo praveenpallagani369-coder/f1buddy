@@ -30,7 +30,10 @@
       "Bash(grep -v \"^$\")",
       "Bash(dir \"C:\\\\Users\\\\palla\\\\projects\\\\f1buddy\\\\src\\\\app\\\\dashboard\")",
       "Bash(findstr \"jobs\")",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(skill)",
+      "Bash(startup)",
+      "Bash(team-review\")"
     ]
   }
 }

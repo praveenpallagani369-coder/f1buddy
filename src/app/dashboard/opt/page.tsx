@@ -11,6 +11,8 @@ import { Progress } from "@/components/ui/progress";
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { calculateUnemploymentDays } from "@/lib/immigration/rules";
+import { markOptApplicationStepsCompletedForStemUser } from "@/lib/opt/opt-application-timeline";
+import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
 
 interface OPTRow { opt_type: string | null; ead_end_date: string | null; unemployment_days_used: number; unemployment_limit: number; ead_start_date: string | null; ead_category: string | null; application_date: string | null; [key: string]: unknown }
 interface EmployerRow { id: string; employer_name: string; position_title: string | null; employment_type: string; start_date: string; end_date: string | null; is_current: boolean; reported_to_school: boolean; e_verify_employer: boolean; is_stem_related: boolean; [key: string]: unknown }
@@ -64,27 +66,13 @@ export default function OPTPage() {
     const limit = optForm.optType === "stem_extension" ? 150 : 90;
     await supabase.from("opt_status").upsert({ user_id: user.id, opt_type: optForm.optType, ead_category: optForm.eadCategory, ead_start_date: optForm.eadStartDate, ead_end_date: optForm.eadEndDate, unemployment_limit: limit, application_date: optForm.applicationDate || null, approval_date: optForm.approvalDate || null, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
 
-    // Auto-generate STEM validation report deadlines when set to STEM extension
-    if (optForm.optType === "stem_extension" && optForm.eadStartDate) {
-      const { addMonths, parseISO, format } = await import("date-fns");
-      const start = parseISO(optForm.eadStartDate);
-      const selfEvalMonths = new Set([12, 24]);
-      const stemDeadlines = [6, 12, 18, 24].map(month => ({
-        user_id: user.id,
-        title: `STEM OPT ${month}-Month Validation Report${selfEvalMonths.has(month) ? " + Self-Evaluation" : ""}`,
-        description: selfEvalMonths.has(month)
-          ? `Submit I-983 validation report AND self-evaluation (I-983 page 5, signed by you and employer) to DSO within 10 business days of ${format(addMonths(start, month), "MMM d, yyyy")}. 8 CFR 214.2(f)(10)(ii)(C).`
-          : `Submit I-983 validation report to your DSO within 10 business days of ${format(addMonths(start, month), "MMM d, yyyy")}. 8 CFR 214.2(f)(10)(ii)(C).`,
-        deadline_date: format(addMonths(start, month), "yyyy-MM-dd"),
-        category: "opt",
-        severity: "critical",
-        status: "pending",
-        is_system_generated: true,
-      }));
-      for (const d of stemDeadlines) {
-        await supabase.from("compliance_deadlines").upsert(d, { onConflict: "user_id,title", ignoreDuplicates: true });
+    if (optForm.optType === "stem_extension") {
+      const { data: profileRow } = await supabase.from("users").select("program_end_date").eq("id", user.id).single();
+      await markOptApplicationStepsCompletedForStemUser(supabase, user.id, profileRow?.program_end_date ?? null);
+      if (optForm.eadStartDate) {
+        await upsertStemValidationDeadlines(supabase, user.id, optForm.eadStartDate);
+        setStemDeadlinesCreated(true);
       }
-      setStemDeadlinesCreated(true);
     }
 
     const { data } = await supabase.from("opt_status").select("*").eq("user_id", user.id).single();
@@ -207,12 +195,22 @@ export default function OPTPage() {
         <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800 flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-emerald-700">✅ STEM report deadlines created in your Deadlines list</p>
-            <p className="text-xs text-emerald-600 mt-0.5">4 deadlines added for 6, 12, 18, and 24-month validation reports (months 12 & 24 include self-evaluation)</p>
+            <p className="text-xs text-emerald-600 mt-0.5">Four milestones from your STEM EAD start date (months 6, 12, 18, and 24) — submit each validation to your DSO within 10 business days. Months 12 and 24 also need a signed self-evaluation.</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Link href="/dashboard/deadlines" className="text-xs text-emerald-700 underline whitespace-nowrap">View Deadlines →</Link>
+            <Link href="/dashboard/deadlines" className="text-xs text-emerald-700 underline whitespace-nowrap">Deadlines →</Link>
+            <Link href="/dashboard/opt/stem-reports" className="text-xs text-emerald-700 underline whitespace-nowrap">STEM Reports →</Link>
             <button onClick={() => setStemDeadlinesCreated(false)} className="text-gray-400 hover:text-gray-600 text-lg leading-none">×</button>
           </div>
+        </div>
+      )}
+
+      {opt?.opt_type === "stem_extension" && opt.ead_start_date && (
+        <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-200 dark:bg-indigo-950/40 dark:border-indigo-800">
+          <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">STEM OPT: DSO reporting every 6 months</p>
+          <p className="text-xs text-indigo-800 dark:text-indigo-300 mt-1">
+            VisaBuddy adds four compliance deadlines — at 6, 12, 18, and 24 months from your STEM EAD start — for I‑983 validations (and self-evaluations at 12 and 24 months). Track due dates here and on <Link href="/dashboard/deadlines" className="underline font-medium">Deadlines</Link> and <Link href="/dashboard/opt/stem-reports" className="underline font-medium">STEM Reports</Link>.
+          </p>
         </div>
       )}
 
