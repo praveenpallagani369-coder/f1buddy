@@ -42,6 +42,7 @@ export default function OPTPage() {
 
   const [optForm, setOptForm] = useState({ optType: "post_completion", eadCategory: "C3B", eadStartDate: "", eadEndDate: "", applicationDate: "", approvalDate: "" });
   const [empForm, setEmpForm] = useState({ employerName: "", positionTitle: "", startDate: "", endDate: "", isCurrent: true, employmentType: "full_time", isStemRelated: true, eVerifyEmployer: false, reportedToSchool: false });
+  const [editingEmpId, setEditingEmpId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -100,18 +101,32 @@ export default function OPTPage() {
       finalEmployerName = untitledCount === 0 ? "Untitled Employer" : `Untitled Employer ${untitledCount + 1}`;
     }
 
-    await supabase.from("opt_employment").insert({
-      user_id: user.id,
-      employer_name: finalEmployerName,
-      position_title: empForm.positionTitle,
-      start_date: empForm.startDate,
-      end_date: empForm.endDate || null,
-      is_current: empForm.isCurrent,
-      employment_type: empForm.employmentType,
-      is_stem_related: empForm.isStemRelated,
-      e_verify_employer: empForm.eVerifyEmployer,
-      reported_to_school: empForm.reportedToSchool,
-    });
+    if (editingEmpId) {
+      await supabase.from("opt_employment").update({
+        employer_name: finalEmployerName,
+        position_title: empForm.positionTitle,
+        start_date: empForm.startDate,
+        end_date: empForm.endDate || null,
+        is_current: empForm.isCurrent,
+        employment_type: empForm.employmentType,
+        is_stem_related: empForm.isStemRelated,
+        e_verify_employer: empForm.eVerifyEmployer,
+        reported_to_school: empForm.reportedToSchool,
+      }).eq("id", editingEmpId);
+    } else {
+      await supabase.from("opt_employment").insert({
+        user_id: user.id,
+        employer_name: finalEmployerName,
+        position_title: empForm.positionTitle,
+        start_date: empForm.startDate,
+        end_date: empForm.endDate || null,
+        is_current: empForm.isCurrent,
+        employment_type: empForm.employmentType,
+        is_stem_related: empForm.isStemRelated,
+        e_verify_employer: empForm.eVerifyEmployer,
+        reported_to_school: empForm.reportedToSchool,
+      });
+    }
 
     // Auto-create 10-day DSO reporting deadline
     if (!empForm.reportedToSchool) {
@@ -154,6 +169,7 @@ export default function OPTPage() {
     const { data } = await supabase.from("opt_employment").select("*").eq("user_id", user.id).order("start_date", { ascending: false });
     setEmployers(data ?? []);
     setShowEmpForm(false);
+    setEditingEmpId(null);
     setEmpForm({ employerName: "", positionTitle: "", startDate: "", endDate: "", isCurrent: true, employmentType: "full_time", isStemRelated: true, eVerifyEmployer: false, reportedToSchool: false });
     setSaving(false);
   }
@@ -428,8 +444,8 @@ export default function OPTPage() {
               </div>
             )}
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setShowEmpForm(false)}>Cancel</Button>
-              <Button onClick={saveEmployer} loading={saving} disabled={!empForm.startDate}>Save Employer</Button>
+              <Button variant="outline" onClick={() => { setShowEmpForm(false); setEditingEmpId(null); }}>Cancel</Button>
+              <Button onClick={saveEmployer} loading={saving} disabled={!empForm.startDate}>{editingEmpId ? "Update Employer" : "Save Employer"}</Button>
             </div>
           </CardContent>
         </Card>
@@ -460,6 +476,29 @@ export default function OPTPage() {
                       {!e.reported_to_school && <Badge variant="warning" className="text-xs">Not Reported to DSO</Badge>}
                     </div>
                   </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-shrink-0 text-xs"
+                    onClick={() => {
+                      setEditingEmpId(e.id);
+                      setEmpForm({
+                        employerName: e.employer_name,
+                        positionTitle: e.position_title ?? "",
+                        startDate: e.start_date,
+                        endDate: e.end_date ?? "",
+                        isCurrent: e.is_current,
+                        employmentType: e.employment_type,
+                        isStemRelated: e.is_stem_related,
+                        eVerifyEmployer: e.e_verify_employer,
+                        reportedToSchool: e.reported_to_school,
+                      });
+                      setShowEmpForm(true);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    Edit
+                  </Button>
                 </div>
               ))}
             </div>

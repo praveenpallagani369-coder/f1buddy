@@ -95,14 +95,17 @@ export default function OnboardingPage() {
     employerName: "",
     employmentStartDate: "",
     employmentEndDate: "",
+    isStemRelated: true,
+    eVerifyEmployer: false,
+    reportedToSchool: false,
   });
 
   // Track which fields were auto-filled by AI so we can highlight them
   const [aiFilledFields, setAiFilledFields] = useState<Set<string>>(new Set());
 
-  function set(field: string, value: string, fromAI = false) {
+  function set(field: string, value: string | boolean, fromAI = false) {
     setForm((f) => ({ ...f, [field]: value }));
-    if (fromAI) setAiFilledFields((prev) => new Set(prev).add(field));
+    if (fromAI && typeof value === "string") setAiFilledFields((prev) => new Set(prev).add(field));
     else setAiFilledFields((prev) => { const n = new Set(prev); n.delete(field); return n; });
   }
 
@@ -204,8 +207,8 @@ export default function OnboardingPage() {
           employment_type: "full_time",
           is_stem_related: optType === "stem_extension",
           is_current: !form.employmentEndDate || form.employmentEndDate >= today,
-          e_verify_employer: optType === "stem_extension",
-          reported_to_school: true,
+          e_verify_employer: form.eVerifyEmployer,
+          reported_to_school: form.reportedToSchool,
         });
       }
 
