@@ -51,7 +51,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles },
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
-      { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
+      // { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
       { href: "/dashboard/guides", label: "Guides & Tools", icon: BookMarked },
       { href: "/dashboard/feedback", label: "Feedback", icon: SendHorizontal },
       { href: "/dashboard/settings", label: "Settings", icon: Settings },

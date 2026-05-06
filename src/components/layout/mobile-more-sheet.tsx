@@ -32,7 +32,7 @@ const SHEET_SECTIONS: SheetSection[] = [
     items: [
       { href: "/dashboard/ai", label: "AI Assistant", icon: Sparkles, badge: "AI" },
       { href: "/dashboard/community", label: "Community Q&A", icon: MessageCircle },
-      { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
+      // { href: "/dashboard/attorneys", label: "Attorneys", icon: Gavel },
     ],
   },
   {
