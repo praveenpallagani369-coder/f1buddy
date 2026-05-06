@@ -427,9 +427,12 @@ export default async function DashboardPage() {
 
           {/* Current Employment */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5 overflow-hidden">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><Building2 className="w-4 h-4" /></div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Current Employment</p>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><Building2 className="w-4 h-4" /></div>
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Current Employment</p>
+              </div>
+              <Link href="/dashboard/opt" className="text-[11px] text-orange-600 dark:text-orange-400 hover:underline font-medium">Edit →</Link>
             </div>
             {currentEmployer ? (
               <div>
@@ -451,9 +454,12 @@ export default async function DashboardPage() {
 
           {/* Program Info */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200/80 dark:border-gray-700 shadow-[0_1px_3px_rgba(0,0,0,0.06)] p-5 overflow-hidden">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program Info</p>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
+                <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program Info</p>
+              </div>
+              <Link href="/dashboard/profile" className="text-[11px] text-orange-600 dark:text-orange-400 hover:underline font-medium">Edit →</Link>
             </div>
             <div className="space-y-2 text-sm">
               {[
