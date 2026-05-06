@@ -112,7 +112,15 @@ export interface FeedbackNotificationData {
 
 export async function sendFeedbackNotification(data: FeedbackNotificationData): Promise<void> {
   const adminEmail = process.env.FEEDBACK_NOTIFICATION_EMAIL;
-  if (!process.env.RESEND_API_KEY || !adminEmail) return;
+
+  if (!process.env.RESEND_API_KEY) {
+    console.error("[Feedback Email] RESEND_API_KEY is not set — skipping email.");
+    return;
+  }
+  if (!adminEmail) {
+    console.error("[Feedback Email] FEEDBACK_NOTIFICATION_EMAIL is not set — skipping email.");
+    return;
+  }
 
   const resend = getResend();
   const safeName = data.submitterName ? escapeHtml(data.submitterName) : "Anonymous Student";
