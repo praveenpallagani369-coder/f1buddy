@@ -159,7 +159,7 @@ export async function markOptApplicationStepsCompletedForStemUser(
         .from("opt_application_steps")
         .update({
           is_completed: true,
-          completed_date: now,
+          completed_date: target,
           target_date: target,
           updated_at: updatedAt,
         })
@@ -171,7 +171,7 @@ export async function markOptApplicationStepsCompletedForStemUser(
         step_order: step.order,
         target_date: target,
         is_completed: true,
-        completed_date: now,
+        completed_date: target,
       });
     }
   }

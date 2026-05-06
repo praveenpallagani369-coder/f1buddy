@@ -399,7 +399,7 @@ export default function OnboardingPage() {
                 step_name: stemSteps[i],
                 step_order: i + 1,
                 is_completed: true,
-                completed_date: today,
+                completed_date: null,
               }).select().maybeSingle();
             }
           }
