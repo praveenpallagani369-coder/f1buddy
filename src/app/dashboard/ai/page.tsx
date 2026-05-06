@@ -170,9 +170,9 @@ export default function AIPage() {
     <div className="flex flex-col h-[calc(100vh-7rem)]">
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">AI Immigration Assistant</h1>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">Powered by Groq + Llama 3.3 · Knows your profile &amp; deadlines</p>
+        <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">AI Immigration Assistant</h1>
+          <span className="text-gray-500 dark:text-gray-400 text-xs font-normal">Knows your profile &amp; deadlines</span>
         </div>
         {messages.length > 0 && (
           <button
