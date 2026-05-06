@@ -177,7 +177,7 @@ export default async function DashboardPage() {
     days: differenceInCalendarDays(parseISO(d.deadline_date), today)
   }));
 
-  const hasUrgent = upcomingDeadlines.some(d => d.days <= 7) || criticalDeadlines.length > 0 || phase === "grace_period" || phase === "program_ended" || liveUnemploymentDays >= unemploymentLimit * 0.9;
+  const hasUrgent = upcomingDeadlines.some(d => d.days <= 7 || d.severity === "critical") || phase === "grace_period" || phase === "program_ended" || liveUnemploymentDays >= unemploymentLimit * 0.9;
   const hasTakeAction = upcomingDeadlines.some(d => d.days <= 30) || expiringDocs.length > 0 || liveUnemploymentDays >= unemploymentLimit * 0.7;
   const hasActionNeeded = upcomingDeadlines.some(d => d.days <= 60) || fiveMonthWarning || phase === "stem_180_extension";
 
