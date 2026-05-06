@@ -258,6 +258,9 @@ export default function OnboardingPage() {
     dsoName: "",
     dsoEmail: "",
     dsoPhone: "",
+    employerName: "",
+    employmentStartDate: "",
+    employmentEndDate: "",
   });
 
   // Track which fields were auto-filled by AI so we can highlight them
@@ -355,6 +358,21 @@ export default function OnboardingPage() {
         unemployment_limit: optType === "stem_extension" ? 150 : 90,
         updated_at: new Date().toISOString(),
       }, { onConflict: "user_id" });
+
+      if (form.employerName && form.employmentStartDate) {
+        await supabase.from("opt_employment").insert({
+          user_id: user.id,
+          employer_name: form.employerName,
+          start_date: form.employmentStartDate,
+          end_date: form.employmentEndDate || null,
+          employment_type: "full_time",
+          is_stem_related: optType === "stem_extension",
+          is_current: !form.employmentEndDate || form.employmentEndDate >= today,
+          e_verify_employer: optType === "stem_extension",
+          reported_to_school: true,
+        });
+      }
+
       if (optType === "stem_extension") {
         await markOptApplicationStepsCompletedForStemUser(
           supabase,
@@ -363,7 +381,35 @@ export default function OnboardingPage() {
         );
         if (form.eadStartDate) {
           await upsertStemValidationDeadlines(supabase, user.id, form.eadStartDate);
+          
+          if (form.eadStartDate <= today) {
+            // mark stem opt steps as done
+            const stemSteps = [
+              "stem_eligibility", "stem_employer_verify", "stem_i983_draft", 
+              "stem_dso_request", "stem_file_i765", "stem_receipt", "stem_ead_received"
+            ];
+            for (let i = 0; i < stemSteps.length; i++) {
+              await supabase.from("opt_application_steps").insert({
+                user_id: user.id,
+                step_name: stemSteps[i],
+                step_order: i + 1,
+                is_completed: true,
+                completed_date: today,
+              }).select().maybeSingle();
+            }
+          }
         }
+      }
+    } else if (form.visaStatus === "F1_CPT") {
+      if (form.employerName && form.employmentStartDate) {
+        await supabase.from("cpt_records").insert({
+          user_id: user.id,
+          employer_name: form.employerName,
+          start_date: form.employmentStartDate,
+          end_date: form.employmentEndDate || null,
+          cpt_type: "full_time",
+          is_current: !form.employmentEndDate || form.employmentEndDate >= today,
+        });
       }
     }
 
@@ -559,6 +605,25 @@ export default function OnboardingPage() {
                   </div>
                 </div>
               )}
+
+              {/* CPT/OPT Employment Details */}
+              {(isOPT || form.visaStatus === "F1_CPT") && (
+                <div className="border border-blue-200 dark:border-blue-800/50 rounded-xl p-4 bg-blue-50 dark:bg-blue-950/20 space-y-3 mt-4">
+                  <div>
+                    <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                      Current Employment Details
+                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                      Log your employer so we can correctly track your {isOPT ? "unemployment days" : "CPT status"}.
+                    </p>
+                  </div>
+                  <Field label="Employer Name" id="employerName" placeholder="Tech Corp Inc." value={form.employerName} onChange={(v) => set("employerName", v)} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Start Date" id="employmentStartDate" type="date" value={form.employmentStartDate} onChange={(v) => set("employmentStartDate", v)} />
+                    <Field label="End Date" id="employmentEndDate" type="date" value={form.employmentEndDate} onChange={(v) => set("employmentEndDate", v)} />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -592,6 +657,7 @@ export default function OnboardingPage() {
                   ["DSO", form.dsoName || "—"],
                   ["Home Country", form.homeCountry],
                   ...(form.passportExpiry ? [["Passport Expiry", form.passportExpiry]] : []),
+                  ...(form.employerName ? [["Employer", form.employerName]] : []),
                 ] as [string, string][]).map(([k, v]) => (
                   <div key={k} className="flex justify-between py-2.5 text-sm">
                     <span className="text-gray-400 dark:text-gray-500">{k}</span>

@@ -23,7 +23,17 @@ export async function upsertStemValidationDeadlines(
     is_system_generated: true,
   }));
 
+  const { data: existing } = await supabase
+    .from("compliance_deadlines")
+    .select("title")
+    .eq("user_id", userId)
+    .like("title", "STEM OPT %");
+
+  const existingTitles = new Set(existing?.map((d) => d.title) || []);
+
   for (const d of stemDeadlines) {
-    await supabase.from("compliance_deadlines").upsert(d, { onConflict: "user_id,title", ignoreDuplicates: true });
+    if (!existingTitles.has(d.title)) {
+      await supabase.from("compliance_deadlines").insert(d);
+    }
   }
 }
