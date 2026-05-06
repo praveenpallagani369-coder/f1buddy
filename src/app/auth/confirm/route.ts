@@ -29,7 +29,9 @@ export async function GET(request: Request) {
       token_hash,
     });
     if (!error) {
-      const dest = nextPath ?? "/auth/update-password";
+      // If type is recovery, always default to update-password
+      const defaultDest = type === "recovery" ? "/auth/update-password" : "/dashboard";
+      const dest = nextPath ?? defaultDest;
       return NextResponse.redirect(`${origin}${dest}`);
     }
   }

@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
                   </div>
                 )}
                 <Button type="submit" className="w-full" loading={loading}>
-                  Send reset link
+                  Send reset instructions
                 </Button>
               </form>
             </>
