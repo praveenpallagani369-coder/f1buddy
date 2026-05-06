@@ -10,7 +10,7 @@ import {
   Sparkles, MessageCircle, Settings,
   BookMarked, ShieldAlert,
   Sun, Moon, LogOut, X, BookOpen,
-  CalendarClock, Gavel,
+  CalendarClock, Gavel, SendHorizontal,
   type LucideIcon,
 } from "lucide-react";
 
@@ -46,6 +46,7 @@ const SHEET_SECTIONS: SheetSection[] = [
     heading: "Account",
     items: [
       { href: "/dashboard/settings", label: "Settings", icon: Settings },
+      { href: "/dashboard/feedback", label: "Feedback", icon: SendHorizontal },
     ],
   },
 ];
