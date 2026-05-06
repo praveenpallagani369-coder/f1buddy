@@ -14,6 +14,10 @@ export const viewport: Viewport = {
   initialScale: 1,
   minimumScale: 1,
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#030712" },
+  ],
 };
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://visabuddy.vercel.app";
@@ -47,8 +51,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} overflow-x-hidden`} suppressHydrationWarning>
-      <body className="min-h-screen antialiased overflow-x-hidden">
+    <html lang="en" className={`${inter.variable} overflow-x-hidden bg-[var(--background)]`} suppressHydrationWarning>
+      <body className="min-h-screen antialiased overflow-x-hidden bg-[var(--background)] text-[var(--foreground)]">
         <Providers>{children}</Providers>
       </body>
     </html>
