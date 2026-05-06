@@ -9,32 +9,28 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { AppIcon } from "@/components/icons/AppIcon";
 import {
-  GraduationCap, Briefcase, FlaskConical, BookOpen, Globe, Building2,
-  Upload, Loader2, CheckCircle2, AlertCircle, ScanLine,
+  GraduationCap, Briefcase, FlaskConical, BookOpen, Globe,
+  Loader2, CheckCircle2, AlertCircle,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type VisaStatus =
-  | "F1_STUDENT" | "F1_CPT" | "F1_OPT" | "F1_STEM_OPT"
-  | "F1_PRE_COMPLETION_OPT" | "J1" | "M1" | "OTHER";
+  | "F1_STUDENT" | "F1_CPT" | "F1_OPT" | "F1_STEM_OPT" | "OTHER";
 
 type ScanState = "idle" | "scanning" | "done" | "error";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const VISA_OPTIONS: { value: VisaStatus; label: string; sublabel: string; icon: React.ElementType }[] = [
-  { value: "F1_STUDENT",            label: "F-1 Student",              sublabel: "Currently enrolled, studying on campus",         icon: GraduationCap },
-  { value: "F1_CPT",                label: "F-1 CPT",                  sublabel: "Curricular Practical Training during program",    icon: BookOpen },
-  { value: "F1_PRE_COMPLETION_OPT", label: "F-1 Pre-Completion OPT",   sublabel: "Working part-time before graduation",            icon: Briefcase },
-  { value: "F1_OPT",                label: "F-1 OPT",                  sublabel: "Post-completion OPT — working after graduation",  icon: Briefcase },
-  { value: "F1_STEM_OPT",           label: "F-1 STEM OPT",             sublabel: "24-month STEM OPT extension",                   icon: FlaskConical },
-  { value: "J1",                    label: "J-1 Exchange Visitor",     sublabel: "Research scholar, professor, or intern",         icon: Globe },
-  { value: "M1",                    label: "M-1 Vocational",           sublabel: "Vocational or non-academic program",             icon: Building2 },
-  { value: "OTHER",                 label: "Other",                    sublabel: "Different visa type or status",                  icon: Globe },
+  { value: "F1_STUDENT",  label: "F-1 Student",          sublabel: "Currently enrolled", icon: GraduationCap },
+  { value: "F1_CPT",      label: "F-1 CPT",              sublabel: "Training during program", icon: BookOpen },
+  { value: "F1_OPT",      label: "F-1 OPT",              sublabel: "Post-completion OPT", icon: Briefcase },
+  { value: "F1_STEM_OPT", label: "F-1 STEM OPT",         sublabel: "STEM extension", icon: FlaskConical },
+  { value: "OTHER",       label: "Other",                sublabel: "Different visa type", icon: Globe },
 ];
 
-const OPT_STATUSES: VisaStatus[] = ["F1_OPT", "F1_STEM_OPT", "F1_PRE_COMPLETION_OPT"];
+const OPT_STATUSES: VisaStatus[] = ["F1_OPT", "F1_STEM_OPT"];
 
 const STEPS = ["Your Status", "Your Program", "DSO Contact", "Review"];
 
@@ -48,169 +44,7 @@ const DEGREES = ["Bachelor's", "Master's", "PhD", "Certificate", "Associate's", 
 
 const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/jpg,image/png,image/webp";
 
-// ─── Document Scanner ─────────────────────────────────────────────────────────
 
-interface ScannerProps {
-  docType: "passport" | "ead";
-  label: string;
-  hint: string;
-  onExtracted: (data: Record<string, string | null>) => void;
-}
-
-function DocumentScanner({ docType, label, hint, onExtracted }: ScannerProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  // Use a ref so the async handleFile always has the latest callback (no stale closure)
-  const onExtractedRef = useRef(onExtracted);
-  onExtractedRef.current = onExtracted;
-
-  const [scanState, setScanState] = useState<ScanState>("idle");
-  const [scanMsg, setScanMsg] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [extractedSummary, setExtractedSummary] = useState<Record<string, string | null>>({});
-
-    // Resize + compress image via canvas so it fits within Vercel's 4 MB body limit.
-  // Phone photos are 4–12 MB; after compression they're < 200 KB — still sharp
-  // enough for the vision model to read text on documents.
-  async function compressImage(file: File): Promise<{ base64: string; mimeType: string }> {
-    const MAX_SIDE = 1280;
-    const QUALITY = 0.88;
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        let { naturalWidth: w, naturalHeight: h } = img;
-        if (w > MAX_SIDE || h > MAX_SIDE) {
-          if (w >= h) { h = Math.round(h * MAX_SIDE / w); w = MAX_SIDE; }
-          else        { w = Math.round(w * MAX_SIDE / h); h = MAX_SIDE; }
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = w; canvas.height = h;
-        canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
-        const dataUrl = canvas.toDataURL("image/jpeg", QUALITY);
-        resolve({ base64: dataUrl.split(",")[1], mimeType: "image/jpeg" });
-      };
-      img.onerror = reject;
-      img.src = url;
-    });
-  }
-
-  async function handleFile(file: File) {
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setScanState("error");
-      setScanMsg("Please use a photo (JPG, PNG, WEBP). PDFs can't be scanned.");
-      return;
-    }
-    if (file.size > 20_000_000) {
-      setScanState("error");
-      setScanMsg("Image is too large — please use a photo under 20 MB.");
-      return;
-    }
-
-    setFileName(file.name);
-    setScanState("scanning");
-    setScanMsg("Scanning document with AI…");
-
-    try {
-      // Compress before sending — avoids Vercel 4 MB body limit
-      const { base64, mimeType: compressedMime } = await compressImage(file);
-
-      const res = await fetch("/api/ai/scan-document", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageBase64: base64, mimeType: compressedMime, docType }),
-      });
-
-      const data = await res.json();
-
-      if (!data.success) {
-        setScanState("error");
-        setScanMsg(data.error?.message ?? "Scan failed — please enter dates manually.");
-        return;
-      }
-
-      const extracted: Record<string, string | null> = data.data?.extracted ?? {};
-      // Always call via ref — avoids stale closure from async context
-      onExtractedRef.current(extracted);
-      setExtractedSummary(extracted);
-
-      const filled = Object.values(extracted).filter(Boolean).length;
-      setScanState("done");
-      setScanMsg(filled > 0 ? `Filled ${filled} field${filled > 1 ? "s" : ""} below ↓` : "Couldn't read fields clearly — please enter manually.");
-    } catch {
-      setScanState("error");
-      setScanMsg("Scan failed — please enter dates manually.");
-    }
-  }
-
-  return (
-    <div className={`rounded-xl border-2 border-dashed p-4 transition-colors ${
-      scanState === "done"  ? "border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/20" :
-      scanState === "error" ? "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/20" :
-      "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/30"
-    }`}>
-      <input
-        ref={inputRef}
-        type="file"
-        accept={ACCEPTED_IMAGE_TYPES}
-        className="hidden"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
-      />
-
-      {scanState === "scanning" ? (
-        <div className="flex items-center gap-3">
-          <Loader2 className="w-5 h-5 text-orange-500 animate-spin flex-shrink-0" />
-          <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{fileName}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Scanning document with AI…</p>
-          </div>
-        </div>
-      ) : scanState === "done" ? (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{scanMsg}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => { setScanState("idle"); setScanMsg(""); setFileName(""); setExtractedSummary({}); if (inputRef.current) inputRef.current.value = ""; }}
-              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 underline flex-shrink-0"
-            >
-              Re-scan
-            </button>
-          </div>
-          {/* Show what was extracted so users can verify */}
-          {Object.entries(extractedSummary).filter(([, v]) => v).map(([k, v]) => (
-            <div key={k} className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400">
-              <span className="font-medium capitalize">{k.replace(/([A-Z])/g, " $1").trim()}:</span>
-              <span className="font-mono bg-emerald-100 dark:bg-emerald-900/40 px-1.5 py-0.5 rounded">{v}</span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="w-full flex items-center gap-3 text-left"
-        >
-          <div className="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/40 flex items-center justify-center flex-shrink-0">
-            {scanState === "error" ? <AlertCircle className="w-5 h-5 text-red-500" /> : <ScanLine className="w-5 h-5 text-orange-600 dark:text-orange-400" />}
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{label}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {scanState === "error" ? scanMsg : hint}
-            </p>
-          </div>
-          <Upload className="w-4 h-4 text-gray-400 ml-auto flex-shrink-0" />
-        </button>
-      )}
-    </div>
-  );
-}
 
 // ─── Field helper ─────────────────────────────────────────────────────────────
 
@@ -276,14 +110,11 @@ export default function OnboardingPage() {
   const today = new Date().toISOString().split("T")[0];
   const eadStartInFuture = isOPT && !!form.eadStartDate && form.eadStartDate > today;
 
-  function getVisaType(): "F1" | "J1" | "M1" {
-    if (form.visaStatus === "J1") return "J1";
-    if (form.visaStatus === "M1") return "M1";
-    return "F1";
+  function getVisaType(): "F1" | "OTHER" {
+    return form.visaStatus === "OTHER" ? "OTHER" : "F1";
   }
 
-  function getOptType(): "pre_completion" | "post_completion" | "stem_extension" | null {
-    if (form.visaStatus === "F1_PRE_COMPLETION_OPT") return "pre_completion";
+  function getOptType(): "post_completion" | "stem_extension" | null {
     if (form.visaStatus === "F1_OPT") return "post_completion";
     if (form.visaStatus === "F1_STEM_OPT") return "stem_extension";
     return null;
@@ -472,74 +303,42 @@ export default function OnboardingPage() {
 
           {/* ── Step 0: Visa Status ── */}
           {step === 0 && (
-            <div className="space-y-5">
-              {/* Visa status selector */}
+            <div className="space-y-6">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  What best describes your current status? <span className="text-red-500">*</span>
-                </p>
-                <div className="space-y-2">
-                  {VISA_OPTIONS.map(({ value, label, sublabel, icon: Icon }) => (
-                    <button key={value} type="button" onClick={() => set("visaStatus", value)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left transition-all active:scale-[0.99] ${
-                        form.visaStatus === value
-                          ? "border-orange-500 bg-orange-50 dark:bg-orange-950/40"
-                          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
-                      }`}>
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        form.visaStatus === value
-                          ? "bg-orange-100 dark:bg-orange-900/50 text-orange-600 dark:text-orange-400"
-                          : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
-                      }`}>
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className={`text-sm font-medium ${form.visaStatus === value ? "text-orange-700 dark:text-orange-300" : "text-gray-800 dark:text-gray-200"}`}>{label}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{sublabel}</p>
-                      </div>
-                      {form.visaStatus === value && (
-                        <div className="ml-auto w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      )}
-                    </button>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  What is your current visa status? <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  value={form.visaStatus}
+                  onChange={(e) => set("visaStatus", e.target.value)}
+                  className="h-11"
+                >
+                  <option value="" disabled>Select status...</option>
+                  {VISA_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label} — {opt.sublabel}</option>
                   ))}
-                </div>
+                </Select>
               </div>
 
-              {/* Passport scan */}
-              <div className="space-y-3">
-                <DocumentScanner
-                  docType="passport"
-                  label="Scan passport to auto-fill expiry date"
-                  hint="Take a photo of your passport data page · JPG, PNG, WEBP"
-                  onExtracted={handlePassportScan}
-                />
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Home Country <span className="text-red-500">*</span></label>
-                    <Select value={form.homeCountry} onChange={(e) => set("homeCountry", e.target.value)}>
-                      {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                    </Select>
-                    {aiFilledFields.has("homeCountry") && (
-                      <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Auto-filled</p>
-                    )}
-                  </div>
-                  <Field label="Passport Expiry" id="passportExpiry" type="date"
-                    value={form.passportExpiry} onChange={(v) => set("passportExpiry", v)}
-                    highlighted={aiFilledFields.has("passportExpiry")} />
-                </div>
-              </div>
-
-              {/* SEVIS ID */}
               <div>
-                <label htmlFor="sevisId" className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                  Home Country <span className="text-red-500">*</span>
+                </label>
+                <Select
+                  value={form.homeCountry}
+                  onChange={(e) => set("homeCountry", e.target.value)}
+                  className="h-11"
+                >
+                  {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                </Select>
+              </div>
+
+              <div>
+                <label htmlFor="sevisId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   SEVIS ID <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
                 <Input id="sevisId" placeholder="N00xxxxxxxxx" value={form.sevisId} onChange={(e) => set("sevisId", e.target.value)} />
-                <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
                   <span className="text-emerald-500">🔒</span>
                   Encrypted with AES-256 — never readable by VisaBuddy staff.
                 </p>
@@ -580,37 +379,23 @@ export default function OnboardingPage() {
                   <div className="border border-orange-200 dark:border-orange-800/50 rounded-xl p-4 bg-orange-50 dark:bg-orange-950/20 space-y-3">
                     <div>
                       <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
-                        {form.visaStatus === "F1_STEM_OPT" ? "STEM OPT EAD Card" : "OPT EAD Card"}
+                        {form.visaStatus === "F1_STEM_OPT" ? "STEM OPT EAD Card Details" : "OPT EAD Card Details"}
                       </p>
                       <p className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
                         We&apos;ll use these dates to track your {form.visaStatus === "F1_STEM_OPT" ? "150" : "90"}-day unemployment limit.
                       </p>
                     </div>
 
-                    {/* EAD scanner */}
-                    <DocumentScanner
-                      docType="ead"
-                      label="Scan EAD card to auto-fill expiry date"
-                      hint="Take a clear photo of the front of your EAD card · JPG, PNG, WEBP"
-                      onExtracted={handleEADScan}
-                    />
-
-                    {form.eadCategory && (
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Card category: <strong>{form.eadCategory}</strong>
-                      </p>
-                    )}
-
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Field label="EAD Start Date" id="eadStart" type="date" value={form.eadStartDate} onChange={(v) => set("eadStartDate", v)} highlighted={aiFilledFields.has("eadStartDate")} max={today} />
+                        <Field label="EAD Start Date" id="eadStart" type="date" value={form.eadStartDate} onChange={(v) => set("eadStartDate", v)} max={today} />
                         {eadStartInFuture && (
                           <p className="text-[11px] text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
                             <AlertCircle className="w-3 h-3" /> EAD start date can&apos;t be in the future — you&apos;re already on OPT
                           </p>
                         )}
                       </div>
-                      <Field label="EAD End Date" id="eadEnd" type="date" value={form.eadEndDate} onChange={(v) => set("eadEndDate", v)} highlighted={aiFilledFields.has("eadEndDate")} />
+                      <Field label="EAD End Date" id="eadEnd" type="date" value={form.eadEndDate} onChange={(v) => set("eadEndDate", v)} />
                     </div>
                   </div>
                 </div>
