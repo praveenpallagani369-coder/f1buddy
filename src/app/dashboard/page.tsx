@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { differenceInCalendarDays, parseISO, addDays, format } from "date-fns";
 import { calculateUnemploymentDays, checkFiveMonthRule, calculateDaysOutsideUS } from "@/lib/immigration/rules";
 import { upsertStemValidationDeadlines } from "@/lib/opt/stem-validation-deadlines";
+import { upsertStemApplicationDeadline } from "@/lib/opt/opt-application-timeline";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
@@ -138,6 +139,17 @@ export default async function DashboardPage() {
     // Refetch next stem deadline
     const { data: retryStemDeadlines } = await supabase.from("compliance_deadlines").select("*").eq("user_id", user.id).eq("status", "pending").like("title", "%STEM OPT%Validation Report%").order("deadline_date").limit(1);
     nextStemDeadline = retryStemDeadlines?.[0] ?? null;
+  }
+
+  // Self-heal: ensure STEM application deadline exists for post-completion students
+  const hasStemAppDeadline = deadlines.some(d => d.title.includes("STEM OPT Extension"));
+  if (opt?.opt_type === "post_completion" && opt?.ead_end_date && !hasStemAppDeadline) {
+    await upsertStemApplicationDeadline(supabase, user.id, opt.ead_end_date);
+    // Refetch deadlines to show it immediately
+    const { data: retryDeadlines } = await supabase.from("compliance_deadlines").select("*").eq("user_id", user.id).eq("status", "pending").order("deadline_date").limit(5);
+    if (retryDeadlines) {
+      deadlines.splice(0, deadlines.length, ...retryDeadlines);
+    }
   }
 
   const today = new Date();
