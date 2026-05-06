@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -87,9 +87,16 @@ export default function OPTPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     if (empForm.isCurrent) await supabase.from("opt_employment").update({ is_current: false }).eq("user_id", user.id);
+    
+    let finalEmployerName = empForm.employerName.trim();
+    if (!finalEmployerName) {
+      const untitledCount = employers.filter(e => e.employer_name.startsWith("Untitled Employer")).length;
+      finalEmployerName = untitledCount === 0 ? "Untitled Employer" : `Untitled Employer ${untitledCount + 1}`;
+    }
+
     await supabase.from("opt_employment").insert({
       user_id: user.id,
-      employer_name: empForm.employerName,
+      employer_name: finalEmployerName,
       position_title: empForm.positionTitle,
       start_date: empForm.startDate,
       end_date: empForm.endDate || null,
@@ -361,7 +368,7 @@ export default function OPTPage() {
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">Employer Name *</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-300 mb-1.5">Employer Name</label>
                 <Input placeholder="Acme Corporation" value={empForm.employerName} onChange={(e) => setEmpForm(f => ({ ...f, employerName: e.target.value }))} />
               </div>
               <div>
@@ -416,7 +423,7 @@ export default function OPTPage() {
             )}
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setShowEmpForm(false)}>Cancel</Button>
-              <Button onClick={saveEmployer} loading={saving} disabled={!empForm.employerName || !empForm.startDate}>Save Employer</Button>
+              <Button onClick={saveEmployer} loading={saving} disabled={!empForm.startDate}>Save Employer</Button>
             </div>
           </CardContent>
         </Card>

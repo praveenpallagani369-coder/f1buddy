@@ -323,7 +323,7 @@ export default function OnboardingPage() {
   }, []);
 
   const canContinueStep0 = form.visaStatus !== "" && form.homeCountry !== "";
-  const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "" && !eadStartInFuture && (!(form.employmentStartDate || form.employerName) || (form.employerName !== "" && form.employmentStartDate !== ""));
+  const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "" && !eadStartInFuture;
 
   async function handleFinish() {
     setLoading(true);
@@ -359,10 +359,15 @@ export default function OnboardingPage() {
         updated_at: new Date().toISOString(),
       }, { onConflict: "user_id" });
 
-      if (form.employerName && form.employmentStartDate) {
+      let finalEmployerName = form.employerName.trim();
+      if (!finalEmployerName && form.employmentStartDate) {
+        finalEmployerName = "Untitled Employer";
+      }
+
+      if (finalEmployerName && form.employmentStartDate) {
         await supabase.from("opt_employment").insert({
           user_id: user.id,
-          employer_name: form.employerName,
+          employer_name: finalEmployerName,
           start_date: form.employmentStartDate,
           end_date: form.employmentEndDate || null,
           employment_type: "full_time",
@@ -401,10 +406,15 @@ export default function OnboardingPage() {
         }
       }
     } else if (form.visaStatus === "F1_CPT") {
-      if (form.employerName && form.employmentStartDate) {
+      let finalEmployerName = form.employerName.trim();
+      if (!finalEmployerName && form.employmentStartDate) {
+        finalEmployerName = "Untitled Employer";
+      }
+
+      if (finalEmployerName && form.employmentStartDate) {
         await supabase.from("cpt_records").insert({
           user_id: user.id,
-          employer_name: form.employerName,
+          employer_name: finalEmployerName,
           start_date: form.employmentStartDate,
           end_date: form.employmentEndDate || null,
           cpt_type: "full_time",

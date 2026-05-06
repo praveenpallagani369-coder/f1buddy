@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { differenceInCalendarDays, parseISO } from "date-fns";
@@ -62,9 +62,16 @@ export default function CPTPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     if (form.isCurrent) await supabase.from("cpt_records").update({ is_current: false }).eq("user_id", user.id);
+
+    let finalEmployerName = form.employerName.trim();
+    if (!finalEmployerName) {
+      const untitledCount = records.filter(r => r.employer_name.startsWith("Untitled Employer")).length;
+      finalEmployerName = untitledCount === 0 ? "Untitled Employer" : `Untitled Employer ${untitledCount + 1}`;
+    }
+
     await supabase.from("cpt_records").insert({
       user_id: user.id,
-      employer_name: form.employerName,
+      employer_name: finalEmployerName,
       position_title: form.positionTitle || null,
       start_date: form.startDate,
       end_date: form.endDate || null,
@@ -208,7 +215,7 @@ export default function CPTPage() {
           <CardHeader><CardTitle className="text-base">Add CPT Record</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Employer Name *">
+              <Field label="Employer Name">
                 <Input placeholder="Acme Corp" value={form.employerName} onChange={(e) => set("employerName", e.target.value)} />
               </Field>
               <Field label="Position Title">
@@ -248,7 +255,7 @@ export default function CPTPage() {
             )}
             <div className="flex gap-3">
               <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
-              <Button onClick={saveRecord} loading={saving} disabled={!form.employerName || !form.startDate}>Save CPT Record</Button>
+              <Button onClick={saveRecord} loading={saving} disabled={!form.startDate}>Save CPT Record</Button>
             </div>
           </CardContent>
         </Card>
