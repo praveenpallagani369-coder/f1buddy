@@ -323,7 +323,7 @@ export default function OnboardingPage() {
   }, []);
 
   const canContinueStep0 = form.visaStatus !== "" && form.homeCountry !== "";
-  const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "" && !eadStartInFuture;
+  const canContinueStep1 = form.schoolName !== "" && form.programName !== "" && form.programStartDate !== "" && form.programEndDate !== "" && !eadStartInFuture && (!(form.employmentStartDate || form.employerName) || (form.employerName !== "" && form.employmentStartDate !== ""));
 
   async function handleFinish() {
     setLoading(true);
