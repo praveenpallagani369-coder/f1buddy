@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   OPT_PROCESSING_FALLBACK,
   buildOptApplicationTimeline,
-  markOptApplicationStepsCompletedForStemUser,
+  markPostCompletionOptStepsCompleted,
   stemUserHasIncompleteOptSteps,
   type OptTimelineStep,
 } from "@/lib/opt/opt-application-timeline";
@@ -91,7 +91,7 @@ export default function OPTTimelinePage() {
       }
 
       stemStepsSyncedRef.current = true;
-      await markOptApplicationStepsCompletedForStemUser(supabase, user.id, programEnd);
+      await markPostCompletionOptStepsCompleted(supabase, user.id, programEnd);
       const { data } = await supabase.from("opt_application_steps").select("*").eq("user_id", user.id).order("step_order");
       setSavedSteps(data ?? []);
     }
