@@ -320,17 +320,30 @@ export default function OnboardingPage() {
                 </Select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Home Country <span className="text-red-500">*</span>
-                </label>
-                <Select
-                  value={form.homeCountry}
-                  onChange={(e) => set("homeCountry", e.target.value)}
-                  className="h-11"
-                >
-                  {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </Select>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Home Country <span className="text-red-500">*</span>
+                  </label>
+                  <Select
+                    value={form.homeCountry}
+                    onChange={(e) => set("homeCountry", e.target.value)}
+                    className="h-11"
+                  >
+                    {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                    Passport Expiry <span className="text-gray-400 font-normal">(for tracking)</span>
+                  </label>
+                  <Input
+                    type="date"
+                    value={form.passportExpiry}
+                    onChange={(e) => set("passportExpiry", e.target.value)}
+                    className="h-11"
+                  />
+                </div>
               </div>
 
               <div>
