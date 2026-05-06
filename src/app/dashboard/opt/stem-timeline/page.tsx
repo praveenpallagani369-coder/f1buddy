@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { addDays, subDays, parseISO, differenceInCalendarDays, format } from "date-fns";
@@ -133,7 +133,10 @@ export default function STEMTimelinePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const timeline = opt?.ead_end_date ? buildSTEMTimeline(parseISO(opt.ead_end_date)) : null;
+  // For STEM users, their application happened before their STEM EAD start date
+  // For regular OPT users planning STEM, their application will happen before their current EAD end date
+  const refDateISO = opt?.opt_type === "stem_extension" ? opt?.ead_start_date : opt?.ead_end_date;
+  const timeline = refDateISO ? buildSTEMTimeline(parseISO(refDateISO)) : null;
 
   const mergedTimeline = timeline?.map((step) => {
     const saved = savedSteps.find((s) => s.step_name === step.id);
