@@ -459,7 +459,7 @@ export default async function DashboardPage() {
                 <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center"><GraduationCap className="w-4 h-4" /></div>
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Program Info</p>
               </div>
-              <Link href="/dashboard/profile" className="text-[11px] text-orange-600 dark:text-orange-400 hover:underline font-medium">Edit →</Link>
+              <Link href="/dashboard/profile?edit=true" className="text-[11px] text-orange-600 dark:text-orange-400 hover:underline font-medium">Edit →</Link>
             </div>
             <div className="space-y-2 text-sm">
               {[

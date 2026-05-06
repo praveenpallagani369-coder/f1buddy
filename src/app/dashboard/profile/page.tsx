@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +30,15 @@ interface Profile {
 }
 
 export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="text-gray-500 dark:text-gray-400 text-center py-20">Loading profile...</div>}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
+
+function ProfileContent() {
+  const searchParams = useSearchParams();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -58,7 +68,10 @@ export default function ProfilePage() {
       setLoading(false);
     }
     load();
-  }, []);
+    if (searchParams.get("edit") === "true") {
+      setEditing(true);
+    }
+  }, [searchParams]);
 
   async function save() {
     setSaving(true);
@@ -97,8 +110,13 @@ export default function ProfilePage() {
 
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
     <Card>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base">{title}</CardTitle>
+        {!editing && (
+          <button onClick={() => setEditing(true)} className="text-[11px] text-orange-600 dark:text-orange-400 hover:underline font-medium">
+            Edit
+          </button>
+        )}
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>
@@ -128,13 +146,11 @@ export default function ProfilePage() {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Profile</h1>
           <p className="text-gray-600 dark:text-gray-400 text-sm">Your student and visa information</p>
         </div>
-        {editing ? (
+        {editing && (
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
             <Button onClick={save} loading={saving}>Save Changes</Button>
           </div>
-        ) : (
-          <Button variant="outline" onClick={() => setEditing(true)}>Edit Profile</Button>
         )}
       </div>
 
