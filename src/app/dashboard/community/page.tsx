@@ -48,6 +48,7 @@ export default function CommunityPage() {
   const [saving, setSaving] = useState(false);
   const [savingAnswer, setSavingAnswer] = useState<string | null>(null);
   const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
   const [, setUserId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: "", body: "", category: "OPT", isAnonymous: false });
 
@@ -141,7 +142,10 @@ export default function CommunityPage() {
     }
   }
 
-  const filtered = filter === "All" ? posts : posts.filter(p => p.category === filter);
+  const q = search.trim().toLowerCase();
+  const filtered = posts
+    .filter(p => filter === "All" || p.category === filter)
+    .filter(p => !q || p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q));
 
   if (loading) return (
     <div className="space-y-6 animate-pulse">
@@ -190,6 +194,25 @@ export default function CommunityPage() {
       {/* Disclaimer */}
       <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:border-amber-800 text-xs text-amber-700 dark:text-amber-300">
         <strong>Community Disclaimer:</strong> Answers here are user-generated and are <strong>not legal advice</strong>. Immigration rules are complex and fact-specific — always verify anything you read here with your DSO or a licensed immigration attorney before acting.
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">🔍</span>
+        <Input
+          placeholder="Search questions by keyword..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-9"
+        />
+        {search && (
+          <button
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       {/* Category filter */}
@@ -241,21 +264,32 @@ export default function CommunityPage() {
       <div className="space-y-3">
         {filtered.length === 0 ? (
           <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700">
-            <p className="text-4xl mb-3">💬</p>
+            <p className="text-4xl mb-3">{q ? "🔍" : "💬"}</p>
             <p className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-              {filter === "All" ? "No questions yet" : `No ${filter} questions yet`}
+              {q ? `No results for "${search}"` : filter === "All" ? "No questions yet" : `No ${filter} questions yet`}
             </p>
             <p className="text-gray-500 text-sm mb-5">
-              {filter === "All"
+              {q
+                ? "Try different keywords or clear the search to browse all posts."
+                : filter === "All"
                 ? "Be the first to ask the community a question about F-1 compliance."
                 : `Be the first to ask a ${filter} question — your peers will thank you.`}
             </p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="px-5 py-2.5 rounded-xl bg-orange-600 text-white text-sm font-medium hover:bg-orange-700 transition-colors"
-            >
-              Ask the first question →
-            </button>
+            {q ? (
+              <button
+                onClick={() => setSearch("")}
+                className="px-5 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                Clear search
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowForm(true)}
+                className="px-5 py-2.5 rounded-xl bg-orange-600 text-white text-sm font-medium hover:bg-orange-700 transition-colors"
+              >
+                Ask the first question →
+              </button>
+            )}
           </div>
         ) : (
           filtered.map((post) => {

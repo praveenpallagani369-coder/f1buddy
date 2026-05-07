@@ -1,10 +1,14 @@
 import { ok, err } from "@/lib/api/helpers";
-import { getCached, setCache } from "@/lib/api/cache";
 
 const FR_BASE = "https://www.federalregister.gov/api/v1";
-const CACHE_TTL = 60 * 60 * 1000;
 
-const SEARCH_TERM = "optional practical training OR F-1 SEVIS OR employment authorization OR student visa";
+const SEARCH_TERMS = [
+  "optional practical training",
+  "F-1 student visa",
+  "SEVIS",
+  "employment authorization document",
+  "student work authorization",
+];
 
 interface FRDocument {
   title: string;
@@ -17,26 +21,17 @@ interface FRDocument {
 }
 
 export async function GET() {
-  const cacheKey = "immigration-news";
-  const cached = getCached(cacheKey);
-
-  if (cached) {
-    return ok(JSON.parse(cached));
-  }
-
   try {
     const params = new URLSearchParams();
-    params.set("conditions[term]", SEARCH_TERM);
-    params.set("per_page", "15");
+    params.set("conditions[term]", SEARCH_TERMS.join(" OR "));
+    params.set("per_page", "20");
     params.set("order", "newest");
-    // fields[] requires one append per field
     for (const field of ["title", "abstract", "document_number", "publication_date", "type", "html_url", "agencies"]) {
       params.append("fields[]", field);
     }
 
-    const res = await fetch(`${FR_BASE}/documents.json?${params}`, {
-      next: { revalidate: 3600 },
-    });
+    const res = await fetch(`${FR_BASE}/documents.json?${params}`, { cache: "no-store" });
+
     if (!res.ok) return err("API_ERROR", "Federal Register API unavailable", 502);
     const data = await res.json();
 
@@ -50,8 +45,7 @@ export async function GET() {
       agency: doc.agencies?.[0]?.name ?? "DHS",
     }));
 
-    setCache(cacheKey, JSON.stringify(articles), CACHE_TTL);
-    return ok(articles);
+    return ok({ articles, fetchedAt: new Date().toISOString(), total: data.count ?? articles.length });
   } catch {
     return err("API_ERROR", "Failed to fetch immigration news", 502);
   }

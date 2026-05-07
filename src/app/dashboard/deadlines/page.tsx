@@ -43,7 +43,16 @@ export default function DeadlinesPage() {
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from("compliance_deadlines").insert({ user_id: user.id, ...form, status: "pending", is_system_generated: false });
+    await supabase.from("compliance_deadlines").insert({
+      user_id: user.id,
+      title: form.title,
+      description: form.description || null,
+      deadline_date: form.deadlineDate,
+      category: form.category,
+      severity: form.severity,
+      status: "pending",
+      is_system_generated: false,
+    });
     await load();
     setShowForm(false);
     setForm({ title: "", description: "", deadlineDate: "", category: "custom", severity: "warning" });
