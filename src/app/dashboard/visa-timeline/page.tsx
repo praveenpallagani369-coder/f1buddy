@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { buildVisaTimeline, getCurrentStage } from "@/lib/immigration/visa-stages";
@@ -34,6 +34,20 @@ export default function VisaTimelinePage() {
       setProfile(pRes.data);
       setOpt(oRes.data);
       setLoading(false);
+
+      // Auto-expand current stage once data is loaded
+      const stages = buildVisaTimeline({
+        programStartDate: pRes.data?.program_start_date ?? null,
+        programEndDate: pRes.data?.program_end_date ?? null,
+        optType: oRes.data?.opt_type ?? null,
+        eadStartDate: oRes.data?.ead_start_date ?? null,
+        eadEndDate: oRes.data?.ead_end_date ?? null,
+        stemEndDate: oRes.data?.opt_type === "stem_extension" ? oRes.data?.ead_end_date : null,
+        optApplicationDate: oRes.data?.application_date ?? null,
+        h1bPetitionFiled: false,
+      });
+      const current = stages.find(s => s.isCurrent);
+      if (current) setExpanded(current.id);
     }
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,10 +116,10 @@ export default function VisaTimelinePage() {
                 <button
                   onClick={() => setExpanded(expanded === stage.id ? null : stage.id)}
                   className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg transition-all z-10 relative
-                    ${stage.isCurrent ? `${c.ring} ring-4 ring-offset-2 ring-offset-white bg-gray-50 scale-110` : ""}
+                    ${stage.isCurrent ? `${c.ring} ring-4 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 bg-gray-50 dark:bg-gray-800 scale-110 animate-pulse` : ""}
                     ${stage.isCompleted ? `bg-slate-700 border-slate-600` : ""}
-                    ${stage.isFuture && !stage.isCurrent ? "bg-white border-gray-200 opacity-40" : ""}
-                    ${stage.isCurrent ? `bg-gray-50 dark:bg-gray-800 border-current` : ""}`}
+                    ${stage.isFuture && !stage.isCurrent ? "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 opacity-40" : ""}
+                    ${stage.isCurrent ? `border-current` : ""}`}
                   style={stage.isCurrent ? { borderColor: "" } : {}}
                 >
                   {stage.isCompleted ? "✓" : stage.icon}
@@ -130,7 +144,7 @@ export default function VisaTimelinePage() {
           return (
             <Card
               key={stage.id}
-              className={`transition-all cursor-pointer ${stage.isCurrent ? `border ${c.bg}` : stage.isFuture ? "opacity-50" : ""}`}
+              className={`transition-all cursor-pointer ${stage.isCurrent ? `border ${c.bg}` : stage.isFuture ? "opacity-70 grayscale-[0.3]" : ""}`}
               onClick={() => setExpanded(expanded === stage.id ? null : stage.id)}
             >
               <CardContent className="p-4">
@@ -153,11 +167,11 @@ export default function VisaTimelinePage() {
                       )}
                     </div>
                   </div>
-                  <span className="text-gray-500 text-sm">{isOpen ? "▲" : "▼"}</span>
+                  <span className="text-gray-500 text-sm">{expanded === stage.id ? "▲" : "▼"}</span>
                 </div>
 
-                {isOpen && (
-                  <div className="mt-4 space-y-4 border-t border-gray-200 pt-4">
+                {expanded === stage.id && (
+                  <div className="mt-4 space-y-4 border-t border-gray-200 dark:border-gray-800 pt-4">
                     {/* Warnings */}
                     {stage.warnings.length > 0 && (
                       <div className="space-y-2">

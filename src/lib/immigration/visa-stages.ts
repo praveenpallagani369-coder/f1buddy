@@ -100,116 +100,86 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
   }
 
   // ── Stage 3: OPT Active ───────────────────────────────────
-  if (eadStart && eadEnd && input.optType !== "stem_extension") {
-    const daysLeft = differenceInCalendarDays(eadEnd, today);
-    stages.push({
-      id: "opt_active",
-      label: "OPT Active",
-      icon: "💼",
-      color: "emerald",
-      startDate: input.eadStartDate,
-      endDate: input.eadEndDate,
-      isCurrent: today >= eadStart && today <= eadEnd,
-      isCompleted: today > eadEnd,
-      isFuture: today < eadStart,
-      rules: [
-        "Work must be directly related to your degree field",
-        "Full-time (40h/wk) or part-time (20h/wk minimum) — both are valid",
-        "Max 90 days unemployment — days while abroad also count",
-        "Report new employer to DSO within 10 days of starting",
-        "Report job end to DSO within 10 days",
-        "Maintain valid EAD — cannot work after EAD expiry",
-      ],
-      warnings: daysLeft <= 90 && daysLeft > 0
-        ? [`EAD expires in ${daysLeft} days — ${daysLeft <= 30 ? "apply for STEM extension IMMEDIATELY" : "apply for STEM extension if eligible"}`]
-        : [],
-      nextStep: "Apply for STEM OPT extension if your degree qualifies (STEM list)",
-    });
-  }
-
-  // ── Stage 3b: OPT (Completed) — shown when user advanced to STEM OPT ─
-  // When on STEM extension, show original OPT as a completed stage.
-  // We infer the OPT period as programEndDate → STEM EAD start.
-  if (isOnStemOpt && eadStart && progEnd) {
-    stages.push({
-      id: "opt_active",
-      label: "OPT Active",
-      icon: "💼",
-      color: "emerald",
-      startDate: input.programEndDate,
-      endDate: input.eadStartDate,
-      isCurrent: false,
-      isCompleted: true,
-      isFuture: false,
-      rules: [
-        "Work must be directly related to your degree field",
-        "Full-time (40h/wk) or part-time (20h/wk minimum) — both are valid",
-        "Max 90 days unemployment — days while abroad also count",
-        "Report new employer to DSO within 10 days of starting",
-        "Report job end to DSO within 10 days",
-        "Maintain valid EAD — cannot work after EAD expiry",
-      ],
-      warnings: [],
-      nextStep: "Applied for STEM OPT extension",
-    });
-  }
+  const optStart = eadStart || (progEnd ? addDays(progEnd, 1) : null);
+  const optEnd = eadEnd || (optStart ? addDays(optStart, 364) : null);
+  
+  stages.push({
+    id: "opt_active",
+    label: "OPT Active",
+    icon: "💼",
+    color: "emerald",
+    startDate: optStart ? format(optStart, "yyyy-MM-dd") : null,
+    endDate: optEnd ? format(optEnd, "yyyy-MM-dd") : null,
+    isCurrent: !!(eadStart && eadEnd && today >= eadStart && today <= eadEnd && input.optType !== "stem_extension"),
+    isCompleted: !!(eadEnd && today > eadEnd && input.optType !== "stem_extension") || isOnStemOpt,
+    isFuture: !eadStart || (eadStart && today < eadStart),
+    rules: [
+      "Work must be directly related to your degree field",
+      "Full-time (40h/wk) or part-time (20h/wk minimum) — both are valid",
+      "Max 90 days unemployment — days while abroad also count",
+      "Report new employer to DSO within 10 days of starting",
+      "Report job end to DSO within 10 days",
+      "Maintain valid EAD — cannot work after EAD expiry",
+    ],
+    warnings: eadEnd && input.optType !== "stem_extension" && differenceInCalendarDays(eadEnd, today) <= 90 && differenceInCalendarDays(eadEnd, today) > 0
+      ? [`EAD expires in ${differenceInCalendarDays(eadEnd, today)} days — apply for STEM extension if eligible`]
+      : [],
+    nextStep: "Apply for STEM OPT extension (24 months) if degree qualifies",
+  });
 
   // ── Stage 4: STEM OPT Active ─────────────────────────────
-  if (input.optType === "stem_extension" && eadStart && eadEnd) {
-    const daysLeft = differenceInCalendarDays(eadEnd, today);
-    stages.push({
-      id: "stem_opt_active",
-      label: "STEM OPT Extension",
-      icon: "🔬",
-      color: "violet",
-      startDate: input.eadStartDate,
-      endDate: input.eadEndDate,
-      isCurrent: today >= eadStart && today <= eadEnd,
-      isCompleted: today > eadEnd,
-      isFuture: today < eadStart,
-      rules: [
-        "Employer MUST be E-Verify enrolled — no self-employment, no 1099, no unpaid/volunteer work",
-        "I-983 Training Plan must be signed by employer AND submitted to DSO before starting",
-        "Validation reports due at 6, 12, 18, 24 months — student has 10 business days to report to DSO",
-        "Self-evaluations (I-983 page 5) due at 12 and 24 months — signed by student AND employer",
-        "150 days is the CUMULATIVE unemployment cap across ALL of OPT + STEM OPT combined — not a fresh counter",
-        "Time abroad while unemployed counts toward the 150-day cap",
-        "Report employer changes to DSO within 10 days; new I-983 required within 10 days of new employer",
-        "Employer must report termination/departure to DSO within 5 business days",
-      ],
-      warnings: daysLeft <= 90 && daysLeft > 0
-        ? [`STEM OPT expires in ${daysLeft} days — ${daysLeft <= 180 ? "file H-1B or prepare to change status" : ""}`]
-        : [],
-      nextStep: "File H-1B petition or explore EB-2 NIW, O-1A, or other pathways",
-    });
-  }
+  const stemStart = isOnStemOpt ? eadStart : (eadEnd ? addDays(eadEnd, 1) : null);
+  const stemEnd = input.stemEndDate ? parseISO(input.stemEndDate) : (stemStart ? addDays(stemStart, 729) : null);
+
+  stages.push({
+    id: "stem_opt_active",
+    label: "STEM OPT Extension",
+    icon: "🔬",
+    color: "violet",
+    startDate: stemStart ? format(stemStart, "yyyy-MM-dd") : null,
+    endDate: stemEnd ? format(stemEnd, "yyyy-MM-dd") : null,
+    isCurrent: !!(isOnStemOpt && eadStart && eadEnd && today >= eadStart && today <= eadEnd),
+    isCompleted: !!(isOnStemOpt && eadEnd && today > eadEnd),
+    isFuture: !isOnStemOpt,
+    rules: [
+      "Employer MUST be E-Verify enrolled — no self-employment, no 1099",
+      "I-983 Training Plan must be signed and submitted to DSO before starting",
+      "Validation reports due at 6, 12, 18, 24 months (10-day window)",
+      "Self-evaluations (I-983 p.5) due at 12 and 24 months",
+      "150 days CUMULATIVE unemployment cap (Total across OPT + STEM)",
+      "Report employer changes within 10 days; new I-983 required",
+    ],
+    warnings: isOnStemOpt && eadEnd && differenceInCalendarDays(eadEnd, today) <= 180 && differenceInCalendarDays(eadEnd, today) > 0
+      ? [`STEM OPT expires in ${differenceInCalendarDays(eadEnd, today)} days — plan for H-1B or next steps`]
+      : [],
+    nextStep: "Plan for H-1B lottery or other career transitions",
+  });
 
   // ── Stage 5: Grace Period ─────────────────────────────────
-  const activeEadEnd = eadEnd;
-  if (activeEadEnd) {
-    const graceEnd = addDays(activeEadEnd, 60);
-    stages.push({
-      id: "grace_period",
-      label: "60-Day Grace Period",
-      icon: "⏱️",
-      color: "orange",
-      startDate: input.eadEndDate,
-      endDate: format(graceEnd, "yyyy-MM-dd"),
-      isCurrent: today > activeEadEnd && today <= graceEnd,
-      isCompleted: today > graceEnd,
-      isFuture: today <= activeEadEnd,
-      rules: [
-        "You CANNOT work during the grace period",
-        "Use this time to: change status, depart the US, or receive H-1B cap-gap",
-        "60 days from OPT/STEM end date — not flexible",
-        "If H-1B was filed and selected in lottery, cap-gap may extend authorization",
-      ],
-      warnings: today > activeEadEnd && today <= graceEnd
-        ? [`Grace period ends ${format(graceEnd, "MMM d, yyyy")} — ${differenceInCalendarDays(graceEnd, today)} days remaining`]
-        : [],
-      nextStep: "Change to H-1B, depart US, or file for another status change",
-    });
-  }
+  const finalEadEnd = eadEnd; // Either OPT or STEM end
+  const graceStart = finalEadEnd ? addDays(finalEadEnd, 1) : null;
+  const graceEnd = graceStart ? addDays(graceStart, 59) : null;
+
+  stages.push({
+    id: "grace_period",
+    label: "60-Day Grace Period",
+    icon: "⏱️",
+    color: "orange",
+    startDate: graceStart ? format(graceStart, "yyyy-MM-dd") : null,
+    endDate: graceEnd ? format(graceEnd, "yyyy-MM-dd") : null,
+    isCurrent: !!(graceStart && graceEnd && today >= graceStart && today <= graceEnd),
+    isCompleted: !!(graceEnd && today > graceEnd),
+    isFuture: !graceStart || (graceStart && today < graceStart),
+    rules: [
+      "You CANNOT work during the grace period",
+      "Use this time to: change status, depart the US, or receive H-1B cap-gap",
+      "60 days from OPT/STEM end date — not flexible",
+    ],
+    warnings: graceStart && graceEnd && today >= graceStart && today <= graceEnd
+      ? [`Grace period ends ${format(graceEnd, "MMM d, yyyy")} — ${differenceInCalendarDays(graceEnd, today)} days remaining`]
+      : [],
+    nextStep: "Depart US or change to a new status (e.g., H-1B, H-4, New I-20)",
+  });
 
   // ── Stage 6: H-1B Cap-Gap ────────────────────────────────
   if (input.h1bPetitionFiled) {
