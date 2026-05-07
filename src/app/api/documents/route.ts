@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     .insert({
       user_id: user.id,
       doc_type: docType,
-      file_url: publicUrl ?? (storagePath ? `pending://${storagePath}` : null),
+      file_url: publicUrl ?? (storagePath ? `pending://${storagePath}` : "record-only"),
       file_name: fileName || null,
       file_size_bytes: parsed.data.fileSizeBytes ?? null,
       mime_type: mimeType || null,
