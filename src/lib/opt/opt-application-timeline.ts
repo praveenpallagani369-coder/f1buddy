@@ -200,7 +200,7 @@ export async function upsertStemApplicationDeadline(
   const earliestFiling = subDays(expiry, 90);
   
   const title = "File STEM OPT Extension (Form I-765)";
-  const description = `Your STEM OPT application window opens 90 days before your current EAD expires. You must file Form I-765 with USCIS no later than ${eadEndDateISO}. Earliest filing date: ${format(earliestFiling, "yyyy-MM-dd")}. — 8 CFR 214.2(f)(10)(ii)(C)`;
+  const description = `STEM OPT application window: ${format(earliestFiling, "MMM d, yyyy")} to ${format(expiry, "MMM d, yyyy")}. You must file Form I-765 so that USCIS receives it NO LATER than your current EAD expiry date (${eadEndDateISO}). — 8 CFR 214.2(f)(10)(ii)(C)`;
 
   // Check if it already exists
   const { data: existing } = await supabase
