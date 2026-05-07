@@ -26,7 +26,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://*.supabase.co https://api.groq.com https://api.stripe.com https://*.sentry.io https://app.posthog.com https://vitals.vercel-insights.com",
+              "connect-src 'self' https://*.supabase.co https://api.groq.com https://api.stripe.com https://*.sentry.io https://*.posthog.com https://vitals.vercel-insights.com",
               "frame-src 'self' https://js.stripe.com",
               "worker-src 'self' blob:",
               "object-src 'none'",
