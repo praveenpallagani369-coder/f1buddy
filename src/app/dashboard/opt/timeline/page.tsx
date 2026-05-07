@@ -170,7 +170,7 @@ export default function OPTTimelinePage() {
         <CardContent className="p-4">
           <div className="flex items-end gap-4 flex-wrap">
             <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm text-gray-600 mb-1.5">Program End Date</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Program End Date</label>
               <Input type="date"
                 value={customEndDate || profile?.program_end_date || ""}
                 onChange={(e) => setCustomEndDate(e.target.value)}
@@ -208,7 +208,7 @@ export default function OPTTimelinePage() {
       {/* Progress bar */}
       {mergedTimeline && (
         <div className="flex items-center gap-4">
-          <div className="flex-1 bg-gray-100 rounded-full h-2">
+        <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2">
             <div className="bg-indigo-500 h-2 rounded-full transition-all" style={{ width: `${(completedCount / totalCount) * 100}%` }} />
           </div>
           <span className="text-sm text-gray-500 whitespace-nowrap">{completedCount}/{totalCount} steps done</span>
@@ -219,7 +219,7 @@ export default function OPTTimelinePage() {
       {mergedTimeline ? (
         <div className="relative">
           {/* Vertical line */}
-          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-gray-100" />
+          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-gray-100 dark:bg-gray-800" />
 
           <div className="space-y-4">
             {mergedTimeline.map((step, i) => {
@@ -233,8 +233,8 @@ export default function OPTTimelinePage() {
                   <div className={`absolute left-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-bold flex-shrink-0 z-10 ${
                     step.isCompleted ? "bg-emerald-600 border-emerald-600 text-gray-900" :
                     isOverdue ? "bg-red-900/50 border-red-600 text-red-600" :
-                    isUpNext ? "bg-indigo-100 border-indigo-500 text-indigo-600" :
-                    "bg-white border-gray-200 text-gray-500"
+                    isUpNext ? "bg-indigo-100 dark:bg-indigo-900/40 border-indigo-500 text-indigo-600 dark:text-indigo-400" :
+                    "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-500"
                   }`}>
                     {step.isCompleted ? "✓" : step.order}
                   </div>
@@ -243,13 +243,15 @@ export default function OPTTimelinePage() {
                   <Card className={`flex-1 ${
                     isUpNext && !step.isCompleted ? "border-indigo-200" :
                     isOverdue ? "border-red-200" :
+                    isUpNext && !step.isCompleted ? "border-indigo-200 dark:border-indigo-800" :
+                    isOverdue ? "border-red-200 dark:border-red-900" :
                     step.isCompleted ? "opacity-70" : ""
                   }`}>
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 line-through" : "text-gray-900 dark:text-gray-100"}`}>
+                            <p className={`font-medium ${step.isCompleted ? "text-gray-500 dark:text-gray-500 line-through" : "text-gray-900 dark:text-gray-100"}`}>
                               {step.title}
                             </p>
                             {step.isCritical && !step.isCompleted && (

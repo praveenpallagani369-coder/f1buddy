@@ -225,7 +225,7 @@ export default function STEMTimelinePage() {
       {/* Progress bar */}
       {mergedTimeline && (
         <div className="flex items-center gap-4">
-          <div className="flex-1 bg-gray-100 rounded-full h-2">
+          <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-full h-2">
             <div className="bg-violet-500 h-2 rounded-full transition-all" style={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }} />
           </div>
           <span className="text-sm text-gray-500 whitespace-nowrap">{completedCount}/{totalCount} steps done</span>
@@ -235,7 +235,7 @@ export default function STEMTimelinePage() {
       {/* Timeline steps */}
       {mergedTimeline && (
         <div className="relative">
-          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-gray-100" />
+          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-gray-100 dark:bg-gray-800" />
           <div className="space-y-4">
             {mergedTimeline.map((step, i) => {
               const isOverdue = step.targetDate && step.targetDate < today && !step.isCompleted;
@@ -248,7 +248,7 @@ export default function STEMTimelinePage() {
                     step.isCompleted ? "bg-violet-600 border-violet-600 text-gray-900" :
                     isOverdue ? "bg-red-900/50 border-red-600 text-red-600" :
                     isUpNext ? "bg-violet-600/20 border-violet-500 text-violet-400" :
-                    "bg-white border-gray-200 text-gray-500"
+                    "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-500"
                   }`}>
                     {step.isCompleted ? "✓" : step.order}
                   </div>
@@ -272,9 +272,9 @@ export default function STEMTimelinePage() {
                           <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
                           {step.cfr && <p className="text-xs text-gray-500 font-mono mt-1">{step.cfr}</p>}
 
-                          <div className="mt-3 p-3 rounded-lg bg-gray-100 border border-gray-200/50">
-                            <p className="text-xs text-gray-500 font-medium mb-0.5">💡 Tip</p>
-                            <p className="text-xs text-gray-500">{step.tip}</p>
+                          <div className="mt-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-0.5">💡 Tip</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{step.tip}</p>
                           </div>
                         </div>
 
