@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { addMonths, parseISO, differenceInCalendarDays, format, addDays } from "date-fns";
@@ -208,8 +208,8 @@ export default function STEMReportsPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <div className="flex items-center gap-3">
-        <Link href="/dashboard/opt" className="text-gray-500 hover:text-gray-600 text-sm">← OPT Tracker</Link>
-        <span className="text-slate-700">/</span>
+        <Link href="/dashboard/opt" className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">← OPT Tracker</Link>
+        <span className="text-slate-700 dark:text-slate-400">/</span>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">STEM OPT Validation Reports</h1>
       </div>
 
@@ -299,9 +299,9 @@ export default function STEMReportsPage() {
                         {/* Status circle */}
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm border-2 ${
                           isDone ? "bg-emerald-600 border-emerald-600 text-gray-900" :
-                          report.isCurrentWindow ? "bg-amber-600/20 border-amber-500 text-amber-700" :
+                          report.isCurrentWindow ? "bg-amber-600/20 border-amber-500 text-amber-700 dark:text-amber-400" :
                           report.status === "missed" ? "bg-red-900/30 border-red-700 text-red-600" :
-                          "bg-white border-gray-200 text-gray-500"
+                          "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
                         }`}>
                           {isDone ? "✓" : report.status === "missed" ? "!" : `${report.month}M`}
                         </div>
@@ -365,8 +365,8 @@ export default function STEMReportsPage() {
 
                     {/* I-983 Checklist */}
                     {isExpanded && !isDone && (
-                      <div className="mt-4 border-t border-gray-200 pt-4">
-                        <p className="text-sm font-medium text-gray-900 mb-3">I-983 Submission Checklist</p>
+                      <div className="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">I-983 Submission Checklist</p>
                         <div className="space-y-2">
                           {VALIDATION_CHECKLIST.map((item) => (
                             <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
@@ -399,7 +399,7 @@ export default function STEMReportsPage() {
                                     onChange={(e) => setChecklist(c => ({ ...c, [`${report.month}-${item.id}`]: e.target.checked }))}
                                     className="mt-0.5 flex-shrink-0"
                                   />
-                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-500 line-through" : "text-violet-200"}`}>
+                                  <span className={`text-sm ${checklist[`${report.month}-${item.id}`] ? "text-gray-500 dark:text-gray-600 line-through" : "text-violet-700 dark:text-violet-300"}`}>
                                     {item.label}
                                     {item.critical && <span className="text-red-600 ml-1 text-xs">*required</span>}
                                   </span>
@@ -408,8 +408,8 @@ export default function STEMReportsPage() {
                             </div>
                           </div>
                         )}
-                        <div className="mt-4 p-3 rounded-lg bg-gray-100 text-xs text-gray-500">
-                          <p className="font-medium text-gray-600 mb-1">After submitting to DSO:</p>
+                        <div className="mt-4 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-xs text-gray-500 dark:text-gray-400">
+                          <p className="font-medium text-gray-600 dark:text-gray-300 mb-1">After submitting to DSO:</p>
                           <ol className="space-y-1 list-decimal list-inside">
                             <li>Confirm DSO received and updated SEVIS in the SEVP Portal</li>
                             <li>Ask DSO to send you confirmation that SEVIS was updated</li>
@@ -437,7 +437,7 @@ export default function STEMReportsPage() {
                 <div className="flex gap-1">
                   {REPORT_MONTHS.map(m => (
                     <div key={m} className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      completedReports.has(m) ? "bg-emerald-600 text-gray-900" : "bg-gray-100 text-gray-500"
+                      completedReports.has(m) ? "bg-emerald-600 text-gray-900" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                     }`}>
                       {completedReports.has(m) ? "✓" : `${m}M`}
                     </div>

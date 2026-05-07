@@ -139,7 +139,6 @@ export default function VisaTimelinePage() {
       <div className="space-y-3">
         {stages.map((stage) => {
           const c = COLOR_MAP[stage.color];
-          const isOpen = expanded === stage.id || stage.isCurrent;
 
           return (
             <Card

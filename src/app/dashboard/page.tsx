@@ -293,7 +293,7 @@ export default async function DashboardPage() {
         {/* Unemployment */}
         <StatCard
           label={phase === "stem_opt_active" ? "STEM Unemployment" : "OPT Unemployment"}
-          value={opt ? <span className={liveUnemploymentDays >= 85 ? "text-red-600" : liveUnemploymentDays >= 60 ? "text-amber-600" : "text-gray-900"}>{liveUnemploymentDays}</span> : "—"}
+          value={opt ? <span className={liveUnemploymentDays >= 85 ? "text-red-600" : liveUnemploymentDays >= 60 ? "text-amber-600" : "text-gray-900 dark:text-gray-100"}>{liveUnemploymentDays}</span> : "—"}
           sub={opt ? `${unemploymentLimit - liveUnemploymentDays} of ${unemploymentLimit} days remaining` : undefined}
           accent={unemployAccent}
           icon={<Briefcase className="w-3.5 h-3.5" />}
@@ -310,7 +310,7 @@ export default async function DashboardPage() {
         {/* Days Outside US */}
         <StatCard
           label={`Days Outside US (${thisYear})`}
-          value={<span className={fiveMonthWarning ? "text-amber-600" : "text-gray-900"}>{daysOutsideThisYear}</span>}
+          value={<span className={fiveMonthWarning ? "text-amber-600" : "text-gray-900 dark:text-gray-100"}>{daysOutsideThisYear}</span>}
           sub={
             currentlyAbroad ? "Currently abroad" :
             fiveMonthWarning ? "⚠ 5-Month Rule Alert" :
@@ -331,10 +331,10 @@ export default async function DashboardPage() {
           label={eadEnd ? "EAD Expiry" : "Program End"}
           value={
             eadEnd
-              ? <span className={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "text-red-600" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "text-amber-600" : "text-gray-900"}>
+              ? <span className={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "text-red-600" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "text-amber-600" : "text-gray-900 dark:text-gray-100"}>
                   {daysToEadExpiry !== null && daysToEadExpiry >= 0 ? `${daysToEadExpiry}d` : "Expired"}
                 </span>
-              : <span className="text-gray-900">{profile?.program_end_date ? `${differenceInCalendarDays(parseISO(profile.program_end_date), today)}d` : "—"}</span>
+              : <span className="text-gray-900 dark:text-gray-100">{profile?.program_end_date ? `${differenceInCalendarDays(parseISO(profile.program_end_date), today)}d` : "—"}</span>
           }
           sub={eadEnd ? opt?.ead_end_date ?? undefined : profile?.program_end_date ?? undefined}
           accent={daysToEadExpiry !== null && daysToEadExpiry <= 30 ? "bg-red-500" : daysToEadExpiry !== null && daysToEadExpiry <= 90 ? "bg-amber-400" : "bg-violet-400"}

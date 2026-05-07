@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -207,15 +207,15 @@ export default function TravelPage() {
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Departure Date *</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Departure Date *</label>
                 <Input type="date" value={form.departureDate} onChange={(e) => setForm(f => ({ ...f, departureDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Return Date (blank if still abroad)</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Return Date (blank if still abroad)</label>
                 <Input type="date" value={form.returnDate} onChange={(e) => setForm(f => ({ ...f, returnDate: e.target.value }))} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Destination Country *</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Destination Country *</label>
                 <Input placeholder="India" value={form.destinationCountry} onChange={(e) => setForm(f => ({ ...f, destinationCountry: e.target.value }))} />
                 {countryLoading && (
                   <p className="text-xs text-gray-400 mt-1.5">Looking up country...</p>
@@ -235,7 +235,7 @@ export default function TravelPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Travel Type *</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Travel Type *</label>
                 <Select value={form.travelType} onChange={(e) => setForm(f => ({ ...f, travelType: e.target.value }))}>
                   <option value="personal">Personal (vacation, family, conference)</option>
                   <option value="employer_required">Employer-Required (business travel)</option>
@@ -245,7 +245,7 @@ export default function TravelPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Purpose</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Purpose</label>
                 <Select value={form.purpose} onChange={(e) => setForm(f => ({ ...f, purpose: e.target.value }))}>
                   <option value="vacation">Vacation</option>
                   <option value="family">Family Visit</option>
@@ -256,10 +256,10 @@ export default function TravelPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-2">Documents Carried</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-2">Documents Carried</label>
               <div className="grid grid-cols-2 gap-2">
                 {DOC_OPTIONS.map((doc) => (
-                  <label key={doc} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <label key={doc} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
                     <input type="checkbox" checked={form.documentsCarried.includes(doc)}
                       onChange={(e) => setForm(f => ({ ...f, documentsCarried: e.target.checked ? [...f.documentsCarried, doc] : f.documentsCarried.filter(d => d !== doc) }))} />
                     {doc}
@@ -268,7 +268,7 @@ export default function TravelPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1.5">Notes (optional)</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Notes (optional)</label>
               <Input placeholder="Conference name, visa used, etc." value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} />
             </div>
             <div className="flex gap-3">
@@ -301,18 +301,18 @@ export default function TravelPage() {
           ) : (
             <div className="space-y-3">
               {trips.map((t) => (
-                <div key={t.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
+                <div key={t.id} className="flex items-start justify-between p-4 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-lg">✈️</span>
-                      <p className="text-gray-900 font-medium">{t.destination_country}</p>
+                      <p className="text-gray-900 dark:text-gray-100 font-medium">{t.destination_country}</p>
                       {!t.return_date && <Badge variant="warning" className="text-xs">Currently Abroad</Badge>}
                       {t.travel_type === "employer_required"
                         ? <Badge variant="info" className="text-xs">Employer-Required</Badge>
                         : <Badge variant="outline" className="text-xs">Personal</Badge>}
                     </div>
-                    <p className="text-sm text-gray-500 mt-0.5">{t.departure_date} → {t.return_date ?? "Present"}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 capitalize">{t.purpose} · {t.days_outside} days</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{t.departure_date} → {t.return_date ?? "Present"}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 capitalize">{t.purpose} · {t.days_outside} days</p>
                   </div>
                   <Badge variant={t.days_outside >= 60 ? "warning" : "outline"}>{t.days_outside}d</Badge>
                 </div>

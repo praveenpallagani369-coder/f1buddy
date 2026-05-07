@@ -103,9 +103,9 @@ export default function AttorneysPage() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/20 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
-          <p className="text-gray-500">No attorneys found matching your search.</p>
-          <button onClick={() => setSearch("")} className="text-orange-600 text-sm mt-2 hover:underline">Clear search</button>
+        <div className="text-center py-20 bg-gray-50 dark:bg-gray-800/40 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+          <p className="text-gray-500 dark:text-gray-400">No attorneys found matching your search.</p>
+          <button onClick={() => setSearch("")} className="text-orange-600 dark:text-orange-400 text-sm mt-2 hover:underline">Clear search</button>
         </div>
       )}
     </div>

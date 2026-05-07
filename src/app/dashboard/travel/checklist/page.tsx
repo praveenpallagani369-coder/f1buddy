@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { generateTravelChecklist, getOverallStatus } from "@/lib/immigration/travel-checklist";
@@ -28,7 +28,7 @@ const STATUS_CONFIG = {
   pass: { icon: "✅", color: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800", label: "Good" },
   warn: { icon: "⚠️", color: "text-amber-600", bg: "bg-amber-50 border-amber-200 dark:bg-amber-950/40 dark:border-amber-800", label: "Attention" },
   fail: { icon: "🚫", color: "text-red-600", bg: "bg-red-50 border-red-200 dark:bg-red-950/40 dark:border-red-800", label: "Action Required" },
-  unknown: { icon: "❓", color: "text-gray-500 dark:text-gray-400", bg: "bg-gray-100 border-gray-200 dark:border-gray-700", label: "Unknown" },
+  unknown: { icon: "❓", color: "text-gray-500 dark:text-gray-400", bg: "bg-gray-100 border-gray-200 dark:bg-gray-800 dark:border-gray-700", label: "Unknown" },
 };
 
 const OVERALL_CONFIG = {
@@ -144,8 +144,8 @@ export default function TravelChecklistPage() {
           </div>
 
           {/* I-20 travel signature quick-update */}
-          <div className="p-3 rounded-lg bg-gray-100 border border-gray-200 mb-5">
-            <p className="text-sm font-medium text-gray-600 mb-2">I-20 Travel Signature Date</p>
+          <div className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 mb-5">
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">I-20 Travel Signature Date</p>
             <p className="text-xs text-gray-500 mb-2">The date your DSO last signed your I-20 for travel (check the bottom of your I-20)</p>
             <div className="flex gap-2 items-center">
               <Input type="date" className="max-w-[200px]"
@@ -225,7 +225,7 @@ export default function TravelChecklistPage() {
               <span className="text-3xl">{OVERALL_CONFIG[overall].icon}</span>
               <div>
                 <p className={`text-lg font-bold ${OVERALL_CONFIG[overall].color}`}>{OVERALL_CONFIG[overall].label}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {overall === "pass"
                     ? "All checks passed. Keep your documents accessible during travel."
                     : overall === "warn"
@@ -246,13 +246,13 @@ export default function TravelChecklistPage() {
                     <span className="text-lg mt-0.5 flex-shrink-0">{cfg.icon}</span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-gray-900">{item.title}</p>
+                        <p className="font-medium text-gray-900 dark:text-gray-100">{item.title}</p>
                         <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
                         {item.cfr && (
                           <span className="text-xs text-gray-500 font-mono">{item.cfr}</span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 mt-1 leading-relaxed">{item.detail}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">{item.detail}</p>
                       {item.action && (
                         <div className="mt-2 flex items-start gap-2">
                           <span className="text-indigo-600 text-xs">→</span>
@@ -284,8 +284,8 @@ export default function TravelChecklistPage() {
                   "Emergency contact list",
                   "DSO contact information",
                 ].map((doc) => (
-                  <div key={doc} className="flex items-center gap-2 text-sm text-gray-600">
-                    <span className="text-indigo-600 flex-shrink-0">◆</span>
+                  <div key={doc} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-indigo-600 dark:text-indigo-400 flex-shrink-0">◆</span>
                     {doc}
                   </div>
                 ))}

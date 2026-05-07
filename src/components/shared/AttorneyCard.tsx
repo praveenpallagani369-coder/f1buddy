@@ -65,7 +65,7 @@ export function AttorneyCard({
         {hourlyRate && (
           <div className="text-right">
             <p className="text-sm font-bold text-gray-900 dark:text-gray-100">${hourlyRate}</p>
-            <p className="text-[10px] text-gray-500 uppercase">per hour</p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase">per hour</p>
           </div>
         )}
       </div>
@@ -89,7 +89,7 @@ export function AttorneyCard({
             href={consultationUrl} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white h-10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center justify-center active:scale-[0.98] shadow-sm shadow-orange-200/60"
+            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white h-10 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 flex items-center justify-center active:scale-[0.98] shadow-sm shadow-orange-200/60 dark:shadow-none"
           >
             Book Consultation
           </Link>

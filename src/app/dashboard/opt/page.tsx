@@ -426,8 +426,8 @@ export default function OPTPage() {
                 { label: "Reported to DSO", field: "reportedToSchool" },
                 { label: "Current Job", field: "isCurrent" },
               ].map(({ label, field }) => (
-                <label key={field} className="flex items-center gap-2 text-gray-600 cursor-pointer">
-                  <input type="checkbox" className="rounded" checked={empForm[field as keyof typeof empForm] as boolean} onChange={(e) => setEmpForm(f => ({ ...f, [field]: e.target.checked }))} />
+                <label key={field} className="flex items-center gap-2 text-gray-600 dark:text-gray-400 cursor-pointer">
+                  <input type="checkbox" className="rounded" checked={empForm[field as keyof typeof empForm] as boolean} onChange={(e) => setEmpForm((f: any) => ({ ...f, [field]: e.target.checked }))} />
                   {label}
                 </label>
               ))}

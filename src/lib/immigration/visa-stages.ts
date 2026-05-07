@@ -184,7 +184,7 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
   // ── Stage 6: H-1B Cap-Gap ────────────────────────────────
   if (input.h1bPetitionFiled) {
     // Cap-gap extends until Oct 1 of the H-1B fiscal year (the next Oct 1 after EAD ends)
-    const capGapRef = activeEadEnd ?? today;
+    const capGapRef = finalEadEnd ?? today;
     const oct1SameYear = new Date(capGapRef.getFullYear(), 9, 1);
     const h1bStartDate = capGapRef < oct1SameYear ? oct1SameYear : new Date(capGapRef.getFullYear() + 1, 9, 1);
     const h1bStartStr = format(h1bStartDate, "yyyy-MM-dd");
@@ -194,11 +194,11 @@ export function buildVisaTimeline(input: VisaTimelineInput): StageInfo[] {
       label: "H-1B Cap-Gap",
       icon: "🏢",
       color: "blue",
-      startDate: activeEadEnd ? format(addDays(activeEadEnd, 1), "yyyy-MM-dd") : null,
+      startDate: finalEadEnd ? format(addDays(finalEadEnd, 1), "yyyy-MM-dd") : null,
       endDate: h1bStartStr,
-      isCurrent: activeEadEnd ? today > activeEadEnd && today < h1bStartDate : false,
+      isCurrent: finalEadEnd ? today > finalEadEnd && today < h1bStartDate : false,
       isCompleted: today >= h1bStartDate,
-      isFuture: activeEadEnd ? today <= activeEadEnd : true,
+      isFuture: finalEadEnd ? today <= finalEadEnd : true,
       rules: [
         "H-1B petition filed and selected in lottery",
         "Cap-gap extends OPT work authorization until H-1B start (Oct 1)",

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
@@ -162,7 +162,7 @@ export default function CommunityPage() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 space-y-3">
             <div className="flex justify-between">
-              <div className="h-4 w-72 bg-gray-200 dark:bg-gray-700 rounded" />
+              <div className="h-4 w-72 bg-gray-200 dark:bg-gray-800 rounded" />
               <div className="h-5 w-12 bg-gray-100 dark:bg-gray-800 rounded-full" />
             </div>
             <div className="h-3 w-full bg-gray-100 dark:bg-gray-800 rounded" />
@@ -206,24 +206,24 @@ export default function CommunityPage() {
       {showForm && (
         <Card className="border-indigo-200">
           <CardContent className="p-6 space-y-4">
-            <h3 className="font-medium text-gray-900">Ask the Community</h3>
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">Ask the Community</h3>
             <div>
-              <label className="block text-sm text-gray-600 mb-1.5">Question Title *</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Question Title *</label>
               <Input placeholder="e.g., Can I change employers during STEM OPT?" value={form.title} onChange={(e) => setForm(f => ({ ...f, title: e.target.value }))} />
             </div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1.5">Details *</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Details *</label>
               <Textarea placeholder="Provide context — your program, current status, what you've already tried..." value={form.body} onChange={(e) => setForm(f => ({ ...f, body: e.target.value }))} rows={4} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-600 mb-1.5">Category</label>
+                <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Category</label>
                 <Select value={form.category} onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </Select>
               </div>
               <div className="flex items-end pb-0.5">
-                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
                   <input type="checkbox" checked={form.isAnonymous} onChange={(e) => setForm(f => ({ ...f, isAnonymous: e.target.checked }))} />
                   Post anonymously
                 </label>
@@ -270,27 +270,27 @@ export default function CommunityPage() {
                     {/* Upvote */}
                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
                       <button onClick={() => upvote(post.id)}
-                        className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-indigo-100 hover:text-indigo-600 text-gray-500 flex items-center justify-center transition-colors text-xs">
+                        className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 hover:text-indigo-600 dark:hover:text-indigo-400 text-gray-500 dark:text-gray-400 flex items-center justify-center transition-colors text-xs">
                         ▲
                       </button>
-                      <span className="text-sm text-gray-500 font-medium">{post.upvotes}</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{post.upvotes}</span>
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <button className="text-left w-full" onClick={() => togglePost(post.id)}>
                         <div className="flex items-start gap-2 flex-wrap mb-1">
-                          <h3 className="text-gray-900 font-medium hover:text-indigo-700 transition-colors">{post.title}</h3>
+                          <h3 className="text-gray-900 dark:text-gray-100 font-medium hover:text-indigo-700 dark:hover:text-indigo-400 transition-colors">{post.title}</h3>
                           <Badge variant="info" className="text-xs flex-shrink-0">{post.category}</Badge>
                         </div>
                         <p className="text-sm text-gray-500 line-clamp-2">{post.body}</p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500 dark:text-gray-400">
                           <span>{post.is_anonymous ? "Anonymous" : (post.users?.name ?? "Student")}</span>
                           <span>·</span>
                           <span>{formatDistanceToNow(parseISO(post.created_at), { addSuffix: true })}</span>
                           <span>·</span>
-                          <span className="text-indigo-600">{post.answer_count} answer{post.answer_count !== 1 ? "s" : ""}</span>
-                          <span className="text-indigo-600">{isExpanded ? "▲ collapse" : "▼ expand"}</span>
+                          <span className="text-indigo-600 dark:text-indigo-400">{post.answer_count} answer{post.answer_count !== 1 ? "s" : ""}</span>
+                          <span className="text-indigo-600 dark:text-indigo-400">{isExpanded ? "▲ collapse" : "▼ expand"}</span>
                         </div>
                       </button>
 
@@ -306,20 +306,20 @@ export default function CommunityPage() {
                               <div className="space-y-3 mb-4">
                                 <p className="text-xs text-gray-500 uppercase tracking-wider">{postAnswers.length} Answer{postAnswers.length !== 1 ? "s" : ""}</p>
                                 {postAnswers.map((ans) => (
-                                  <div key={ans.id} className="flex gap-3 p-3 rounded-lg bg-gray-100 border border-gray-200 dark:border-gray-700">
+                                  <div key={ans.id} className="flex gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
                                     <div className="flex flex-col items-center gap-1 flex-shrink-0">
                                       <button onClick={() => upvoteAnswer(post.id, ans.id)}
-                                        className="w-6 h-6 rounded bg-slate-700 hover:bg-indigo-100 text-gray-500 hover:text-indigo-600 flex items-center justify-center transition-colors text-xs">
+                                        className="w-6 h-6 rounded bg-gray-100 dark:bg-gray-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 flex items-center justify-center transition-colors text-xs">
                                         ▲
                                       </button>
-                                      <span className="text-xs text-gray-500">{ans.upvotes}</span>
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">{ans.upvotes}</span>
                                     </div>
                                     <div className="flex-1 min-w-0">
                                       {ans.is_verified && (
                                         <Badge variant="success" className="text-xs mb-1">✓ Admin-Verified</Badge>
                                       )}
-                                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{ans.body}</p>
-                                      <p className="text-xs text-gray-500 mt-1">
+                                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{ans.body}</p>
+                                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         {ans.users?.name ?? "Student"} · {formatDistanceToNow(parseISO(ans.created_at), { addSuffix: true })}
                                       </p>
                                     </div>
