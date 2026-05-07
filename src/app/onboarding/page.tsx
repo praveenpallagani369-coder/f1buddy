@@ -481,7 +481,7 @@ export default function OnboardingPage() {
                 ] as [string, string][]).map(([k, v]) => (
                   <div key={k} className="flex justify-between py-2.5 text-sm">
                     <span className="text-gray-400 dark:text-gray-500">{k}</span>
-                    <span className="text-gray-700 dark:text-gray-300 text-right max-w-[60%] truncate">{v}</span>
+                    <span className="text-gray-700 dark:text-gray-200 text-right max-w-[60%] truncate">{v}</span>
                   </div>
                 ))}
               </div>

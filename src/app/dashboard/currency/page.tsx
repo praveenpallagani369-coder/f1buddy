@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -81,7 +81,7 @@ export default function CurrencyPage() {
         <CardContent className="p-6">
           <div className="grid md:grid-cols-[1fr,auto,1fr] gap-4 items-end">
             <div>
-              <label className="block text-sm text-gray-600 mb-1.5">Amount (USD)</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">Amount (USD)</label>
               <Input
                 type="number"
                 value={amount}
@@ -94,7 +94,7 @@ export default function CurrencyPage() {
             </div>
             <div className="flex items-center justify-center text-2xl text-gray-500 pb-1">&rarr;</div>
             <div>
-              <label className="block text-sm text-gray-600 mb-1.5">To Currency</label>
+              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1.5">To Currency</label>
               <Select value={to} onChange={(e) => setTo(e.target.value)}>
                 {POPULAR_CURRENCIES.map((c) => (
                   <option key={c.code} value={c.code}>
@@ -106,14 +106,14 @@ export default function CurrencyPage() {
           </div>
 
           {result && !loading && (
-            <div className="mt-6 p-4 rounded-xl bg-gray-100 border border-gray-200 text-center">
-              <p className="text-3xl font-bold text-gray-900">
+            <div className="mt-6 p-4 rounded-xl bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-center">
+              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                 {selectedCurrency?.flag} {result.converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {to}
               </p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 1 USD = {result.rate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })} {to}
               </p>
-              <p className="text-xs text-gray-500 mt-2">Mid-market rate via Frankfurter API (ECB data)</p>
+              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">Mid-market rate via Frankfurter API (ECB data)</p>
             </div>
           )}
           {loading && (
@@ -131,9 +131,9 @@ export default function CurrencyPage() {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[100, 500, 1000, 5000].map((amt) => (
-              <div key={amt} className="p-3 rounded-lg bg-gray-100 border border-gray-200 text-center">
-                <p className="text-sm text-gray-500">${amt.toLocaleString()} USD</p>
-                <p className="text-lg font-semibold text-gray-900 mt-1">
+              <div key={amt} className="p-3 rounded-lg bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400">${amt.toLocaleString()} USD</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-1">
                   {result ? (amt * result.rate).toLocaleString(undefined, { maximumFractionDigits: 0 }) : "—"} {to}
                 </p>
               </div>
@@ -155,13 +155,13 @@ export default function CurrencyPage() {
               href={svc.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between p-3 rounded-lg bg-gray-100 border border-gray-200 hover:border-indigo-200 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors"
             >
               <div>
-                <p className="text-sm text-gray-900 font-medium">{svc.name}</p>
-                <p className="text-xs text-gray-500">{svc.note}</p>
+                <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">{svc.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{svc.note}</p>
               </div>
-              <span className="text-indigo-600 text-sm">&rarr;</span>
+              <span className="text-indigo-600 dark:text-indigo-400 text-sm">&rarr;</span>
             </a>
           ))}
         </CardContent>
@@ -170,7 +170,7 @@ export default function CurrencyPage() {
       {/* Tips */}
       <Card>
         <CardHeader><CardTitle className="text-base">Tips for International Students</CardTitle></CardHeader>
-        <CardContent className="space-y-2 text-sm text-gray-600">
+        <CardContent className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
           <p>&#8226; Banks often add 2-4% markup on exchange rates. Wise typically offers the mid-market rate with a small flat fee.</p>
           <p>&#8226; Avoid airport currency exchanges — they have the worst rates (5-10% markup).</p>
           <p>&#8226; For recurring transfers, set up a Wise or Remitly account linked to your US bank for quick transfers.</p>

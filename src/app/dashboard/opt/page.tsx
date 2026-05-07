@@ -462,7 +462,7 @@ export default function OPTPage() {
         </CardHeader>
         <CardContent>
           {employers.length === 0 ? (
-            <div className="text-center py-8 text-gray-600">No employers logged yet</div>
+            <div className="text-center py-8 text-gray-600 dark:text-gray-400">No employers logged yet</div>
           ) : (
             <div className="space-y-3">
               {employers.map((e) => (
@@ -472,8 +472,8 @@ export default function OPTPage() {
                       <p className="text-gray-900 dark:text-gray-100 font-medium">{e.employer_name}</p>
                       {e.is_current && <Badge variant="success" className="text-xs">Current</Badge>}
                     </div>
-                    <p className="text-sm text-gray-600">{e.position_title ?? e.employment_type.replace("_", " ")}</p>
-                    <p className="text-xs text-gray-500 mt-1">{e.start_date} → {e.end_date ?? "Present"}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{e.position_title ?? e.employment_type.replace("_", " ")}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{e.start_date} → {e.end_date ?? "Present"}</p>
                     <div className="flex gap-2 mt-2">
                       {e.is_stem_related && <Badge variant="info" className="text-xs">STEM</Badge>}
                       {e.e_verify_employer && <Badge variant="info" className="text-xs">E-Verify</Badge>}
